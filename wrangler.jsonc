@@ -1,0 +1,12 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "cog-website",
+  "d1_databases": [
+    {
+      "binding": "cog_website",
+      "database_name": "cog-website",
+      "database_id": "ec968649-c36b-4ab2-930c-10276e1846f8",
+      "migrations_dir": "migrations"
+    }
+  ]
+}
