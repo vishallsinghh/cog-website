@@ -1,0 +1,46 @@
+{
+  "name": "cog-website",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "postinstall": "prisma generate",
+    "db:generate": "prisma generate",
+    "db:migration:new": "wrangler d1 migrations create cog-website",
+    "db:migrate:local": "wrangler d1 migrations apply cog-website --local",
+    "db:migrate:remote": "wrangler d1 migrations apply cog-website --remote",
+    "typecheck": "tsc --noEmit",
+    "db:migration:diff": "prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --script",
+    "db:seed": "tsx --env-file=.env prisma/seed.ts"
+  },
+  "dependencies": {
+    "@better-auth/prisma-adapter": "^1.7.7",
+    "@prisma/adapter-d1": "^7.10.0",
+    "@prisma/client": "^7.10.0",
+    "@tanstack/react-query": "^5.104.1",
+    "@trpc/tanstack-react-query": "^11.19.0",
+    "@upstash/ratelimit": "^2.2.0",
+    "@upstash/redis": "^1.39.0",
+    "better-auth": "^1.7.7",
+    "next": "16.4.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "superjson": "^2.2.6"
+  },
+  "devDependencies": {
+    "@tailwindcss/turbopack": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.0",
+    "prisma": "^7.10.0",
+    "tailwindcss": "^4",
+    "tsx": "^4.23.15",
+    "typescript": "^5",
+    "wrangler": "^4.148.0"
+  }
+}
