@@ -16,7 +16,7 @@ export const requireAuth = cache(async () => {
     const session = await getSession();
 
     if (!session?.user) {
-        return redirect("/sign-in");
+        return redirect("/member");
     }
     
     return session;
