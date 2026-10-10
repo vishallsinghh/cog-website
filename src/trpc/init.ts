@@ -2,7 +2,7 @@ import { superjson } from "./transformer";
 import { cache } from "react";
 import { initTRPC, TRPCError } from "@trpc/server";
 import { getSession } from "@/lib/auth.utils";
-import { roles, type AppRole } from "@/lib/permissions";
+import { hasPermission as roleHasPermission, type RequiredPermissions } from "@/lib/access";
 
 export const createTRPCContext = cache(async () => {
     return {
@@ -15,8 +15,6 @@ export type Context = Awaited<ReturnType<typeof createTRPCContext>>;
 export const t = initTRPC.context<Context>().create({
     transformer: superjson
 });
-
-type RequiredPermissions = Parameters<(typeof roles)[AppRole]["authorize"]>[0];
 
 const hasSession = t.middleware(({ ctx, next }) => {
     const session = ctx.auth;
@@ -39,13 +37,7 @@ const hasSession = t.middleware(({ ctx, next }) => {
 
 const hasPermission = (required: RequiredPermissions) =>
     t.middleware(({ ctx, next }) => {
-        const userRoles = (ctx.auth?.user?.role ?? "").split(",").map((role) => role.trim());
-
-        const allowed = userRoles.some(
-            (role) => role in roles && roles[role as AppRole].authorize(required).success
-        );
-
-        if (!allowed) {
+        if (!roleHasPermission(ctx.auth?.user?.role, required)) {
             throw new TRPCError({
                 code: "FORBIDDEN",
                 message: "You do not have permission to access this resource."

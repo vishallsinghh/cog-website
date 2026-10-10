@@ -177,7 +177,7 @@ export function MemberAuth() {
         }
 
         detailsForm.reset();
-        router.push("/");
+        router.push("/dashboard");
         router.refresh();
     }
 
@@ -187,7 +187,7 @@ export function MemberAuth() {
 
         const { error } = await authClient.signIn.social({
             provider: "google",
-            callbackURL: "/",
+            callbackURL: "/dashboard",
             errorCallbackURL: "/member",
         });
 
