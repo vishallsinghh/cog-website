@@ -1,0 +1,39 @@
+import Link from "next/link";
+import { Shell, PageBanner } from "@/components/site-shell";
+export default function Page() {
+    return (
+        <Shell>
+            <main>
+                <PageBanner
+                    eyebrow="SUPPORT OUR MISSION"
+                    title="Every contribution matters."
+                    description="Your generosity helps support education, housing, medical care and community welfare across Gujarat."
+                />
+                <section className="section interior">
+                    <div className="container">
+                        <div className="panel">
+                            <h2>Give with purpose</h2>
+                            <p className="interior-lead">
+                                The planned payment system supports one-time and recurring
+                                donations through Razorpay, with programme selection and
+                                receipts linked to a member account.
+                            </p>
+                            <div className="notice">
+                                Payments are not enabled in this frontend preview. Razorpay
+                                checkout, webhooks and receipt generation must be tested before
+                                accepting funds.
+                            </div>
+                            <Link
+                                href="/contact"
+                                className="button button-dark"
+                                style={{ marginTop: 25 }}
+                            >
+                                Contact the Council ↗
+                            </Link>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </Shell>
+    );
+}
