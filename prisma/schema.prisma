@@ -100,6 +100,7 @@ model MemberProfile {
   jamaat            String?
   aadhaarLast4      String?
   aadhaarEncrypted  String?
+  contactEmail      String?
   aadhaarVerifiedAt DateTime?
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt

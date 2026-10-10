@@ -32,6 +32,17 @@ export function authErrorMessage(error: AuthError) {
     return "Something went wrong. Please try again.";
 }
 
+const LINK_MESSAGES: Record<string, string> = {
+    account_already_linked_to_different_user: "This Google account is already linked to another COG member.",
+    unable_to_link_account: "We could not link your Google account. Please try again.",
+    email_not_verified: "Your Google email address is not verified, so it cannot be linked.",
+    access_denied: "Google connection was cancelled.",
+};
+
+export function linkErrorMessage(code: string) {
+    return LINK_MESSAGES[code] ?? "We could not connect your Google account. Please try again.";
+}
+
 export function oauthErrorMessage(code: string) {
     if (code === "ACCOUNT_PENDING_APPROVAL") return { pending: true, message: "" };
 

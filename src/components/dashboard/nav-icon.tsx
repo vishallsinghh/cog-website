@@ -6,6 +6,7 @@ import {
     NewspaperIcon,
     ScrollTextIcon,
     ShieldCheckIcon,
+    UserRoundIcon,
     UsersIcon,
     type LucideIcon,
 } from "lucide-react";
@@ -13,6 +14,7 @@ import type { NavIconName } from "@/lib/navigation";
 
 const ICONS: Record<NavIconName, LucideIcon> = {
     dashboard: LayoutDashboardIcon,
+    profile: UserRoundIcon,
     members: UsersIcon,
     applications: ClipboardListIcon,
     donations: HandCoinsIcon,

@@ -2,6 +2,7 @@ import { hasPermission, type RequiredPermissions } from "./access";
 
 export type NavIconName =
     | "dashboard"
+    | "profile"
     | "members"
     | "applications"
     | "donations"
@@ -32,6 +33,12 @@ export const NAV_GROUPS: NavGroup[] = [
                 href: "/dashboard",
                 icon: "dashboard",
                 description: "Your account at a glance.",
+            },
+            {
+                title: "Profile",
+                href: "/profile",
+                icon: "profile",
+                description: "Update your details and connected accounts.",
             },
         ],
     },

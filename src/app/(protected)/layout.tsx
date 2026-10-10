@@ -3,31 +3,36 @@ import { AppSidebar } from "@/components/dashboard/app-sidebar";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { primaryRoleLabel } from "@/lib/access";
 import { requireAuth } from "@/lib/auth.utils";
 import { navForRole } from "@/lib/navigation";
+import { TRPCReactProvider } from "@/trpc/client";
 
 async function ProtectedShell({ children }: { children: React.ReactNode }) {
     const { user } = await requireAuth();
 
     return (
-        <TooltipProvider>
-            <SidebarProvider>
-                <AppSidebar
-                    groups={navForRole(user.role)}
-                    user={{
-                        name: user.name,
-                        phoneNumber: user.phoneNumber ?? "",
-                        roleLabel: primaryRoleLabel(user.role),
-                    }}
-                />
-                <SidebarInset>
-                    <DashboardHeader />
-                    <div className="flex flex-1 flex-col p-4 sm:p-6 lg:p-10">{children}</div>
-                </SidebarInset>
-            </SidebarProvider>
-        </TooltipProvider>
+        <TRPCReactProvider>
+            <TooltipProvider>
+                <SidebarProvider>
+                    <AppSidebar
+                        groups={navForRole(user.role)}
+                        user={{
+                            name: user.name,
+                            phoneNumber: user.phoneNumber ?? "",
+                            roleLabel: primaryRoleLabel(user.role),
+                        }}
+                    />
+                    <SidebarInset>
+                        <DashboardHeader />
+                        <div className="flex flex-1 flex-col p-4 sm:p-6 lg:p-10">{children}</div>
+                    </SidebarInset>
+                </SidebarProvider>
+                <Toaster position="top-right" />
+            </TooltipProvider>
+        </TRPCReactProvider>
     );
 }
 

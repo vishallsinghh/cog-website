@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronsUpDownIcon, GlobeIcon, LogOutIcon } from "lucide-react";
+import { ChevronsUpDownIcon, GlobeIcon, LogOutIcon, UserRoundIcon } from "lucide-react";
 import { authClient } from "@/lib/auth.client";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -78,6 +78,12 @@ export function NavUser({ user }: { user: NavUserData }) {
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuGroup>
+                            <DropdownMenuItem asChild>
+                                <Link href="/profile">
+                                    <UserRoundIcon />
+                                    Profile
+                                </Link>
+                            </DropdownMenuItem>
                             <DropdownMenuItem asChild>
                                 <Link href="/">
                                     <GlobeIcon />
