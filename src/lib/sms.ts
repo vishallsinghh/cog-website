@@ -1,24 +1,30 @@
-import { env } from "./env";
+import { smsEnv } from "./env";
+
+const MSG91_OTP_URL = "https://control.msg91.com/api/v5/otp";
 
 export async function sendOtpSms(phoneNumber: string, code: string) {
-    if (env.NODE_ENV !== "production" || !env.MSG91_AUTH_KEY || !env.MSG91_OTP_TEMPLATE_ID) {
+    const env = smsEnv();
+
+    if (env.NODE_ENV !== "production") {
         console.log(`[dev-otp] ${phoneNumber}: ${code}`);
         return;
     }
 
     const params = new URLSearchParams({
-        template_id: env.MSG91_OTP_TEMPLATE_ID,
+        template_id: env.MSG91_OTP_TEMPLATE_ID!,
         mobile: phoneNumber.replace("+", ""),
         otp: code,
     });
 
-    const response = await fetch(`https://control.msg91.com/api/v5/otp?${params}`, {
+    const response = await fetch(`${MSG91_OTP_URL}?${params}`, {
         method: "POST",
-        headers: { authkey: env.MSG91_AUTH_KEY, "content-type": "application/json" },
+        headers: { authkey: env.MSG91_AUTH_KEY!, "content-type": "application/json" },
         body: JSON.stringify({}),
     });
 
-    if (!response.ok) {
-        throw new Error(`MSG91 request failed with status ${response.status}`);
+    const result = (await response.json().catch(() => null)) as { type?: string; message?: string } | null;
+
+    if (!response.ok || result?.type !== "success") {
+        throw new Error(`MSG91 OTP request failed: ${result?.message ?? response.status}`);
     }
 }

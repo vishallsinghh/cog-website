@@ -1,27 +1,13 @@
-import { PageBanner } from "@/components/site-shell";
+import { AuthShowcase } from "@/components/member/auth-showcase";
+import { MemberAuth } from "@/components/member/member-auth";
+
 export default function Page() {
     return (
-        <main>
-            <PageBanner
-                eyebrow="MEMBER PORTAL"
-                title="Your community, connected."
-                description="One account for your profile, assistance applications, donations and notifications."
-            />
-            <section className="section interior">
-                <div className="container">
-                    <div className="panel">
-                        <h2>Member sign in</h2>
-                        <p className="interior-lead">
-                            Secure mobile OTP sign-in and Google account linking are part of
-                            the existing Better Auth foundation. The interface will be
-                            connected after authentication configuration and member journeys
-                            are verified.
-                        </p>
-                        <div className="notice">
-                            Sign-in is not active in this preview. This page does not
-                            collect phone numbers or personal data.
-                        </div>
-                    </div>
+        <main className="grid min-h-[680px] lg:grid-cols-[1.05fr_1fr]">
+            <AuthShowcase />
+            <section className="flex items-center justify-center bg-background px-4 py-8 sm:px-10 sm:py-12 lg:py-16">
+                <div className="w-full max-w-md">
+                    <MemberAuth />
                 </div>
             </section>
         </main>

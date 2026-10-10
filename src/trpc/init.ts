@@ -2,6 +2,7 @@ import { superjson } from "./transformer";
 import { cache } from "react";
 import { initTRPC, TRPCError } from "@trpc/server";
 import { getSession } from "@/lib/auth.utils";
+import { roles, type AppRole } from "@/lib/permissions";
 
 export const createTRPCContext = cache(async () => {
     return {
@@ -14,6 +15,8 @@ export type Context = Awaited<ReturnType<typeof createTRPCContext>>;
 export const t = initTRPC.context<Context>().create({
     transformer: superjson
 });
+
+type RequiredPermissions = Parameters<(typeof roles)[AppRole]["authorize"]>[0];
 
 const hasSession = t.middleware(({ ctx, next }) => {
     const session = ctx.auth;
@@ -34,33 +37,28 @@ const hasSession = t.middleware(({ ctx, next }) => {
     });
 });
 
-const isAdmin = t.middleware(({ ctx, next }) => {
-    const role = ctx.auth?.user?.role;
+const hasPermission = (required: RequiredPermissions) =>
+    t.middleware(({ ctx, next }) => {
+        const userRoles = (ctx.auth?.user?.role ?? "").split(",").map((role) => role.trim());
 
-    if (role !== "INTERNAL" && role !== "SUPERADMIN") {
-        throw new TRPCError({
-            code: "FORBIDDEN",
-            message: "Only admins and super admins can access this resource."
-        });
-    }
+        const allowed = userRoles.some(
+            (role) => role in roles && roles[role as AppRole].authorize(required).success
+        );
 
-    return next();
-});
+        if (!allowed) {
+            throw new TRPCError({
+                code: "FORBIDDEN",
+                message: "You do not have permission to access this resource."
+            });
+        }
 
-const isSuperAdmin = t.middleware(({ ctx, next }) => {
-    if (ctx.auth?.user?.role !== "SUPERADMIN") {
-        throw new TRPCError({
-            code: "FORBIDDEN",
-            message: "Only super admins can access this resource."
-        });
-    }
-
-    return next();
-});
+        return next();
+    });
 
 export const createTRPCRouter = t.router;
 export const createCallerFactory = t.createCallerFactory;
 export const baseProcedure = t.procedure;
 export const protectedProcedure = t.procedure.use(hasSession);
-export const internalUserProcedure = protectedProcedure.use(isAdmin);
-export const superAdminProcedure = protectedProcedure.use(isSuperAdmin);
+export const permissionProcedure = (required: RequiredPermissions) =>
+    protectedProcedure.use(hasPermission(required));
+export const superAdminProcedure = permissionProcedure({ user: ["set-role"] });

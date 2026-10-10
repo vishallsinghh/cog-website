@@ -6,8 +6,10 @@ import { phoneNumber } from "better-auth/plugins/phone-number";
 import { nextCookies } from "better-auth/next-js";
 import { after } from "next/server";
 import { z } from "zod";
+import { storeAadhaarForUser } from "./aadhaar.server";
+import { signUpDetailsSchema } from "./auth.schemas";
 import { db } from "./db";
-import { env } from "./env";
+import { authEnv } from "./env";
 import { ac, roles } from "./permissions";
 import { isIndianMobile, tempEmailForPhone } from "./phone";
 import {
@@ -20,10 +22,7 @@ import {
 } from "./rate-limit";
 import { sendOtpSms } from "./sms";
 
-const signUpDetailsSchema = z.object({
-    name: z.string().trim().min(2).max(100),
-    consent: z.literal(true),
-});
+const env = authEnv();
 
 const phoneBodySchema = z.object({ phoneNumber: z.string() });
 
@@ -34,6 +33,11 @@ export const auth = betterAuth({
         provider: "sqlite",
     }),
     trustedOrigins: [env.BETTER_AUTH_URL],
+    disabledPaths: [
+        "/sign-in/phone-number",
+        "/phone-number/request-password-reset",
+        "/phone-number/reset-password",
+    ],
     socialProviders: {
         google: {
             clientId: env.GOOGLE_CLIENT_ID,
@@ -99,14 +103,16 @@ export const auth = betterAuth({
     },
     hooks: {
         before: createAuthMiddleware(async (ctx) => {
+            const body = phoneBodySchema.safeParse(ctx.body);
+            if (!body.success) return;
+
             if (ctx.path === "/phone-number/send-otp") {
-                const { phoneNumber: number } = phoneBodySchema.parse(ctx.body);
-                await assertCanSendOtp(number, getIP(ctx.request ?? new Request("http://localhost"), ctx.context.options));
+                const ip = ctx.request ? getIP(ctx.request, ctx.context.options) : null;
+                await assertCanSendOtp(body.data.phoneNumber, ip);
             }
 
             if (ctx.path === "/phone-number/verify") {
-                const { phoneNumber: number } = phoneBodySchema.parse(ctx.body);
-                await assertNumberNotLocked(number);
+                await assertNumberNotLocked(body.data.phoneNumber);
             }
         }),
         after: createAuthMiddleware(async (ctx) => {
@@ -152,6 +158,14 @@ export const auth = betterAuth({
                             consentAcceptedAt: new Date(),
                         },
                     };
+                },
+                after: async (user, ctx) => {
+                    if (ctx?.path !== "/phone-number/verify") return;
+
+                    const details = signUpDetailsSchema.safeParse(ctx.body);
+                    if (!details.success) return;
+
+                    await storeAadhaarForUser(user.id, details.data.aadhaar);
                 },
             },
         },

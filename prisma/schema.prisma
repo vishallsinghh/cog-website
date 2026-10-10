@@ -99,6 +99,7 @@ model MemberProfile {
   pincode           String?
   jamaat            String?
   aadhaarLast4      String?
+  aadhaarEncrypted  String?
   aadhaarVerifiedAt DateTime?
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt

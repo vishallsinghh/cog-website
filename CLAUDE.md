@@ -37,12 +37,17 @@ src/lib/            server and shared modules
   auth.client.ts    Better Auth browser client
   auth.utils.ts     getSession / requireAuth helpers for server components
   db.ts             Prisma client on D1
-  env.ts            Zod-validated env (server only)
+  env.ts            Zod-validated env in lazy groups (dbEnv, authEnv, redisEnv, smsEnv, seedEnv); never read process.env elsewhere
+  auth.schemas.ts   Zod schemas shared by the auth config and the sign-in form
+  aadhaar.ts        Aadhaar format, checksum and last-4 helpers (client-safe)
+  aadhaar.server.ts store, read and purge the encrypted Aadhaar
+  crypto.ts         AES-256-GCM helpers
   permissions.ts    roles and access control, shared by server and client
   phone.ts          +91 validation and placeholder email helper
   rate-limit.ts     Upstash storage for Better Auth and the OTP guards
   redis.ts          Upstash client
   sms.ts            OTP delivery (console in dev, MSG91 in production)
+src/components/     site shell, shadcn components in ui/, feature components (member/)
 src/trpc/           tRPC init, routers, server and client wiring
 src/generated/      Prisma client output, never edit
 prisma/schema.prisma
@@ -53,8 +58,9 @@ migrations/         D1 SQL migrations applied with wrangler
 ## Rules
 
 - Money is stored and passed as integers in paise. Convert to rupees only when rendering.
-- Never store or log a full Aadhaar number. Keep only the last 4 digits and the DigiLocker verification timestamp.
+- Aadhaar: the full number is collected at sign-up and held only as AES-256-GCM ciphertext in `MemberProfile.aadhaarEncrypted` (key `AADHAAR_ENCRYPTION_KEY`) until the account is approved or rejected. Approval and rejection must call `purgeFullAadhaar()`, which leaves only `aadhaarLast4` and the DigiLocker timestamp. Never log it, return it to the client, or put it in URLs, audit logs or error messages. Reading it goes through `readFullAadhaar()` behind a permission check and an `AuditLog` row. Entering the number is not verification; only DigiLocker sets `aadhaarVerifiedAt`.
 - All input goes through Zod: tRPC inputs, route handlers, server actions, forms, and env variables. Never trust a client value.
+- Forms use react-hook-form with `zodResolver` and the shadcn `FieldGroup` / `Field` / `Controller` pattern (`data-invalid` on `Field`, `aria-invalid` on the control). Read `.claude/skills/shadcn` before adding or changing UI.
 - Phone numbers are `+91` followed by a 10-digit mobile starting 6 to 9. Validate with `INDIAN_MOBILE` from `src/lib/phone.ts`.
 - There are no passwords. OTP is the only login. Google can only be linked from inside a logged-in account and must never create a user.
 - Accounts start as `pending`. Only `approved` users get a session. Approval is done by an admin and issues the COG Member ID.
@@ -88,11 +94,14 @@ Seed the Super Admin with `SUPER_ADMIN_PHONE` and `SUPER_ADMIN_NAME` set in `.en
 
 ## Environment variables
 
-Required: `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_DATABASE_ID`, `CLOUDFLARE_D1_TOKEN`.
+Required: `AADHAAR_ENCRYPTION_KEY` (32 random bytes, base64; generate with `openssl rand -base64 32`), `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_DATABASE_ID`, `CLOUDFLARE_D1_TOKEN`.
 Production OTP delivery: `MSG91_AUTH_KEY`, `MSG91_OTP_TEMPLATE_ID`.
 Seed only: `SUPER_ADMIN_PHONE`, `SUPER_ADMIN_NAME`.
 
 ## Known gaps
 
-- `src/trpc/init.ts` still checks the old `INTERNAL` / `SUPERADMIN` roles and needs the new role names.
+- tRPC has no per-user / per-IP rate-limit middleware or audit-log helper yet, so denied admin calls are not logged.
+- No approve or reject flow exists yet, so nothing calls `purgeFullAadhaar()`; encrypted Aadhaar numbers stay until Part 9 adds it. Add a retention job as a safety net.
+- Consent is stored on `user.consentAcceptedAt` only; the `Consent` table is not written yet.
+- Page copy is English only until next-intl is set up.
 - Turnstile, the daily OTP cap with admin alert, and Member ID issuing on approval are not built yet.
