@@ -10,6 +10,8 @@ import { requireAuth } from "@/lib/auth.utils";
 import { navForRole } from "@/lib/navigation";
 import { TRPCReactProvider } from "@/trpc/client";
 
+export const instant = false;
+
 async function ProtectedShell({ children }: { children: React.ReactNode }) {
     const { user } = await requireAuth();
 
