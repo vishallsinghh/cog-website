@@ -22,7 +22,7 @@ import {
     type DetailsFormValues,
     type OtpFormValues,
 } from "@/lib/auth.schemas";
-import { normalizeIndianMobile } from "@/lib/phone";
+import { formatMobileInput, normalizeIndianMobile } from "@/lib/phone";
 import { cn } from "@/lib/utils";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -343,6 +343,7 @@ export function MemberAuth() {
                                                                 inputMode="numeric"
                                                                 autoComplete="tel-national"
                                                                 placeholder="98765 43210"
+                                                                onChange={(event) => field.onChange(formatMobileInput(event.target.value))}
                                                                 aria-invalid={fieldState.invalid}
                                                             />
                                                         </InputGroup>
