@@ -100,7 +100,7 @@ Seed only: `SUPER_ADMIN_PHONE`, `SUPER_ADMIN_NAME`.
 
 ## Known gaps
 
-- tRPC has no per-user / per-IP rate-limit middleware or audit-log helper yet, so denied admin calls are not logged.
+- tRPC has no per-user / per-IP rate-limit middleware yet. Denied permission checks are audited through `staffProcedure` in `src/trpc/init.ts`; use it (not `protectedProcedure`) for every admin procedure.
 - No approve or reject flow exists yet, so nothing calls `purgeFullAadhaar()`; encrypted Aadhaar numbers stay until Part 9 adds it. Add a retention job as a safety net.
 - Consent is stored on `user.consentAcceptedAt` only; the `Consent` table is not written yet.
 - Page copy is English only until next-intl is set up.
