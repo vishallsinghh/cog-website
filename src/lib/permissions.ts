@@ -3,7 +3,7 @@ import { adminAc, defaultStatements, userAc } from "better-auth/plugins/admin/ac
 
 export const statement = {
     ...defaultStatements,
-    member: ["read", "approve", "reject", "update"],
+    member: ["read", "readContact", "approve", "reject", "update"],
     donation: ["read", "refund", "export"],
     application: ["read", "review", "verify", "decide", "export"],
     content: ["read", "write", "publish"],
@@ -17,7 +17,7 @@ export const roles = {
     member: ac.newRole({ ...userAc.statements }),
     super_admin: ac.newRole({
         ...adminAc.statements,
-        member: ["read", "approve", "reject", "update"],
+        member: ["read", "readContact", "approve", "reject", "update"],
         donation: ["read", "refund", "export"],
         application: ["read", "review", "verify", "decide", "export"],
         content: ["read", "write", "publish"],
@@ -26,7 +26,7 @@ export const roles = {
     }),
     admin: ac.newRole({
         user: ["list", "get"],
-        member: ["read", "approve", "reject", "update"],
+        member: ["read", "readContact", "approve", "reject", "update"],
         donation: ["read", "refund", "export"],
         application: ["read", "review", "verify", "decide", "export"],
         content: ["read", "write", "publish"],
@@ -34,7 +34,7 @@ export const roles = {
         auditLog: ["read"],
     }),
     editor: ac.newRole({
-        member: ["read"],
+        member: ["read", "readContact"],
         content: ["read", "write", "publish"],
     }),
     viewer: ac.newRole({
