@@ -148,7 +148,7 @@ export function HomeSections() {
                         <div>
                             <p>
                                 Every initiative starts with a simple purpose: making a
-                                meaningful difference where it's needed most.
+                                meaningful difference where it&apos;s needed most.
                             </p>
                             <Link href="/programmes" className="text-link">
                                 View all programmes <span>↗</span>

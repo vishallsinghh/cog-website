@@ -33,29 +33,16 @@ export const roles = {
         report: ["read", "export"],
         auditLog: ["read"],
     }),
-    programme_manager: ac.newRole({
+    editor: ac.newRole({
         member: ["read"],
-        application: ["read", "review", "decide", "export"],
-        report: ["read", "export"],
-    }),
-    finance: ac.newRole({
-        member: ["read"],
-        donation: ["read", "refund", "export"],
-        report: ["read", "export"],
-    }),
-    jamaat_verifier: ac.newRole({
-        member: ["read"],
-        application: ["read", "verify"],
-    }),
-    content_editor: ac.newRole({
         content: ["read", "write", "publish"],
     }),
-    auditor: ac.newRole({
+    viewer: ac.newRole({
         member: ["read"],
         donation: ["read"],
         application: ["read"],
         content: ["read"],
-        report: ["read", "export"],
+        report: ["read"],
         auditLog: ["read"],
     }),
 };
@@ -66,21 +53,15 @@ export const ROLE_LABELS: Record<AppRole, string> = {
     member: "Member",
     super_admin: "Super Admin",
     admin: "Admin",
-    programme_manager: "Programme Manager",
-    finance: "Finance",
-    jamaat_verifier: "Jamaat Verifier",
-    content_editor: "Content Editor",
-    auditor: "Auditor",
+    editor: "Editor",
+    viewer: "Viewer",
 };
 
 export const STAFF_ROLES = [
     "super_admin",
     "admin",
-    "programme_manager",
-    "finance",
-    "jamaat_verifier",
-    "content_editor",
-    "auditor",
+    "editor",
+    "viewer",
 ] as const satisfies readonly AppRole[];
 
 export const MEMBER_STATUSES = ["pending", "approved", "rejected"] as const;

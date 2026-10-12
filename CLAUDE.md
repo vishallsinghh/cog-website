@@ -64,7 +64,7 @@ migrations/         D1 SQL migrations applied with wrangler
 - Phone numbers are `+91` followed by a 10-digit mobile starting 6 to 9. Validate with `INDIAN_MOBILE` from `src/lib/phone.ts`.
 - There are no passwords. OTP is the only login. Google can only be linked from inside a logged-in account and must never create a user.
 - Accounts start as `pending`. Only `approved` users get a session. Approval is done by an admin and issues the COG Member ID.
-- Roles: `member`, `super_admin`, `admin`, `programme_manager`, `finance`, `jamaat_verifier`, `content_editor`, `auditor`. Check permissions through `src/lib/permissions.ts`, never by comparing role strings in feature code.
+- Roles: `member`, `super_admin`, `admin`, `editor`, `viewer`. Check permissions through `src/lib/permissions.ts`, never by comparing role strings in feature code.
 - Every admin action and every denied access attempt writes an `AuditLog` row.
 - Uploaded documents are private. Never expose a public URL for them.
 - Prisma on D1 has no transactions. Design writes so a partial failure is safe to retry.
