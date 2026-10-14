@@ -6,8 +6,11 @@ import { phoneNumber } from "better-auth/plugins/phone-number";
 import { nextCookies } from "better-auth/next-js";
 import { after } from "next/server";
 import { z } from "zod";
+import { storeAadhaarForUser } from "./aadhaar.server";
+import { writeAuditLog } from "./audit";
+import { signUpDetailsSchema } from "./auth.schemas";
 import { db } from "./db";
-import { env } from "./env";
+import { authEnv } from "./env";
 import { ac, roles } from "./permissions";
 import { isIndianMobile, tempEmailForPhone } from "./phone";
 import {
@@ -19,13 +22,49 @@ import {
     upstashRateLimitStorage,
 } from "./rate-limit";
 import { sendOtpSms } from "./sms";
+import { findOpenInvite, markInviteAccepted } from "./staff-invite";
+import { ASSIGNABLE_ROLES } from "./team.schemas";
 
-const signUpDetailsSchema = z.object({
-    name: z.string().trim().min(2).max(100),
-    consent: z.literal(true),
-});
+const env = authEnv();
 
 const phoneBodySchema = z.object({ phoneNumber: z.string() });
+
+const verifyBodySchema = z.object({
+    phoneNumber: z.string(),
+    updatePhoneNumber: z.boolean().optional(),
+});
+
+type InviteRole = (typeof ASSIGNABLE_ROLES)[number];
+
+function isInviteRole(role: string): role is InviteRole {
+    return (ASSIGNABLE_ROLES as readonly string[]).includes(role);
+}
+
+/**
+ * Records an invite as accepted once its role has actually been applied to the user.
+ * Safe to run twice: only the call that flips acceptedAt writes the audit row. If the
+ * role was not applied (for example a rejected account), the invite stays open.
+ */
+async function acceptInviteFor(
+    user: { id: string; phoneNumber?: string | null; role?: string | null; status?: string | null },
+    ipAddress: string | null,
+) {
+    if (!user.phoneNumber || user.status !== "approved") return;
+
+    const invite = await findOpenInvite(user.phoneNumber);
+    if (!invite || user.role !== invite.role) return;
+
+    if (!(await markInviteAccepted(invite.id))) return;
+
+    await writeAuditLog({
+        actorId: user.id,
+        action: "staff.invite.accepted",
+        entityType: "staff_invite",
+        entityId: invite.id,
+        metadata: { role: invite.role, invitedById: invite.invitedById },
+        ipAddress,
+    });
+}
 
 export const auth = betterAuth({
     baseURL: env.BETTER_AUTH_URL,
@@ -34,6 +73,11 @@ export const auth = betterAuth({
         provider: "sqlite",
     }),
     trustedOrigins: [env.BETTER_AUTH_URL],
+    disabledPaths: [
+        "/sign-in/phone-number",
+        "/phone-number/request-password-reset",
+        "/phone-number/reset-password",
+    ],
     socialProviders: {
         google: {
             clientId: env.GOOGLE_CLIENT_ID,
@@ -45,6 +89,7 @@ export const auth = betterAuth({
         accountLinking: {
             enabled: true,
             allowDifferentEmails: true,
+            allowUnlinkingAll: true,
             trustedProviders: [],
         },
     },
@@ -99,14 +144,16 @@ export const auth = betterAuth({
     },
     hooks: {
         before: createAuthMiddleware(async (ctx) => {
+            const body = phoneBodySchema.safeParse(ctx.body);
+            if (!body.success) return;
+
             if (ctx.path === "/phone-number/send-otp") {
-                const { phoneNumber: number } = phoneBodySchema.parse(ctx.body);
-                await assertCanSendOtp(number, getIP(ctx.request ?? new Request("http://localhost"), ctx.context.options));
+                const ip = ctx.request ? getIP(ctx.request, ctx.context.options) : null;
+                await assertCanSendOtp(body.data.phoneNumber, ip);
             }
 
             if (ctx.path === "/phone-number/verify") {
-                const { phoneNumber: number } = phoneBodySchema.parse(ctx.body);
-                await assertNumberNotLocked(number);
+                await assertNumberNotLocked(body.data.phoneNumber);
             }
         }),
         after: createAuthMiddleware(async (ctx) => {
@@ -144,14 +191,75 @@ export const auth = betterAuth({
                         });
                     }
 
+                    // An open staff invite for this number makes the new account staff and
+                    // approved straight away. Without one the account starts pending.
+                    const invite =
+                        typeof user.phoneNumber === "string" ? await findOpenInvite(user.phoneNumber) : null;
+                    const invitedRole = invite && isInviteRole(invite.role) ? invite.role : null;
+
                     return {
                         data: {
                             ...user,
                             name: details.data.name,
-                            status: "pending",
+                            status: invitedRole ? "approved" : "pending",
+                            ...(invitedRole ? { role: invitedRole } : {}),
                             consentAcceptedAt: new Date(),
                         },
                     };
+                },
+                after: async (user, ctx) => {
+                    if (ctx?.path !== "/phone-number/verify") return;
+
+                    const details = signUpDetailsSchema.safeParse(ctx.body);
+                    if (!details.success) return;
+
+                    await storeAadhaarForUser(user.id, details.data.aadhaar);
+
+                    const ip = ctx.request ? getIP(ctx.request, ctx.context.options) : null;
+                    await acceptInviteFor(user as Parameters<typeof acceptInviteFor>[0], ip);
+                },
+            },
+            update: {
+                // Runs after the OTP is verified and before the session is created, so the
+                // session already carries the new role. It receives only the changed fields
+                // ({ phoneNumberVerified: true }), so the user is found by the verified number.
+                before: async (data, ctx) => {
+                    if (ctx?.path !== "/phone-number/verify") return;
+
+                    const body = verifyBodySchema.safeParse(ctx.body);
+                    if (!body.success) return;
+
+                    // Changing a logged-in user's own number goes through this path too.
+                    // It must never grant a role.
+                    if (body.data.updatePhoneNumber || "phoneNumber" in data) return;
+
+                    const invite = await findOpenInvite(body.data.phoneNumber);
+                    if (!invite || !isInviteRole(invite.role)) return;
+
+                    const existing = await db.user.findUnique({
+                        where: { phoneNumber: body.data.phoneNumber },
+                        select: { role: true, status: true },
+                    });
+                    if (!existing) return;
+
+                    // A rejected account stays rejected: an invite never overrides a rejection.
+                    if (existing.status === "rejected") return;
+
+                    // An invite never touches a Super Admin.
+                    if ((existing.role ?? "").split(",").some((value) => value.trim() === "super_admin")) {
+                        return;
+                    }
+
+                    return { data: { ...data, role: invite.role, status: "approved" } };
+                },
+                after: async (user, ctx) => {
+                    if (ctx?.path !== "/phone-number/verify") return;
+
+                    const body = verifyBodySchema.safeParse(ctx.body);
+                    if (!body.success || body.data.updatePhoneNumber) return;
+
+                    const ip = ctx.request ? getIP(ctx.request, ctx.context.options) : null;
+                    await acceptInviteFor(user as Parameters<typeof acceptInviteFor>[0], ip);
                 },
             },
         },

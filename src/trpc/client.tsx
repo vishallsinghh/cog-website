@@ -27,7 +27,7 @@ function getQueryClient() {
 function getUrl() {
     const base = (() => {
         if (typeof window !== 'undefined') return '';
-        return process.env.ORIGIN || 'http://localhost:3000';
+        return process.env.BETTER_AUTH_URL || 'http://localhost:3000';
     })();
     return `${base}/api/trpc`;
 }
@@ -44,6 +44,9 @@ export function TRPCReactProvider(
                 httpBatchLink({
                     transformer: superjson,
                     url: getUrl(),
+                    // /api/trpc is outside the [locale] route, so send the page language.
+                    headers: () =>
+                        typeof document === 'undefined' ? {} : { 'x-cog-locale': document.documentElement.lang },
                 }),
             ],
         }),

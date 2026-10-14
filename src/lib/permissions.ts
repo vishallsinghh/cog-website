@@ -3,7 +3,7 @@ import { adminAc, defaultStatements, userAc } from "better-auth/plugins/admin/ac
 
 export const statement = {
     ...defaultStatements,
-    member: ["read", "approve", "reject", "update"],
+    member: ["read", "readContact", "approve", "reject", "update"],
     donation: ["read", "refund", "export"],
     application: ["read", "review", "verify", "decide", "export"],
     content: ["read", "write", "publish"],
@@ -17,7 +17,7 @@ export const roles = {
     member: ac.newRole({ ...userAc.statements }),
     super_admin: ac.newRole({
         ...adminAc.statements,
-        member: ["read", "approve", "reject", "update"],
+        member: ["read", "readContact", "approve", "reject", "update"],
         donation: ["read", "refund", "export"],
         application: ["read", "review", "verify", "decide", "export"],
         content: ["read", "write", "publish"],
@@ -26,36 +26,23 @@ export const roles = {
     }),
     admin: ac.newRole({
         user: ["list", "get"],
-        member: ["read", "approve", "reject", "update"],
+        member: ["read", "readContact", "approve", "reject", "update"],
         donation: ["read", "refund", "export"],
         application: ["read", "review", "verify", "decide", "export"],
         content: ["read", "write", "publish"],
         report: ["read", "export"],
         auditLog: ["read"],
     }),
-    programme_manager: ac.newRole({
-        member: ["read"],
-        application: ["read", "review", "decide", "export"],
-        report: ["read", "export"],
-    }),
-    finance: ac.newRole({
-        member: ["read"],
-        donation: ["read", "refund", "export"],
-        report: ["read", "export"],
-    }),
-    jamaat_verifier: ac.newRole({
-        member: ["read"],
-        application: ["read", "verify"],
-    }),
-    content_editor: ac.newRole({
+    editor: ac.newRole({
+        member: ["read", "readContact"],
         content: ["read", "write", "publish"],
     }),
-    auditor: ac.newRole({
+    viewer: ac.newRole({
         member: ["read"],
         donation: ["read"],
         application: ["read"],
         content: ["read"],
-        report: ["read", "export"],
+        report: ["read"],
         auditLog: ["read"],
     }),
 };
@@ -65,11 +52,8 @@ export type AppRole = keyof typeof roles;
 export const STAFF_ROLES = [
     "super_admin",
     "admin",
-    "programme_manager",
-    "finance",
-    "jamaat_verifier",
-    "content_editor",
-    "auditor",
+    "editor",
+    "viewer",
 ] as const satisfies readonly AppRole[];
 
 export const MEMBER_STATUSES = ["pending", "approved", "rejected"] as const;

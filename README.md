@@ -1,36 +1,37 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# COG Website
 
-## Getting Started
+Bilingual member, donation and assistance platform for The Council of Gujarat. See `CLAUDE.md` for the stack, folder structure and project rules.
 
-First, run the development server:
+## Getting started
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. Copy the required variables into `.env` (the full list is in `CLAUDE.md`).
+2. Apply the database migrations: `npm run db:migrate:local`, then `npm run db:migrate:remote`.
+3. Seed the Super Admin: `npm run db:seed`.
+4. Start the app: `npm run dev` and open [http://localhost:3000](http://localhost:3000).
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Dev login (Super Admin)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Field | Value |
+| --- | --- |
+| Page | `/member` |
+| Mobile number | `90000 00000` (`+919000000000`) |
+| Role | Super Admin, already approved |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Open `/member`, stay on the **Sign in** tab and enter `9000000000`.
+2. Press **Send code**. In development no SMS is sent: the code is printed in the terminal running `npm run dev`, on a line that starts with `[dev-otp] +919000000000:`.
+3. Enter that 6-digit code to sign in. The session lasts 30 days.
 
-## Learn More
+The number and name come from `SUPER_ADMIN_PHONE` and `SUPER_ADMIN_NAME` in `.env`. Running `npm run db:seed` again is safe and only updates the same account.
 
-To learn more about Next.js, take a look at the following resources:
+Before go-live, replace this dummy number: set `SUPER_ADMIN_PHONE` to a real number the owner controls, run the seed, then ban or delete the dummy account. In production the code is sent through MSG91, so anyone who owns `+919000000000` could otherwise receive it.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Sign-up and approval
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+New members sign up with name, mobile number and Aadhaar, then verify the code. Their account stays `pending` and they cannot log in until an admin approves it. The Super Admin account above is the only account that can log in out of the box.
 
-## Deploy on Vercel
+## Scripts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `npm run dev`: start locally
+- `npm run typecheck`: TypeScript check
+- `npm run lint`: ESLint
+- `npm run db:migration:new -- <name>`, `db:migration:diff`, `db:migrate:local`, `db:migrate:remote`, `db:generate`, `db:seed`: database workflow, explained in `CLAUDE.md`

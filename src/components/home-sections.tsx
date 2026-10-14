@@ -1,17 +1,219 @@
-import Link from "next/link";
 import Image from "next/image";
-import { Shell } from "./site-shell";
-const programmeCards = [
-{n:"01",name:"Education & scholarships",desc:"Supporting students, opening doors and investing in brighter futures.",image:"/images/education.png",href:"/programmes#education"},
-{n:"02",name:"Housing & community",desc:"Helping families find stability, security and a place to call home.",image:"/images/housing.png",href:"/programmes#housing"},
-{n:"03",name:"Healthcare & welfare",desc:"Standing beside families when care and support matter most.",image:"/images/healthcare.png",href:"/programmes#healthcare"},
-];
-export function HomeSections(){return <Shell><main>
-<section className="hero"><div className="hero-photo"><Image src="/images/community-hero.png" alt="Community members together" fill priority sizes="100vw" className="image-cover"/></div><div className="hero-overlay"/><div className="container hero-content"><div className="hero-kicker"><span className="hero-kicker-line"/> THE COUNCIL OF GUJARAT <span className="hero-kicker-line"/></div><h1>United by faith.<br/><em>Driven by service.</em></h1><p>Bringing KSI Jamaats together to uplift lives, strengthen communities and shape a better tomorrow.</p><div className="hero-buttons"><Link href="/programmes" className="button button-gold">Explore our work <span>↗</span></Link><Link href="/about" className="button button-outline-white">Discover our story <span>↗</span></Link></div><div className="hero-bottom"><span>GUJARAT, INDIA</span><span>ESTABLISHED 1987</span><span>UNITY • SERVICE • PROGRESS</span></div></div></section>
-<section className="stats"><div className="container stats-grid"><div><strong>40<span>+</span></strong><span>Years of service</span></div><div><strong>44</strong><span>KSI Jamaats united</span></div><div><strong>35,000<span>+</span></strong><span>Community members</span></div><div><strong>100<span>+</span></strong><span>Cities & villages</span></div></div></section>
-<section className="section story"><div className="container story-grid"><div className="story-image"><Image src="/images/students.png" fill sizes="(max-width: 800px) 100vw, 50vw" className="image-cover" alt="Young community members learning together"/><div className="image-plaque"><span>EST.</span><strong>1987</strong><span>GUJARAT</span></div></div><div className="story-copy"><div className="eyebrow">WHO WE ARE</div><h2>Rooted in community.<br/><em>Growing together.</em></h2><div className="gold-rule"/><p>For nearly four decades, The Council of Gujarat has brought together Khoja Shia Ithna-Asheri Jamaats across the state with one shared belief: when communities stand together, meaningful progress becomes possible.</p><p>From education and housing to healthcare, welfare and disaster relief, our work is rooted in dignity, compassion and collective responsibility.</p><Link className="text-link" href="/about">More about our journey <span>↗</span></Link></div></div></section>
-<section className="section work-section"><div className="container"><div className="section-heading"><div><div className="eyebrow">THE WORK WE DO</div><h2>Serving people.<br/><em>Changing lives.</em></h2></div><div><p>Every initiative starts with a simple purpose: making a meaningful difference where it's needed most.</p><Link href="/programmes" className="text-link">View all programmes <span>↗</span></Link></div></div><div className="programmes-grid">{programmeCards.map(c=><Link href={c.href} key={c.n} className="programme-card"><div className="programme-image"><Image src={c.image} alt="" fill sizes="(max-width: 800px) 100vw, 33vw" className="image-cover"/></div><div className="programme-card-body"><span className="card-number">{c.n} / OUR IMPACT</span><h3>{c.name}</h3><p>{c.desc}</p><span className="round-arrow">↗</span></div></Link>)}</div></div></section>
-<section className="quote-section"><div className="container quote-grid"><div className="quote-mark">“</div><div><blockquote>An institution becomes meaningful when its work continues beyond the people who built it.</blockquote><p>— Late Alhaj Gulamabbas “Gulubhai” Noormahmad Bhurani<br/><span>Lifetime Chairman, The Council of Gujarat</span></p><Link href="/legacy" className="text-link text-link-light">Read our legacy <span>↗</span></Link></div></div></section>
-<section className="section impact-section"><div className="container impact-grid"><div><div className="eyebrow">OUR IMPACT</div><h2>Progress that<br/><em>touches lives.</em></h2><p>Beyond the numbers are families empowered, opportunities created and communities brought closer together.</p><Link href="/legacy" className="button button-dark">Discover our impact <span>↗</span></Link></div><div className="impact-numbers"><div><strong>681</strong><span>Families helped with housing</span></div><div><strong>700</strong><span>Elderly women supported</span></div><div><strong>43</strong><span>Group marriage programmes</span></div><div><strong>830</strong><span>Marriages conducted</span></div></div></div></section>
-<section className="cta-section"><div className="container cta-inner"><div><div className="eyebrow light">BE PART OF THE CHANGE</div><h2>Together, we can build<br/><em>a brighter tomorrow.</em></h2><p>Your support helps transform collective care into lasting impact.</p></div><div className="cta-buttons"><Link href="/donate" className="button button-gold">Support our mission <span>↗</span></Link><Link href="/assistance" className="button button-outline-white">Explore assistance <span>↗</span></Link></div></div></section>
-</main></Shell>}
+import { getTranslations } from "next-intl/server";
+import { impactValue } from "@/content/impact";
+import { PROGRAMMES } from "@/content/programmes";
+import { Link } from "@/i18n/navigation";
+
+// The home page features the first three programmes.
+const FEATURED = PROGRAMMES.slice(0, 3);
+
+export async function HomeSections() {
+    const t = await getTranslations("Home");
+    const tp = await getTranslations("Programmes");
+    const ti = await getTranslations("Impact");
+
+    return (
+        <main>
+            <section className="hero">
+                <div className="hero-photo">
+                    <Image
+                        src="/images/community-hero.png"
+                        alt={t("heroAlt")}
+                        fill
+                        priority
+                        sizes="100vw"
+                        className="image-cover"
+                    />
+                </div>
+                <div className="hero-overlay" />
+                <div className="container hero-content">
+                    <div className="hero-kicker">
+                        <span className="hero-kicker-line" /> {t("kicker")}{" "}
+                        <span className="hero-kicker-line" />
+                    </div>
+                    <h1>
+                        {t("heroTitle")}
+                        <br />
+                        <em>{t("heroTitleEm")}</em>
+                    </h1>
+                    <p>{t("heroText")}</p>
+                    <div className="hero-buttons">
+                        <Link href="/our-work" className="button button-gold">
+                            {t("exploreWork")} <span>↗</span>
+                        </Link>
+                        <Link href="/about" className="button button-outline-white">
+                            {t("discoverStory")} <span>↗</span>
+                        </Link>
+                    </div>
+                    <div className="hero-bottom">
+                        <span>{t("heroBottom.place")}</span>
+                        <span>{t("heroBottom.established")}</span>
+                        <span>{t("heroBottom.motto")}</span>
+                    </div>
+                </div>
+            </section>
+            <section className="stats">
+                <div className="container stats-grid">
+                    <div>
+                        <strong>
+                            40<span>+</span>
+                        </strong>
+                        <span>{t("stats.years")}</span>
+                    </div>
+                    <div>
+                        <strong>{impactValue("jamaats")}</strong>
+                        <span>{t("stats.jamaats")}</span>
+                    </div>
+                    <div>
+                        <strong>
+                            35,000<span>+</span>
+                        </strong>
+                        <span>{t("stats.people")}</span>
+                    </div>
+                    <div>
+                        <strong>
+                            100<span>+</span>
+                        </strong>
+                        <span>{t("stats.villages")}</span>
+                    </div>
+                </div>
+            </section>
+            <section className="section story">
+                <div className="container story-grid">
+                    <div className="story-image">
+                        <Image
+                            src="/images/students.png"
+                            fill
+                            sizes="(max-width: 800px) 100vw, 50vw"
+                            className="image-cover"
+                            alt={t("storyAlt")}
+                        />
+                        <div className="image-plaque">
+                            <span>{t("plaqueEst")}</span>
+                            <strong>1987</strong>
+                            <span>{t("plaquePlace")}</span>
+                        </div>
+                    </div>
+                    <div className="story-copy">
+                        <div className="eyebrow">{t("whoWeAre")}</div>
+                        <h2>
+                            {t("storyTitle")}
+                            <br />
+                            <em>{t("storyTitleEm")}</em>
+                        </h2>
+                        <div className="gold-rule" />
+                        <p>{t("storyP1")}</p>
+                        <p>{t("storyP2")}</p>
+                        <Link className="text-link" href="/our-journey">
+                            {t("storyLink")} <span>↗</span>
+                        </Link>
+                    </div>
+                </div>
+            </section>
+            <section className="section work-section">
+                <div className="container">
+                    <div className="section-heading">
+                        <div>
+                            <div className="eyebrow">{t("workEyebrow")}</div>
+                            <h2>
+                                {t("workTitle")}
+                                <br />
+                                <em>{t("workTitleEm")}</em>
+                            </h2>
+                        </div>
+                        <div>
+                            <p>{t("workText")}</p>
+                            <Link href="/our-work" className="text-link">
+                                {t("workLink")} <span>↗</span>
+                            </Link>
+                        </div>
+                    </div>
+                    <div className="programmes-grid">
+                        {FEATURED.map((c, i) => (
+                            <Link href={`/our-work/${c.slug}`} key={c.slug} className="programme-card">
+                                <div className="programme-image">
+                                    <Image
+                                        src={c.image}
+                                        alt=""
+                                        fill
+                                        sizes="(max-width: 800px) 100vw, 33vw"
+                                        className="image-cover"
+                                    />
+                                </div>
+                                <div className="programme-card-body">
+                                    <span className="card-number">
+                                        {t("cardLabel", { number: String(i + 1).padStart(2, "0") })}
+                                    </span>
+                                    <h3>{tp(`${c.key}.name`)}</h3>
+                                    <p>{tp(`${c.key}.short`)}</p>
+                                    <span className="round-arrow">↗</span>
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+            </section>
+            <section className="quote-section">
+                <div className="container quote-grid">
+                    <div className="quote-mark">“</div>
+                    <div>
+                        <blockquote>{t("quote")}</blockquote>
+                        <p>
+                            {t("quoteBy")}
+                            <br />
+                            <span>{t("quoteRole")}</span>
+                        </p>
+                        <Link href="/leadership" className="text-link text-link-light">
+                            {t("quoteLink")} <span>↗</span>
+                        </Link>
+                    </div>
+                </div>
+            </section>
+            <section className="section impact-section">
+                <div className="container impact-grid">
+                    <div>
+                        <div className="eyebrow">{t("impactEyebrow")}</div>
+                        <h2>
+                            {t("impactTitle")}
+                            <br />
+                            <em>{t("impactTitleEm")}</em>
+                        </h2>
+                        <p>{t("impactText")}</p>
+                        <Link href="/impact" className="button button-dark">
+                            {t("impactLink")} <span>↗</span>
+                        </Link>
+                    </div>
+                    <div className="impact-numbers">
+                        {(["housing", "elderlyWomen", "marriageProgrammes", "marriages"] as const).map((id) => (
+                            <div key={id}>
+                                <strong>{impactValue(id)}</strong>
+                                <span>{ti(`figures.${id}`)}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+            <section className="cta-section">
+                <div className="container cta-inner">
+                    <div>
+                        <div className="eyebrow light">{t("ctaEyebrow")}</div>
+                        <h2>
+                            {t("ctaTitle")}
+                            <br />
+                            <em>{t("ctaTitleEm")}</em>
+                        </h2>
+                        <p>{t("ctaText")}</p>
+                    </div>
+                    <div className="cta-buttons">
+                        <Link href="/donate" className="button button-gold">
+                            {t("ctaDonate")} <span>↗</span>
+                        </Link>
+                        <Link href="/assistance" className="button button-outline-white">
+                            {t("ctaAssistance")} <span>↗</span>
+                        </Link>
+                    </div>
+                </div>
+            </section>
+        </main>
+    );
+}
