@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import {
@@ -24,6 +24,8 @@ import {
 } from "@/lib/auth.schemas";
 import { formatMobileInput, normalizeIndianMobile } from "@/lib/phone";
 import { cn } from "@/lib/utils";
+import { getPathname, Link, useRouter } from "@/i18n/navigation";
+import { FormFieldError } from "@/components/form/form-field-error";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -31,7 +33,6 @@ import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/
 import {
     Field,
     FieldDescription,
-    FieldError,
     FieldGroup,
     FieldLabel,
     FieldSeparator,
@@ -55,18 +56,6 @@ type Step = "details" | "otp" | "pending";
 const RESEND_SECONDS = 60;
 const STEP_PROGRESS: Record<Step, number> = { details: 33, otp: 66, pending: 100 };
 
-const COPY: Record<Mode, { title: string; description: string; submit: string }> = {
-    signin: {
-        title: "Welcome back",
-        description: "Enter your mobile number and we will text you a one-time code.",
-        submit: "Sign in",
-    },
-    signup: {
-        title: "Join the community",
-        description: "Create your COG account with your name, mobile number and Aadhaar.",
-        submit: "Create account",
-    },
-};
 
 function formatMobile(phoneNumber: string) {
     return `${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 8)} ${phoneNumber.slice(8)}`;
@@ -74,8 +63,11 @@ function formatMobile(phoneNumber: string) {
 
 export function MemberAuth() {
     const router = useRouter();
+    const locale = useLocale();
+    const t = useTranslations("Auth");
+    const te = useTranslations("AuthErrors");
     const oauthError = useSearchParams().get("error");
-    const oauthOutcome = oauthError ? oauthErrorMessage(oauthError) : null;
+    const oauthOutcome = oauthError ? oauthErrorMessage(oauthError, te) : null;
     const [mode, setMode] = useState<Mode>("signin");
     const [step, setStep] = useState<Step>(oauthOutcome?.pending ? "pending" : "details");
     const [phoneNumber, setPhoneNumber] = useState("");
@@ -97,8 +89,8 @@ export function MemberAuth() {
     });
 
     useEffect(() => {
-        if (oauthError) window.history.replaceState(null, "", "/member");
-    }, [oauthError]);
+        if (oauthError) window.history.replaceState(null, "", getPathname({ href: "/member", locale }));
+    }, [oauthError, locale]);
 
     useEffect(() => {
         if (cooldown <= 0) return;
@@ -122,7 +114,7 @@ export function MemberAuth() {
         const { error } = await authClient.phoneNumber.sendOtp({ phoneNumber: number });
 
         if (error) {
-            setServerError(authErrorMessage(error));
+            setServerError(authErrorMessage(error, te));
             return false;
         }
 
@@ -163,7 +155,7 @@ export function MemberAuth() {
 
         if (error) {
             otpForm.reset();
-            return setServerError(authErrorMessage(error));
+            return setServerError(authErrorMessage(error, te));
         }
 
         detailsForm.reset();
@@ -177,13 +169,13 @@ export function MemberAuth() {
 
         const { error } = await authClient.signIn.social({
             provider: "google",
-            callbackURL: "/dashboard",
-            errorCallbackURL: "/member",
+            callbackURL: getPathname({ href: "/dashboard", locale }),
+            errorCallbackURL: getPathname({ href: "/member", locale }),
         });
 
         if (error) {
             setGoogleLoading(false);
-            setServerError(authErrorMessage(error));
+            setServerError(authErrorMessage(error, te));
         }
     }
 
@@ -194,13 +186,16 @@ export function MemberAuth() {
         setResending(false);
     }
 
-    const copy = COPY[mode];
+    const copy =
+        mode === "signin"
+            ? { title: t("signinTitle"), description: t("signinDescription"), submit: t("signinSubmit") }
+            : { title: t("signupTitle"), description: t("signupDescription"), submit: t("signupSubmit") };
     const detailsSubmitting = detailsForm.formState.isSubmitting;
     const otpSubmitting = otpForm.formState.isSubmitting;
 
     return (
         <div className="flex w-full flex-col gap-6">
-            <Progress value={STEP_PROGRESS[step]} aria-label="Sign in progress" className="h-1" />
+            <Progress value={STEP_PROGRESS[step]} aria-label={t("progress")} className="h-1" />
 
             <div key={step} className="animate-in fade-in slide-in-from-bottom-3 duration-500">
                 {step === "pending" ? (
@@ -212,15 +207,12 @@ export function MemberAuth() {
                                         <ClockIcon />
                                     </EmptyMedia>
                                     <EmptyTitle className="font-heading text-2xl font-normal">
-                                        {mode === "signup" ? "Request received" : "Awaiting approval"}
+                                        {mode === "signup" ? t("requestReceived") : t("awaitingApproval")}
                                     </EmptyTitle>
-                                    <EmptyDescription>
-                                        Your account is awaiting approval from COG. You will be able
-                                        to log in as soon as it is approved.
-                                    </EmptyDescription>
+                                    <EmptyDescription>{t("pendingText")}</EmptyDescription>
                                 </EmptyHeader>
                                 <Button asChild variant="outline" size="lg">
-                                    <Link href="/">Back to home</Link>
+                                    <Link href="/">{t("backHome")}</Link>
                                 </Button>
                             </Empty>
                         </div>
@@ -239,10 +231,10 @@ export function MemberAuth() {
                                             )}
                                         />
                                         <TabsTrigger value="signin" className="z-10 text-sm transition-colors duration-200 outline-none focus-visible:border-transparent focus-visible:ring-0 focus-visible:outline-none data-active:bg-transparent group-data-[variant=default]/tabs-list:data-active:shadow-none">
-                                            Sign in
+                                            {t("signin")}
                                         </TabsTrigger>
                                         <TabsTrigger value="signup" className="z-10 text-sm transition-colors duration-200 outline-none focus-visible:border-transparent focus-visible:ring-0 focus-visible:outline-none data-active:bg-transparent group-data-[variant=default]/tabs-list:data-active:shadow-none">
-                                            Sign up
+                                            {t("signup")}
                                         </TabsTrigger>
                                     </TabsList>
                                 </Tabs>
@@ -256,17 +248,17 @@ export function MemberAuth() {
                                     disabled={otpSubmitting}
                                 >
                                     <ChevronLeftIcon data-icon="inline-start" />
-                                    Change number
+                                    {t("changeNumber")}
                                 </Button>
                             )}
                             <div className="flex flex-col gap-1.5 pt-2">
                                 <h2 className="font-heading text-3xl font-normal tracking-tight">
-                                    {step === "details" ? copy.title : "Check your phone"}
+                                    {step === "details" ? copy.title : t("checkPhone")}
                                 </h2>
                                 <p className="text-sm leading-relaxed text-muted-foreground">
                                     {step === "details"
                                         ? copy.description
-                                        : `Enter the 6-digit code we sent to ${formatMobile(phoneNumber)}.`}
+                                        : t("codeSent", { phone: formatMobile(phoneNumber) })}
                                 </p>
                             </div>
                         </div>
@@ -294,17 +286,17 @@ export function MemberAuth() {
                                                     render={({ field, fieldState }) => (
                                                         <Field data-invalid={fieldState.invalid}>
                                                             <FieldLabel htmlFor="member-name">
-                                                                Full name
+                                                                {t("fullName")}
                                                             </FieldLabel>
                                                             <Input
                                                                 {...field}
                                                                 id="member-name"
                                                                 autoComplete="name"
-                                                                placeholder="As you would like us to address you"
+                                                                placeholder={t("fullNamePlaceholder")}
                                                                 aria-invalid={fieldState.invalid}
                                                             />
                                                             {fieldState.invalid && (
-                                                                <FieldError errors={[fieldState.error]} />
+                                                                <FormFieldError error={fieldState.error} />
                                                             )}
                                                         </Field>
                                                     )}
@@ -317,7 +309,7 @@ export function MemberAuth() {
                                                 render={({ field, fieldState }) => (
                                                     <Field data-invalid={fieldState.invalid}>
                                                         <FieldLabel htmlFor="member-mobile">
-                                                            Mobile number
+                                                            {t("mobile")}
                                                         </FieldLabel>
                                                         <InputGroup>
                                                             <InputGroupAddon>
@@ -338,10 +330,10 @@ export function MemberAuth() {
                                                             />
                                                         </InputGroup>
                                                         {fieldState.invalid ? (
-                                                            <FieldError errors={[fieldState.error]} />
+                                                            <FormFieldError error={fieldState.error} />
                                                         ) : (
                                                             <FieldDescription>
-                                                                We only send a code to verify it is you.
+                                                                {t("mobileHelp")}
                                                             </FieldDescription>
                                                         )}
                                                     </Field>
@@ -354,7 +346,7 @@ export function MemberAuth() {
                                                     control={detailsForm.control}
                                                     render={({ field, fieldState }) => (
                                                         <Field data-invalid={fieldState.invalid}>
-                                                            <FieldLabel htmlFor="member-aadhaar">Aadhaar number</FieldLabel>
+                                                            <FieldLabel htmlFor="member-aadhaar">{t("aadhaar")}</FieldLabel>
                                                             <InputGroup>
                                                                 <InputGroupAddon>
                                                                     <IdCardIcon />
@@ -370,11 +362,10 @@ export function MemberAuth() {
                                                                 />
                                                             </InputGroup>
                                                             {fieldState.invalid ? (
-                                                                <FieldError errors={[fieldState.error]} />
+                                                                <FormFieldError error={fieldState.error} />
                                                             ) : (
                                                                 <FieldDescription>
-                                                                    Stored encrypted and reduced to the last 4 digits once COG approves your
-                                                                    account.
+                                                                    {t("aadhaarHelp")}
                                                                 </FieldDescription>
                                                             )}
                                                         </Field>
@@ -403,10 +394,10 @@ export function MemberAuth() {
                                                                     htmlFor="member-consent"
                                                                     className="leading-snug font-normal"
                                                                 >
-                                                                    I agree to COG storing my details, including my Aadhaar number until my account is approved, and contacting me about my membership, in line with the privacy policy and terms.
+                                                                    {t("consent")}
                                                                 </FieldLabel>
                                                                 {fieldState.invalid && (
-                                                                    <FieldError errors={[fieldState.error]} />
+                                                                    <FormFieldError error={fieldState.error} />
                                                                 )}
                                                             </div>
                                                         </Field>
@@ -423,7 +414,7 @@ export function MemberAuth() {
                                                 {detailsSubmitting ? (
                                                     <Spinner data-icon="inline-start" />
                                                 ) : null}
-                                                Send code
+                                                {t("sendCode")}
                                                 {!detailsSubmitting && (
                                                     <ArrowRightIcon data-icon="inline-end" />
                                                 )}
@@ -432,7 +423,7 @@ export function MemberAuth() {
                                     </form>
                                     {mode === "signin" && (
                                         <FieldGroup className="mt-5">
-                                            <FieldSeparator>or</FieldSeparator>
+                                            <FieldSeparator>{t("or")}</FieldSeparator>
                                             <Button
                                                 type="button"
                                                 variant="outline"
@@ -442,7 +433,7 @@ export function MemberAuth() {
                                                 disabled={googleLoading || detailsSubmitting}
                                             >
                                                 {googleLoading ? <Spinner data-icon="inline-start" /> : <GoogleIcon data-icon="inline-start" />}
-                                                Continue with Google
+                                                {t("google")}
                                             </Button>
                                         </FieldGroup>
                                     )}
@@ -463,7 +454,7 @@ export function MemberAuth() {
                                                     className="items-center"
                                                 >
                                                     <FieldLabel htmlFor="member-code" className="sr-only">
-                                                        One-time code
+                                                        {t("otpLabel")}
                                                     </FieldLabel>
                                                     <InputOTP
                                                         id="member-code"
@@ -492,7 +483,7 @@ export function MemberAuth() {
                                                         </InputOTPGroup>
                                                     </InputOTP>
                                                     {fieldState.invalid && (
-                                                        <FieldError errors={[fieldState.error]} />
+                                                        <FormFieldError error={fieldState.error} />
                                                     )}
                                                 </Field>
                                             )}
@@ -517,9 +508,7 @@ export function MemberAuth() {
                                             disabled={otpSubmitting || resending || cooldown > 0}
                                         >
                                             {resending ? <Spinner data-icon="inline-start" /> : null}
-                                            {cooldown > 0
-                                                ? `Resend code in ${cooldown}s`
-                                                : "Resend code"}
+                                            {cooldown > 0 ? t("resendIn", { seconds: cooldown }) : t("resend")}
                                         </Button>
                                     </FieldGroup>
                                 </form>
@@ -528,9 +517,7 @@ export function MemberAuth() {
 
                         <div className="flex justify-center">
                             <p className="text-center text-xs leading-relaxed text-muted-foreground">
-                                {mode === "signin"
-                                    ? "New to COG? Choose Sign up above to create your account."
-                                    : "Your account will be reviewed and approved by COG before you can log in."}
+                                {mode === "signin" ? t("signinFoot") : t("signupFoot")}
                             </p>
                         </div>
                     </div>

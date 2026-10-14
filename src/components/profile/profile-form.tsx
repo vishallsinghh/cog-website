@@ -1,24 +1,20 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
+import { useLocale, useTranslations } from "next-intl";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth.client";
 import { INDIAN_STATES } from "@/lib/indian-states";
-import {
-    LANGUAGES,
-    LANGUAGE_LABELS,
-    profileFormSchema,
-    type ProfileFormValues,
-} from "@/lib/profile.schemas";
+import { usePathname, useRouter } from "@/i18n/navigation";
+import { LANGUAGES, profileFormSchema, type ProfileFormValues } from "@/lib/profile.schemas";
 import { useTRPC } from "@/trpc/client";
+import { FormFieldError } from "@/components/form/form-field-error";
 import { Button } from "@/components/ui/button";
 import {
     Field,
     FieldDescription,
-    FieldError,
     FieldGroup,
     FieldLabel,
     FieldLegend,
@@ -38,6 +34,10 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 export function ProfileForm({ defaultValues }: { defaultValues: ProfileFormValues }) {
     const router = useRouter();
+    const pathname = usePathname();
+    const locale = useLocale();
+    const t = useTranslations("Profile");
+    const tc = useTranslations("Common");
     const trpc = useTRPC();
     const updateProfile = useMutation(trpc.profile.update.mutationOptions());
 
@@ -53,10 +53,16 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileFormValue
             await updateProfile.mutateAsync(values);
             await authClient.getSession({ query: { disableCookieCache: true } });
             form.reset(values);
-            router.refresh();
-            toast.success("Profile updated");
+            toast.success(t("saved"));
+
+            // Choosing a different preferred language also switches the dashboard to it.
+            if (values.preferredLanguage !== locale) {
+                router.replace(pathname, { locale: values.preferredLanguage });
+            } else {
+                router.refresh();
+            }
         } catch {
-            toast.error("We could not save your changes. Please try again.");
+            toast.error(t("saveError"));
         }
     }
 
@@ -64,22 +70,22 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileFormValue
         <form id="profile-form" onSubmit={form.handleSubmit(onSubmit)} noValidate>
             <FieldGroup className="gap-10">
                 <FieldSet>
-                    <FieldLegend>Personal</FieldLegend>
-                    <FieldDescription>How COG addresses you.</FieldDescription>
+                    <FieldLegend>{t("personal")}</FieldLegend>
+                    <FieldDescription>{t("personalHelp")}</FieldDescription>
                     <FieldGroup>
                         <Controller
                             name="name"
                             control={form.control}
                             render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel htmlFor="profile-name">Full name</FieldLabel>
+                                    <FieldLabel htmlFor="profile-name">{t("fullName")}</FieldLabel>
                                     <Input
                                         {...field}
                                         id="profile-name"
                                         autoComplete="name"
                                         aria-invalid={fieldState.invalid}
                                     />
-                                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                    {fieldState.invalid && <FormFieldError error={fieldState.error} />}
                                 </Field>
                             )}
                         />
@@ -88,7 +94,7 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileFormValue
                             control={form.control}
                             render={({ field }) => (
                                 <Field>
-                                    <FieldLabel>Preferred language</FieldLabel>
+                                    <FieldLabel>{t("preferredLanguage")}</FieldLabel>
                                     <ToggleGroup
                                         type="single"
                                         variant="outline"
@@ -102,7 +108,7 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileFormValue
                                                 value={language}
                                                 className="h-11 px-5"
                                             >
-                                                {LANGUAGE_LABELS[language]}
+                                                {tc(`languages.${language}`)}
                                             </ToggleGroupItem>
                                         ))}
                                     </ToggleGroup>
@@ -113,24 +119,24 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileFormValue
                 </FieldSet>
 
                 <FieldSet>
-                    <FieldLegend>Contact</FieldLegend>
-                    <FieldDescription>Where we send receipts and updates.</FieldDescription>
+                    <FieldLegend>{t("contact")}</FieldLegend>
+                    <FieldDescription>{t("contactHelp")}</FieldDescription>
                     <FieldGroup>
                         <Controller
                             name="contactEmail"
                             control={form.control}
                             render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel htmlFor="profile-email">Email address</FieldLabel>
+                                    <FieldLabel htmlFor="profile-email">{t("email")}</FieldLabel>
                                     <Input
                                         {...field}
                                         id="profile-email"
                                         type="email"
                                         autoComplete="email"
-                                        placeholder="you@example.com"
+                                        placeholder={t("emailPlaceholder")}
                                         aria-invalid={fieldState.invalid}
                                     />
-                                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                    {fieldState.invalid && <FormFieldError error={fieldState.error} />}
                                 </Field>
                             )}
                         />
@@ -138,22 +144,22 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileFormValue
                 </FieldSet>
 
                 <FieldSet>
-                    <FieldLegend>Address</FieldLegend>
-                    <FieldDescription>Your current residential address.</FieldDescription>
+                    <FieldLegend>{t("address")}</FieldLegend>
+                    <FieldDescription>{t("addressHelp")}</FieldDescription>
                     <FieldGroup>
                         <Controller
                             name="addressLine1"
                             control={form.control}
                             render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel htmlFor="profile-address1">Address line 1</FieldLabel>
+                                    <FieldLabel htmlFor="profile-address1">{t("address1")}</FieldLabel>
                                     <Input
                                         {...field}
                                         id="profile-address1"
                                         autoComplete="address-line1"
                                         aria-invalid={fieldState.invalid}
                                     />
-                                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                    {fieldState.invalid && <FormFieldError error={fieldState.error} />}
                                 </Field>
                             )}
                         />
@@ -162,14 +168,14 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileFormValue
                             control={form.control}
                             render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel htmlFor="profile-address2">Address line 2</FieldLabel>
+                                    <FieldLabel htmlFor="profile-address2">{t("address2")}</FieldLabel>
                                     <Input
                                         {...field}
                                         id="profile-address2"
                                         autoComplete="address-line2"
                                         aria-invalid={fieldState.invalid}
                                     />
-                                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                    {fieldState.invalid && <FormFieldError error={fieldState.error} />}
                                 </Field>
                             )}
                         />
@@ -179,14 +185,14 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileFormValue
                                 control={form.control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel htmlFor="profile-city">City</FieldLabel>
+                                        <FieldLabel htmlFor="profile-city">{t("city")}</FieldLabel>
                                         <Input
                                             {...field}
                                             id="profile-city"
                                             autoComplete="address-level2"
                                             aria-invalid={fieldState.invalid}
                                         />
-                                        {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                        {fieldState.invalid && <FormFieldError error={fieldState.error} />}
                                     </Field>
                                 )}
                             />
@@ -195,7 +201,7 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileFormValue
                                 control={form.control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel htmlFor="profile-state">State</FieldLabel>
+                                        <FieldLabel htmlFor="profile-state">{t("state")}</FieldLabel>
                                         <Select
                                             value={field.value}
                                             onValueChange={field.onChange}
@@ -206,7 +212,7 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileFormValue
                                                 className="w-full"
                                                 aria-invalid={fieldState.invalid}
                                             >
-                                                <SelectValue placeholder="Select a state" />
+                                                <SelectValue placeholder={t("statePlaceholder")} />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectGroup>
@@ -218,7 +224,7 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileFormValue
                                                 </SelectGroup>
                                             </SelectContent>
                                         </Select>
-                                        {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                        {fieldState.invalid && <FormFieldError error={fieldState.error} />}
                                     </Field>
                                 )}
                             />
@@ -227,7 +233,7 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileFormValue
                                 control={form.control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel htmlFor="profile-pincode">Pincode</FieldLabel>
+                                        <FieldLabel htmlFor="profile-pincode">{t("pincode")}</FieldLabel>
                                         <Input
                                             {...field}
                                             id="profile-pincode"
@@ -239,7 +245,7 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileFormValue
                                             }
                                             aria-invalid={fieldState.invalid}
                                         />
-                                        {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                        {fieldState.invalid && <FormFieldError error={fieldState.error} />}
                                     </Field>
                                 )}
                             />
@@ -248,21 +254,21 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileFormValue
                 </FieldSet>
 
                 <FieldSet>
-                    <FieldLegend>Community</FieldLegend>
-                    <FieldDescription>Your Jamaat helps COG route requests to the right team.</FieldDescription>
+                    <FieldLegend>{t("community")}</FieldLegend>
+                    <FieldDescription>{t("communityHelp")}</FieldDescription>
                     <FieldGroup>
                         <Controller
                             name="jamaat"
                             control={form.control}
                             render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel htmlFor="profile-jamaat">Jamaat</FieldLabel>
+                                    <FieldLabel htmlFor="profile-jamaat">{t("jamaat")}</FieldLabel>
                                     <Input
                                         {...field}
                                         id="profile-jamaat"
                                         aria-invalid={fieldState.invalid}
                                     />
-                                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                    {fieldState.invalid && <FormFieldError error={fieldState.error} />}
                                 </Field>
                             )}
                         />
@@ -272,7 +278,7 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileFormValue
                 <Field orientation="horizontal">
                     <Button type="submit" size="lg" disabled={isSubmitting || !isDirty}>
                         {isSubmitting && <Spinner data-icon="inline-start" />}
-                        Save changes
+                        {t("save")}
                     </Button>
                     <Button
                         type="button"
@@ -281,7 +287,7 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileFormValue
                         disabled={isSubmitting || !isDirty}
                         onClick={() => form.reset()}
                     >
-                        Discard
+                        {t("discard")}
                     </Button>
                 </Field>
             </FieldGroup>

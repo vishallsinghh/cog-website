@@ -49,14 +49,6 @@ export const roles = {
 
 export type AppRole = keyof typeof roles;
 
-export const ROLE_LABELS: Record<AppRole, string> = {
-    member: "Member",
-    super_admin: "Super Admin",
-    admin: "Admin",
-    editor: "Editor",
-    viewer: "Viewer",
-};
-
 export const STAFF_ROLES = [
     "super_admin",
     "admin",

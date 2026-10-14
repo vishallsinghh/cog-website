@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth.client";
+import { getPathname, useRouter } from "@/i18n/navigation";
 import { linkErrorMessage } from "@/components/member/auth-messages";
 import {
     AlertDialog,
@@ -19,12 +21,18 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { GoogleIcon } from "@/components/member/google-icon";
+import { formatDate } from "@/lib/format";
 
 export type GoogleAccount = { id: string; linkedAt: string };
 
 export function ConnectedAccounts({ google }: { google: GoogleAccount | null }) {
     const router = useRouter();
+    const locale = useLocale();
+    const t = useTranslations("Connected");
+    const te = useTranslations("AuthErrors");
+    const tc = useTranslations("Common");
     const params = useSearchParams();
+    const profilePath = getPathname({ href: "/profile", locale });
     const [busy, setBusy] = useState(false);
     const [confirmOpen, setConfirmOpen] = useState(false);
     const handled = useRef(false);
@@ -37,24 +45,24 @@ export function ConnectedAccounts({ google }: { google: GoogleAccount | null }) 
         if (handled.current || (!error && !linked)) return;
         handled.current = true;
 
-        if (error) toast.error(linkErrorMessage(error));
-        else if (linked === "google") toast.success("Google account connected");
+        if (error) toast.error(linkErrorMessage(error, te));
+        else if (linked === "google") toast.success(t("connectedToast"));
 
-        window.history.replaceState(null, "", "/profile");
-    }, [error, linked]);
+        window.history.replaceState(null, "", profilePath);
+    }, [error, linked, profilePath, t, te]);
 
     async function connect() {
         setBusy(true);
 
         const { error: linkError } = await authClient.linkSocial({
             provider: "google",
-            callbackURL: "/profile?linked=google",
-            errorCallbackURL: "/profile",
+            callbackURL: `${profilePath}?linked=google`,
+            errorCallbackURL: profilePath,
         });
 
         if (linkError) {
             setBusy(false);
-            toast.error(linkErrorMessage(linkError.code ?? ""));
+            toast.error(linkErrorMessage(linkError.code ?? "", te));
         }
     }
 
@@ -70,14 +78,12 @@ export function ConnectedAccounts({ google }: { google: GoogleAccount | null }) 
 
         if (unlinkError) {
             toast.error(
-                unlinkError.code === "SESSION_NOT_FRESH"
-                    ? "For your security, please sign in again before disconnecting Google."
-                    : "We could not disconnect Google. Please try again.",
+                unlinkError.code === "SESSION_NOT_FRESH" ? t("freshSession") : t("disconnectError"),
             );
             return;
         }
 
-        toast.success("Google account disconnected");
+        toast.success(t("disconnectedToast"));
         router.refresh();
     }
 
@@ -90,19 +96,15 @@ export function ConnectedAccounts({ google }: { google: GoogleAccount | null }) 
                     </span>
                     <div className="flex flex-col gap-1">
                         <span className="flex items-center gap-2 text-sm font-medium">
-                            Google
+                            {t("google")}
                             <Badge variant={connected ? "default" : "outline"}>
-                                {connected ? "Connected" : "Not connected"}
+                                {connected ? t("connected") : t("notConnected")}
                             </Badge>
                         </span>
                         <span className="text-xs text-muted-foreground">
                             {connected
-                                ? `Linked on ${new Date(google.linkedAt).toLocaleDateString("en-IN", {
-                                      day: "numeric",
-                                      month: "short",
-                                      year: "numeric",
-                                  })}. You can sign in with Google.`
-                                : "Connect Google to sign in with one tap next time."}
+                                ? t("linkedOn", { date: formatDate(new Date(google.linkedAt), locale) })
+                                : t("connectHint")}
                         </span>
                     </div>
                 </div>
@@ -115,12 +117,12 @@ export function ConnectedAccounts({ google }: { google: GoogleAccount | null }) 
                         disabled={busy}
                         onClick={() => setConfirmOpen(true)}
                     >
-                        Disconnect
+                        {t("disconnect")}
                     </Button>
                 ) : (
                     <Button type="button" size="lg" disabled={busy} onClick={connect}>
                         {busy && <Spinner data-icon="inline-start" />}
-                        Connect Google
+                        {t("connect")}
                     </Button>
                 )}
             </div>
@@ -128,14 +130,11 @@ export function ConnectedAccounts({ google }: { google: GoogleAccount | null }) 
             <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Disconnect Google?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            You will no longer be able to sign in with Google. You can still sign in
-                            with your mobile number, and you can reconnect Google at any time.
-                        </AlertDialogDescription>
+                        <AlertDialogTitle>{t("confirmTitle")}</AlertDialogTitle>
+                        <AlertDialogDescription>{t("confirmText")}</AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel disabled={busy}>Cancel</AlertDialogCancel>
+                        <AlertDialogCancel disabled={busy}>{tc("cancel")}</AlertDialogCancel>
                         <AlertDialogAction
                             disabled={busy}
                             onClick={(event) => {
@@ -144,7 +143,7 @@ export function ConnectedAccounts({ google }: { google: GoogleAccount | null }) 
                             }}
                         >
                             {busy && <Spinner data-icon="inline-start" />}
-                            Disconnect
+                            {t("disconnect")}
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>

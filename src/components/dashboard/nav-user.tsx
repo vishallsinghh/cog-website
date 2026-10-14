@@ -1,9 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { ChevronsUpDownIcon, GlobeIcon, LogOutIcon, UserRoundIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { authClient } from "@/lib/auth.client";
+import { formatPhone } from "@/lib/format";
+import { Link, useRouter } from "@/i18n/navigation";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
     DropdownMenu,
@@ -38,6 +39,7 @@ function initials(name: string) {
 
 export function NavUser({ user }: { user: NavUserData }) {
     const router = useRouter();
+    const t = useTranslations("Dashboard");
     const { isMobile } = useSidebar();
 
     async function signOut() {
@@ -74,20 +76,20 @@ export function NavUser({ user }: { user: NavUserData }) {
                     >
                         <DropdownMenuLabel className="flex flex-col gap-0.5 font-normal">
                             <span className="text-sm font-medium">{user.name}</span>
-                            <span className="text-xs text-muted-foreground">{user.phoneNumber}</span>
+                            <span className="text-xs text-muted-foreground">{formatPhone(user.phoneNumber)}</span>
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuGroup>
                             <DropdownMenuItem asChild>
                                 <Link href="/profile">
                                     <UserRoundIcon />
-                                    Profile
+                                    {t("profileMenu")}
                                 </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem asChild>
                                 <Link href="/">
                                     <GlobeIcon />
-                                    Public website
+                                    {t("publicSite")}
                                 </Link>
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
@@ -95,7 +97,7 @@ export function NavUser({ user }: { user: NavUserData }) {
                         <DropdownMenuGroup>
                             <DropdownMenuItem onSelect={signOut}>
                                 <LogOutIcon />
-                                Sign out
+                                {t("signOut")}
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
                     </DropdownMenuContent>

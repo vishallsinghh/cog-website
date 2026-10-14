@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
     Sidebar,
     SidebarContent,
@@ -15,29 +14,32 @@ import {
     SidebarMenuItem,
     SidebarRail,
 } from "@/components/ui/sidebar";
+import { Link, usePathname } from "@/i18n/navigation";
 import type { NavGroup } from "@/lib/navigation";
 import { NavIcon } from "./nav-icon";
 import { NavUser, type NavUserData } from "./nav-user";
 
 export function AppSidebar({ groups, user }: { groups: NavGroup[]; user: NavUserData }) {
     const pathname = usePathname();
+    const t = useTranslations("Dashboard");
+    const tn = useTranslations("Nav");
 
     return (
         <Sidebar collapsible="icon">
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild tooltip="Council of Gujarat">
+                        <SidebarMenuButton size="lg" asChild tooltip={t("brandTooltip")}>
                             <Link href="/dashboard">
                                 <span className="font-heading text-2xl font-bold tracking-tighter text-primary">
                                     COG
                                 </span>
                                 <span className="flex min-w-0 flex-col leading-tight">
                                     <span className="truncate text-[0.7rem] font-bold tracking-wider text-primary">
-                                        COUNCIL OF GUJARAT
+                                        {t("brandLine1")}
                                     </span>
                                     <span className="truncate text-[0.65rem] tracking-widest text-muted-foreground">
-                                        MEMBER PORTAL
+                                        {t("brandLine2")}
                                     </span>
                                 </span>
                             </Link>
@@ -48,24 +50,28 @@ export function AppSidebar({ groups, user }: { groups: NavGroup[]; user: NavUser
 
             <SidebarContent>
                 {groups.map((group) => (
-                    <SidebarGroup key={group.label}>
-                        <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
+                    <SidebarGroup key={group.key}>
+                        <SidebarGroupLabel>{tn(`groups.${group.key}`)}</SidebarGroupLabel>
                         <SidebarGroupContent>
                             <SidebarMenu>
-                                {group.items.map((item) => (
-                                    <SidebarMenuItem key={item.href}>
-                                        <SidebarMenuButton
-                                            asChild
-                                            tooltip={item.title}
-                                            isActive={pathname === item.href}
-                                        >
-                                            <Link href={item.href}>
-                                                <NavIcon name={item.icon} />
-                                                <span>{item.title}</span>
-                                            </Link>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-                                ))}
+                                {group.items.map((item) => {
+                                    const title = tn(`items.${item.key}.title`);
+
+                                    return (
+                                        <SidebarMenuItem key={item.href}>
+                                            <SidebarMenuButton
+                                                asChild
+                                                tooltip={title}
+                                                isActive={pathname === item.href}
+                                            >
+                                                <Link href={item.href}>
+                                                    <NavIcon name={item.key} />
+                                                    <span>{title}</span>
+                                                </Link>
+                                            </SidebarMenuButton>
+                                        </SidebarMenuItem>
+                                    );
+                                })}
                             </SidebarMenu>
                         </SidebarGroupContent>
                     </SidebarGroup>

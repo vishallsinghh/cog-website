@@ -1,27 +1,30 @@
+import { getTranslations } from "next-intl/server";
 import { Badge } from "@/components/ui/badge";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
 import type { NavItem } from "@/lib/navigation";
 import { NavIcon } from "./nav-icon";
 import { PageHeader } from "./page-header";
 
-export function PagePlaceholder({ item }: { item: NavItem }) {
+export async function PagePlaceholder({ item }: { item: NavItem }) {
+    const t = await getTranslations("Placeholder");
+    const tn = await getTranslations("Nav.items");
+    const td = await getTranslations("Dashboard");
+    const title = tn(`${item.key}.title`);
+
     return (
         <div className="flex flex-col gap-8">
-            <PageHeader eyebrow="WORKSPACE" title={item.title} description={item.description} />
+            <PageHeader eyebrow={td("eyebrows.workspace")} title={title} description={tn(`${item.key}.description`)} />
             <Empty className="rounded-xl border border-dashed bg-card py-16">
                 <EmptyHeader>
                     <EmptyMedia variant="icon">
-                        <NavIcon name={item.icon} />
+                        <NavIcon name={item.key} />
                     </EmptyMedia>
                     <EmptyTitle className="font-heading text-2xl font-normal">
-                        {item.title} is on its way
+                        {t("title", { section: title })}
                     </EmptyTitle>
-                    <EmptyDescription>
-                        This section is built later in the roadmap. You can see it because your role
-                        has access to it.
-                    </EmptyDescription>
+                    <EmptyDescription>{t("text")}</EmptyDescription>
                 </EmptyHeader>
-                <Badge variant="secondary">Coming soon</Badge>
+                <Badge variant="secondary">{t("badge")}</Badge>
             </Empty>
         </div>
     );

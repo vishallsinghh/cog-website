@@ -10,9 +10,9 @@ import {
     UsersIcon,
     type LucideIcon,
 } from "lucide-react";
-import type { NavIconName } from "@/lib/navigation";
+import type { NavKey } from "@/lib/navigation";
 
-const ICONS: Record<NavIconName, LucideIcon> = {
+const ICONS: Record<NavKey, LucideIcon> = {
     dashboard: LayoutDashboardIcon,
     profile: UserRoundIcon,
     members: UsersIcon,
@@ -24,7 +24,7 @@ const ICONS: Record<NavIconName, LucideIcon> = {
     team: ShieldCheckIcon,
 };
 
-export function NavIcon({ name }: { name: NavIconName }) {
+export function NavIcon({ name }: { name: NavKey }) {
     const Icon = ICONS[name];
     return <Icon />;
 }

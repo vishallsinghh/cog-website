@@ -1,7 +1,8 @@
 import { TRPCError } from "@trpc/server";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import { LANGUAGES, profileFormSchema, type ProfileFormValues } from "@/lib/profile.schemas";
-import { createTRPCRouter, protectedProcedure } from "../init";
+import { createTRPCRouter, errorsFor, protectedProcedure } from "../init";
 
 const nullIfEmpty = (value: string) => (value === "" ? null : value);
 
@@ -12,7 +13,10 @@ export const profileRouter = createTRPCRouter({
             include: { profile: true },
         });
 
-        if (!user) throw new TRPCError({ code: "NOT_FOUND", message: "Account not found." });
+        if (!user) {
+            const e = await errorsFor(ctx.locale);
+            throw new TRPCError({ code: "NOT_FOUND", message: e("accountNotFound") });
+        }
 
         const profile = user.profile;
         const language = LANGUAGES.find((value) => value === user.preferredLanguage) ?? "en";
@@ -63,4 +67,16 @@ export const profileRouter = createTRPCRouter({
 
         return { ok: true as const };
     }),
+
+    /** Saves the language chosen from the dashboard switcher. */
+    setLanguage: protectedProcedure
+        .input(z.object({ language: z.enum(LANGUAGES) }))
+        .mutation(async ({ ctx, input }) => {
+            await db.user.update({
+                where: { id: ctx.userId },
+                data: { preferredLanguage: input.language },
+            });
+
+            return { ok: true as const };
+        }),
 });

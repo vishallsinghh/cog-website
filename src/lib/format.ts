@@ -1,24 +1,30 @@
 const TIME_ZONE = "Asia/Kolkata";
 
-const dateTime = new Intl.DateTimeFormat("en-IN", {
-    timeZone: TIME_ZONE,
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-});
+const INTL_LOCALE: Record<string, string> = { en: "en-IN", gu: "gu-IN" };
 
-const dateOnly = new Intl.DateTimeFormat("en-IN", {
-    timeZone: TIME_ZONE,
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-});
+const formatters = new Map<string, Intl.DateTimeFormat>();
 
-export const formatDateTime = (value: Date) => dateTime.format(value);
+function formatter(locale: string, withTime: boolean) {
+    const id = `${locale}:${withTime}`;
+    let value = formatters.get(id);
 
-export const formatDate = (value: Date) => dateOnly.format(value);
+    if (!value) {
+        value = new Intl.DateTimeFormat(INTL_LOCALE[locale] ?? "en-IN", {
+            timeZone: TIME_ZONE,
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            ...(withTime ? { hour: "2-digit", minute: "2-digit" } : {}),
+        });
+        formatters.set(id, value);
+    }
+
+    return value;
+}
+
+export const formatDateTime = (value: Date, locale = "en") => formatter(locale, true).format(value);
+
+export const formatDate = (value: Date, locale = "en") => formatter(locale, false).format(value);
 
 /** "+919876543210" -> "+91 98765 43210". Masked values pass through unchanged. */
 export function formatPhone(value: string) {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { PagingBar } from "@/components/dashboard/paging-bar";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
@@ -13,6 +14,9 @@ import { formatDateTime } from "@/lib/format";
 import { useTRPC } from "@/trpc/client";
 
 export function AuditTable() {
+    const t = useTranslations("Audit");
+    const tc = useTranslations("Common");
+    const locale = useLocale();
     const trpc = useTRPC();
 
     const [action, setAction] = useState("");
@@ -41,7 +45,7 @@ export function AuditTable() {
         <div className="flex flex-col gap-6">
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <Field>
-                    <FieldLabel htmlFor="audit-action">Action</FieldLabel>
+                    <FieldLabel htmlFor="audit-action">{t("action")}</FieldLabel>
                     <NativeSelect
                         id="audit-action"
                         className="w-full"
@@ -51,7 +55,7 @@ export function AuditTable() {
                             setPage(1);
                         }}
                     >
-                        <option value="">All actions</option>
+                        <option value="">{t("allActions")}</option>
                         {filters.data?.actions.map((value) => (
                             <option key={value} value={value}>
                                 {value}
@@ -60,7 +64,7 @@ export function AuditTable() {
                     </NativeSelect>
                 </Field>
                 <Field>
-                    <FieldLabel htmlFor="audit-actor">Actor</FieldLabel>
+                    <FieldLabel htmlFor="audit-actor">{t("actor")}</FieldLabel>
                     <NativeSelect
                         id="audit-actor"
                         className="w-full"
@@ -70,7 +74,7 @@ export function AuditTable() {
                             setPage(1);
                         }}
                     >
-                        <option value="">Everyone</option>
+                        <option value="">{t("everyone")}</option>
                         {filters.data?.actors.map((actor) => (
                             <option key={actor.id} value={actor.id}>
                                 {actor.name}
@@ -79,7 +83,7 @@ export function AuditTable() {
                     </NativeSelect>
                 </Field>
                 <Field>
-                    <FieldLabel htmlFor="audit-from">From</FieldLabel>
+                    <FieldLabel htmlFor="audit-from">{t("from")}</FieldLabel>
                     <Input
                         id="audit-from"
                         type="date"
@@ -92,7 +96,7 @@ export function AuditTable() {
                     />
                 </Field>
                 <Field>
-                    <FieldLabel htmlFor="audit-to">To</FieldLabel>
+                    <FieldLabel htmlFor="audit-to">{t("to")}</FieldLabel>
                     <Input
                         id="audit-to"
                         type="date"
@@ -109,8 +113,8 @@ export function AuditTable() {
             {query.isError ? (
                 <Empty className="rounded-xl border border-dashed bg-card py-12">
                     <EmptyHeader>
-                        <EmptyTitle>Could not load the activity log</EmptyTitle>
-                        <EmptyDescription>Please refresh the page and try again.</EmptyDescription>
+                        <EmptyTitle>{t("loadError")}</EmptyTitle>
+                        <EmptyDescription>{tc("refreshError")}</EmptyDescription>
                     </EmptyHeader>
                 </Empty>
             ) : !data ? (
@@ -125,34 +129,34 @@ export function AuditTable() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>Time</TableHead>
-                                    <TableHead>Actor</TableHead>
-                                    <TableHead>Action</TableHead>
-                                    <TableHead>Entity</TableHead>
-                                    <TableHead>IP</TableHead>
+                                    <TableHead>{t("time")}</TableHead>
+                                    <TableHead>{t("actor")}</TableHead>
+                                    <TableHead>{t("action")}</TableHead>
+                                    <TableHead>{t("entity")}</TableHead>
+                                    <TableHead>{t("ip")}</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {data.rows.length === 0 ? (
                                     <TableRow>
                                         <TableCell colSpan={5} className="py-10 text-center text-muted-foreground">
-                                            No activity matches these filters.
+                                            {t("empty")}
                                         </TableCell>
                                     </TableRow>
                                 ) : (
                                     data.rows.map((row) => (
                                         <TableRow key={row.id}>
                                             <TableCell className="whitespace-nowrap">
-                                                {formatDateTime(row.createdAt)}
+                                                {formatDateTime(row.createdAt, locale)}
                                             </TableCell>
-                                            <TableCell>{row.actorName ?? (row.actorId ? "Unknown" : "System")}</TableCell>
+                                            <TableCell>{row.actorName ?? (row.actorId ? t("unknown") : t("system"))}</TableCell>
                                             <TableCell className="font-mono text-xs">{row.action}</TableCell>
                                             <TableCell className="max-w-56 truncate">
                                                 {row.entityType
                                                     ? `${row.entityType}${row.entityId ? ` · ${row.entityId}` : ""}`
-                                                    : "—"}
+                                                    : tc("dash")}
                                             </TableCell>
-                                            <TableCell className="whitespace-nowrap">{row.ipAddress ?? "—"}</TableCell>
+                                            <TableCell className="whitespace-nowrap">{row.ipAddress ?? tc("dash")}</TableCell>
                                         </TableRow>
                                     ))
                                 )}

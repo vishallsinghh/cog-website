@@ -44,6 +44,9 @@ export function TRPCReactProvider(
                 httpBatchLink({
                     transformer: superjson,
                     url: getUrl(),
+                    // /api/trpc is outside the [locale] route, so send the page language.
+                    headers: () =>
+                        typeof document === 'undefined' ? {} : { 'x-cog-locale': document.documentElement.lang },
                 }),
             ],
         }),

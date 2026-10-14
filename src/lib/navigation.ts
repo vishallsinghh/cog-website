@@ -1,6 +1,7 @@
 import { hasPermission, type RequiredPermissions } from "./access";
 
-export type NavIconName =
+// Each key names the item's icon and its messages under Nav.items.<key>.
+export type NavKey =
     | "dashboard"
     | "profile"
     | "members"
@@ -11,104 +12,50 @@ export type NavIconName =
     | "audit"
     | "team";
 
+export type NavGroupKey = "overview" | "community" | "finance" | "content" | "administration";
+
 export type NavItem = {
-    title: string;
+    key: NavKey;
     href: string;
-    icon: NavIconName;
-    description: string;
     permission?: RequiredPermissions;
 };
 
 export type NavGroup = {
-    label: string;
+    key: NavGroupKey;
     items: NavItem[];
 };
 
 export const NAV_GROUPS: NavGroup[] = [
     {
-        label: "Overview",
+        key: "overview",
         items: [
-            {
-                title: "Dashboard",
-                href: "/dashboard",
-                icon: "dashboard",
-                description: "Your account at a glance.",
-            },
-            {
-                title: "Profile",
-                href: "/profile",
-                icon: "profile",
-                description: "Update your details and connected accounts.",
-            },
+            { key: "dashboard", href: "/dashboard" },
+            { key: "profile", href: "/profile" },
         ],
     },
     {
-        label: "Community",
+        key: "community",
         items: [
-            {
-                title: "Members",
-                href: "/members",
-                icon: "members",
-                description: "Review sign-ups, approve accounts and search the member list.",
-                permission: { member: ["read"] },
-            },
-            {
-                title: "Applications",
-                href: "/applications",
-                icon: "applications",
-                description: "Verify and review assistance applications.",
-                permission: { application: ["read"] },
-            },
+            { key: "members", href: "/members", permission: { member: ["read"] } },
+            { key: "applications", href: "/applications", permission: { application: ["read"] } },
         ],
     },
     {
-        label: "Finance",
+        key: "finance",
         items: [
-            {
-                title: "Donations",
-                href: "/donations",
-                icon: "donations",
-                description: "One-time and monthly donations, receipts and refunds.",
-                permission: { donation: ["read"] },
-            },
-            {
-                title: "Reports",
-                href: "/reports",
-                icon: "reports",
-                description: "Donor statistics and CSV exports.",
-                permission: { report: ["read"] },
-            },
+            { key: "donations", href: "/donations", permission: { donation: ["read"] } },
+            { key: "reports", href: "/reports", permission: { report: ["read"] } },
         ],
     },
     {
-        label: "Content",
-        items: [
-            {
-                title: "Content",
-                href: "/content",
-                icon: "content",
-                description: "Landing page, notices, blogs and emergency appeals.",
-                permission: { content: ["read"] },
-            },
-        ],
+        key: "content",
+        items: [{ key: "content", href: "/content", permission: { content: ["read"] } }],
     },
     {
-        label: "Administration",
+        key: "administration",
         items: [
-            {
-                title: "Audit log",
-                href: "/audit-log",
-                icon: "audit",
-                description: "A record of every admin action.",
-                permission: { auditLog: ["read"] },
-            },
-            {
-                title: "Team",
-                href: "/team",
-                icon: "team",
-                description: "Invite staff, change roles and remove access.",
-                permission: { user: ["set-role"] },
-            },
+            { key: "audit", href: "/audit-log", permission: { auditLog: ["read"] } },
+            { key: "team", href: "/team", permission: { user: ["set-role"] } },
         ],
     },
 ];

@@ -12,7 +12,8 @@ import {
     inviteInputSchema,
     userIdInputSchema,
 } from "@/lib/team.schemas";
-import { createTRPCRouter, superAdminProcedure } from "../init";
+import type { AppLocale } from "@/i18n/routing";
+import { createTRPCRouter, errorsFor, superAdminProcedure } from "../init";
 
 const last4 = (phoneNumber: string | null | undefined) => (phoneNumber ?? "").slice(-4);
 
@@ -20,7 +21,7 @@ function hasRole(role: string | null | undefined, wanted: string) {
     return (role ?? "").split(",").some((value) => value.trim() === wanted);
 }
 
-async function assertNotLastSuperAdmin(target: { id: string; role: string | null }) {
+async function assertNotLastSuperAdmin(target: { id: string; role: string | null }, locale: AppLocale) {
     if (!hasRole(target.role, "super_admin")) return;
 
     const others = await db.user.count({
@@ -28,24 +29,26 @@ async function assertNotLastSuperAdmin(target: { id: string; role: string | null
     });
 
     if (others === 0) {
-        throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "This is the only Super Admin, so their role cannot be changed or removed.",
-        });
+        const e = await errorsFor(locale);
+        throw new TRPCError({ code: "BAD_REQUEST", message: e("lastSuperAdmin") });
     }
 }
 
-async function findStaff(userId: string) {
+async function findStaff(userId: string, locale: AppLocale) {
     const target = await db.user.findUnique({
         where: { id: userId },
         select: { id: true, role: true, phoneNumber: true },
     });
 
-    if (!target) throw new TRPCError({ code: "NOT_FOUND", message: "That person was not found." });
+    if (!target) {
+        const e = await errorsFor(locale);
+        throw new TRPCError({ code: "NOT_FOUND", message: e("personNotFound") });
+    }
 
     const isStaff = (STAFF_ROLES as readonly string[]).some((role) => hasRole(target.role, role));
     if (!isStaff) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: "That person is not on the team." });
+        const e = await errorsFor(locale);
+        throw new TRPCError({ code: "BAD_REQUEST", message: e("notOnTeam") });
     }
 
     return target;
@@ -95,7 +98,8 @@ export const teamRouter = createTRPCRouter({
         });
 
         if (hasRole(existing?.role, "super_admin")) {
-            throw new TRPCError({ code: "BAD_REQUEST", message: "That number belongs to a Super Admin." });
+            const e = await errorsFor(ctx.locale);
+            throw new TRPCError({ code: "BAD_REQUEST", message: e("superAdminNumber") });
         }
 
         // One open invite per number: a new invite replaces the old one.
@@ -130,7 +134,10 @@ export const teamRouter = createTRPCRouter({
     revokeInvite: superAdminProcedure.input(inviteIdInputSchema).mutation(async ({ ctx, input }) => {
         const invite = await db.staffInvite.findFirst({ where: { id: input.inviteId, acceptedAt: null } });
 
-        if (!invite) throw new TRPCError({ code: "NOT_FOUND", message: "That invite no longer exists." });
+        if (!invite) {
+            const e = await errorsFor(ctx.locale);
+            throw new TRPCError({ code: "NOT_FOUND", message: e("inviteGone") });
+        }
 
         await db.staffInvite.deleteMany({ where: { id: invite.id, acceptedAt: null } });
 
@@ -147,11 +154,11 @@ export const teamRouter = createTRPCRouter({
     }),
 
     changeRole: superAdminProcedure.input(changeRoleInputSchema).mutation(async ({ ctx, input }) => {
-        const target = await findStaff(input.userId);
+        const target = await findStaff(input.userId, ctx.locale);
 
         if ((target.role ?? "") === input.role) return { ok: true as const };
 
-        await assertNotLastSuperAdmin(target);
+        await assertNotLastSuperAdmin(target, ctx.locale);
 
         // Close any open invite first so it cannot grant the old role again later.
         await closeOpenInvites(target.phoneNumber);
@@ -174,9 +181,9 @@ export const teamRouter = createTRPCRouter({
     }),
 
     remove: superAdminProcedure.input(userIdInputSchema).mutation(async ({ ctx, input }) => {
-        const target = await findStaff(input.userId);
+        const target = await findStaff(input.userId, ctx.locale);
 
-        await assertNotLastSuperAdmin(target);
+        await assertNotLastSuperAdmin(target, ctx.locale);
 
         await closeOpenInvites(target.phoneNumber);
 

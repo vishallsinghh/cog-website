@@ -1,53 +1,60 @@
+import type { useTranslations } from "next-intl";
+
 type AuthError = { code?: string; message?: string; status?: number } | null | undefined;
 
-const MESSAGES: Record<string, string> = {
-    INVALID_PHONE_NUMBER: "Enter a valid 10-digit Indian mobile number.",
-    INVALID_OTP: "That code is not correct. Check it and try again.",
-    OTP_EXPIRED: "That code has expired. Request a new one.",
-    TOO_MANY_ATTEMPTS: "Too many wrong attempts. Request a new code.",
-    SIGNUP_DETAILS_REQUIRED: "No account found for this number. Switch to Sign up to create one.",
-};
+export type AuthErrorsT = ReturnType<typeof useTranslations<"AuthErrors">>;
 
-const SERVER_MESSAGE_CODES = new Set([
-    "OTP_RESEND_COOLDOWN",
-    "OTP_SEND_LIMIT",
-    "OTP_IP_LIMIT",
-    "OTP_NUMBER_LOCKED",
+const CODE_MESSAGES = [
+    "INVALID_PHONE_NUMBER",
+    "INVALID_OTP",
+    "OTP_EXPIRED",
+    "TOO_MANY_ATTEMPTS",
+    "SIGNUP_DETAILS_REQUIRED",
     "ACCOUNT_REJECTED",
-]);
+] as const;
 
-const OAUTH_MESSAGES: Record<string, string> = {
-    signup_disabled:
-        "No account is linked to this Google account. Sign in with your mobile number first, then link Google from your account page.",
-    ACCOUNT_REJECTED: "Your membership request was not approved. Please contact COG.",
-};
+// Rate-limit errors from src/lib/rate-limit.ts end in "Try again in N seconds."
+const WAIT_CODES = ["OTP_RESEND_COOLDOWN", "OTP_SEND_LIMIT", "OTP_IP_LIMIT", "OTP_NUMBER_LOCKED"] as const;
 
-export function authErrorMessage(error: AuthError) {
-    if (!error) return "Something went wrong. Please try again.";
-
-    if (error.code && MESSAGES[error.code]) return MESSAGES[error.code];
-    if (error.code && SERVER_MESSAGE_CODES.has(error.code) && error.message) return error.message;
-    if (error.status === 429) return "Too many requests. Please wait a moment and try again.";
-
-    return "Something went wrong. Please try again.";
+function find<T extends string>(list: readonly T[], code: string | undefined): T | undefined {
+    return list.find((value) => value === code);
 }
 
-const LINK_MESSAGES: Record<string, string> = {
-    account_already_linked_to_different_user: "This Google account is already linked to another COG member.",
-    unable_to_link_account: "We could not link your Google account. Please try again.",
-    email_not_verified: "Your Google email address is not verified, so it cannot be linked.",
-    access_denied: "Google connection was cancelled.",
-};
-
-export function linkErrorMessage(code: string) {
-    return LINK_MESSAGES[code] ?? "We could not connect your Google account. Please try again.";
+function retrySeconds(message: string | undefined) {
+    const match = /(\d+) seconds?/.exec(message ?? "");
+    return match ? Number(match[1]) : 60;
 }
 
-export function oauthErrorMessage(code: string) {
+export function authErrorMessage(error: AuthError, t: AuthErrorsT) {
+    if (!error) return t("generic");
+
+    const code = find(CODE_MESSAGES, error.code);
+    if (code) return t(code);
+
+    const waitCode = find(WAIT_CODES, error.code);
+    if (waitCode) return t(waitCode, { seconds: retrySeconds(error.message) });
+
+    if (error.status === 429) return t("tooMany");
+
+    return t("generic");
+}
+
+const LINK_CODES = [
+    "account_already_linked_to_different_user",
+    "unable_to_link_account",
+    "email_not_verified",
+    "access_denied",
+] as const;
+
+export function linkErrorMessage(code: string, t: AuthErrorsT) {
+    const known = find(LINK_CODES, code);
+    return known ? t(`link.${known}`) : t("link.generic");
+}
+
+export function oauthErrorMessage(code: string, t: AuthErrorsT) {
     if (code === "ACCOUNT_PENDING_APPROVAL") return { pending: true, message: "" };
+    if (code === "signup_disabled") return { pending: false, message: t("signup_disabled") };
+    if (code === "ACCOUNT_REJECTED") return { pending: false, message: t("ACCOUNT_REJECTED") };
 
-    return {
-        pending: false,
-        message: OAUTH_MESSAGES[code] ?? "Google sign-in did not complete. Please try again.",
-    };
+    return { pending: false, message: t("googleIncomplete") };
 }

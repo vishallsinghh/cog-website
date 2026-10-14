@@ -5,18 +5,18 @@ import { normalizeIndianMobile } from "./phone";
 export const nameSchema = z
     .string()
     .trim()
-    .min(2, "Enter your full name")
-    .max(100, "Name is too long");
+    .min(2, "nameRequired")
+    .max(100, "nameTooLong");
 
 export const mobileSchema = z
     .string()
-    .refine((value) => normalizeIndianMobile(value) !== null, "Enter a valid 10-digit Indian mobile number");
+    .refine((value) => normalizeIndianMobile(value) !== null, "mobileInvalid");
 
 export const aadhaarSchema = z
     .string()
-    .refine((value) => isValidAadhaar(value), "Enter a valid 12-digit Aadhaar number");
+    .refine((value) => isValidAadhaar(value), "aadhaarInvalid");
 
-export const otpCodeSchema = z.string().regex(/^\d{6}$/, "Enter the 6-digit code");
+export const otpCodeSchema = z.string().regex(/^\d{6}$/, "otpInvalid");
 
 export const signUpDetailsSchema = z.object({
     name: nameSchema,
@@ -38,7 +38,7 @@ export function detailsFormSchema(mode: "signin" | "signup"): z.ZodType<DetailsF
         aadhaar: mode === "signup" ? aadhaarSchema : z.string(),
         consent:
             mode === "signup"
-                ? z.boolean().refine((value) => value, "Please accept the consent to continue")
+                ? z.boolean().refine((value) => value, "consentRequired")
                 : z.boolean(),
     });
 }

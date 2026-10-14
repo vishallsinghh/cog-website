@@ -12,7 +12,7 @@ export const assignableRoleSchema = z.enum(ASSIGNABLE_ROLES);
 export const INVITE_TTL_DAYS = 7;
 
 export const inviteInputSchema = z.object({
-    phoneNumber: z.string().regex(INDIAN_MOBILE, "Enter a valid Indian mobile number"),
+    phoneNumber: z.string().regex(INDIAN_MOBILE, "mobileInvalid"),
     role: assignableRoleSchema,
 });
 

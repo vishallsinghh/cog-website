@@ -31,7 +31,11 @@ Skip the brief only for trivial fixes (typos, a one-line bug) the user has alrea
 ## Folder structure
 
 ```
-src/app/            routes, layouts, route handlers (api/auth, api/trpc)
+src/app/[locale]/   every page and layout, under /en or /gu (route handlers stay in src/app/api)
+src/i18n/           next-intl routing, locale-aware Link/redirect/useRouter, request config
+src/proxy.ts        locale detection and the NEXT_LOCALE cookie (Next 16 renamed middleware to proxy)
+messages/           en.json and gu.json, same keys; typed through src/i18n/global.d.ts
+src/content/        site facts kept in one place: contact details, impact figures, programme list
 src/lib/            server and shared modules
   auth.ts           Better Auth server config
   auth.client.ts    Better Auth browser client
@@ -47,7 +51,7 @@ src/lib/            server and shared modules
   rate-limit.ts     Upstash storage for Better Auth and the OTP guards
   redis.ts          Upstash client
   sms.ts            OTP delivery (console in dev, MSG91 in production)
-src/components/     site shell, shadcn components in ui/, feature components (member/)
+src/components/     site shell, shadcn components in ui/, feature components (member/, team/, members/, audit/, profile/)
 src/trpc/           tRPC init, routers, server and client wiring
 src/generated/      Prisma client output, never edit
 prisma/schema.prisma
@@ -68,7 +72,9 @@ migrations/         D1 SQL migrations applied with wrangler
 - Every admin action and every denied access attempt writes an `AuditLog` row.
 - Uploaded documents are private. Never expose a public URL for them.
 - Prisma on D1 has no transactions. Design writes so a partial failure is safe to retry.
-- User-facing text lives in translation files, never hardcoded in components. Gujarati uses placeholders until COG supplies translations.
+- User-facing text lives in `messages/en.json` and `messages/gu.json`, never hardcoded in components. Add every key to both files. `gu.json` is a draft translation pending COG review.
+- Use `Link`, `redirect`, `useRouter` and `usePathname` from `@/i18n/navigation`, not `next/link` or `next/navigation`, so the locale is kept.
+- Zod error messages are keys from `messages.Validation`; render them with `FormFieldError`. tRPC errors use `errorsFor(ctx.locale)`.
 - Secrets live only in `.env` and Vercel env. Do not commit them or print them.
 
 ## Database workflow (D1)
@@ -103,5 +109,5 @@ Seed only: `SUPER_ADMIN_PHONE`, `SUPER_ADMIN_NAME`.
 - tRPC has no per-user / per-IP rate-limit middleware yet. Denied permission checks are audited through `staffProcedure` in `src/trpc/init.ts`; use it (not `protectedProcedure`) for every admin procedure.
 - No approve or reject flow exists yet, so nothing calls `purgeFullAadhaar()`; encrypted Aadhaar numbers stay until Part 9 adds it. Add a retention job as a safety net.
 - Consent is stored on `user.consentAcceptedAt` only; the `Consent` table is not written yet.
-- Page copy is English only until next-intl is set up.
+- Leadership names and years, the full journey timeline, social links, privacy and terms text are placeholders until COG supplies them.
 - Turnstile, the daily OTP cap with admin alert, and Member ID issuing on approval are not built yet.

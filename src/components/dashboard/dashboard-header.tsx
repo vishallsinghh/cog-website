@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -11,10 +11,13 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Link, usePathname } from "@/i18n/navigation";
 import { findNavItem } from "@/lib/navigation";
+import { DashboardLanguageSwitch } from "./language-switch";
 
 export function DashboardHeader() {
     const pathname = usePathname();
+    const t = useTranslations("Nav.items");
     const current = findNavItem(pathname);
     const onDashboard = pathname === "/dashboard";
 
@@ -26,21 +29,26 @@ export function DashboardHeader() {
                 <BreadcrumbList>
                     <BreadcrumbItem>
                         {onDashboard ? (
-                            <BreadcrumbPage>Dashboard</BreadcrumbPage>
+                            <BreadcrumbPage>{t("dashboard.title")}</BreadcrumbPage>
                         ) : (
-                            <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
+                            <BreadcrumbLink asChild>
+                                <Link href="/dashboard">{t("dashboard.title")}</Link>
+                            </BreadcrumbLink>
                         )}
                     </BreadcrumbItem>
                     {!onDashboard && current && (
                         <>
                             <BreadcrumbSeparator />
                             <BreadcrumbItem>
-                                <BreadcrumbPage>{current.title}</BreadcrumbPage>
+                                <BreadcrumbPage>{t(`${current.key}.title`)}</BreadcrumbPage>
                             </BreadcrumbItem>
                         </>
                     )}
                 </BreadcrumbList>
             </Breadcrumb>
+            <div className="ml-auto">
+                <DashboardLanguageSwitch />
+            </div>
         </header>
     );
 }

@@ -4,13 +4,7 @@ import { INDIAN_STATES } from "./indian-states";
 
 export const LANGUAGES = ["en", "gu"] as const;
 
-export const LANGUAGE_LABELS: Record<(typeof LANGUAGES)[number], string> = {
-    en: "English",
-    gu: "ગુજરાતી",
-};
-
-const optionalText = (label: string, max: number) =>
-    z.string().trim().max(max, `${label} is too long`);
+const optionalText = (message: string, max: number) => z.string().trim().max(max, message);
 
 export const profileFormSchema = z.object({
     name: nameSchema,
@@ -18,17 +12,17 @@ export const profileFormSchema = z.object({
     contactEmail: z
         .string()
         .trim()
-        .max(120, "Email is too long")
-        .refine((value) => value === "" || z.email().safeParse(value).success, "Enter a valid email address"),
-    addressLine1: optionalText("Address", 120),
-    addressLine2: optionalText("Address", 120),
-    city: optionalText("City", 60),
+        .max(120, "emailTooLong")
+        .refine((value) => value === "" || z.email().safeParse(value).success, "emailInvalid"),
+    addressLine1: optionalText("addressTooLong", 120),
+    addressLine2: optionalText("addressTooLong", 120),
+    city: optionalText("cityTooLong", 60),
     state: z.union([z.literal(""), z.enum(INDIAN_STATES)]),
     pincode: z
         .string()
         .trim()
-        .refine((value) => value === "" || /^[1-9]\d{5}$/.test(value), "Enter a 6-digit pincode"),
-    jamaat: optionalText("Jamaat", 100),
+        .refine((value) => value === "" || /^[1-9]\d{5}$/.test(value), "pincodeInvalid"),
+    jamaat: optionalText("jamaatTooLong", 100),
 });
 
 export type ProfileFormValues = z.infer<typeof profileFormSchema>;
