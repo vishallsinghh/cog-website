@@ -77,7 +77,7 @@ export function MembersTable() {
 
     return (
         <div className="flex flex-col gap-6">
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+            <div className="grid gap-4 rounded-2xl border border-green/10 bg-field p-4 sm:grid-cols-2 lg:grid-cols-5">
                 <Field className="sm:col-span-2">
                     <FieldLabel htmlFor="members-search">{t("search")}</FieldLabel>
                     <Input
@@ -171,7 +171,7 @@ export function MembersTable() {
                 </div>
             ) : (
                 <>
-                    <div className="rounded-xl border bg-card">
+                    <div className="overflow-hidden rounded-2xl border border-green/10 bg-field">
                         <Table>
                             <TableHeader>
                                 <TableRow>

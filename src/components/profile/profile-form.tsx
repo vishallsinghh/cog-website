@@ -70,7 +70,7 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileFormValue
         <form id="profile-form" onSubmit={form.handleSubmit(onSubmit)} noValidate>
             <FieldGroup className="gap-10">
                 <FieldSet>
-                    <FieldLegend>{t("personal")}</FieldLegend>
+                    <FieldLegend className="font-heading font-medium text-green data-[variant=legend]:text-[26px]">{t("personal")}</FieldLegend>
                     <FieldDescription>{t("personalHelp")}</FieldDescription>
                     <FieldGroup>
                         <Controller
@@ -119,7 +119,7 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileFormValue
                 </FieldSet>
 
                 <FieldSet>
-                    <FieldLegend>{t("contact")}</FieldLegend>
+                    <FieldLegend className="font-heading font-medium text-green data-[variant=legend]:text-[26px]">{t("contact")}</FieldLegend>
                     <FieldDescription>{t("contactHelp")}</FieldDescription>
                     <FieldGroup>
                         <Controller
@@ -144,7 +144,7 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileFormValue
                 </FieldSet>
 
                 <FieldSet>
-                    <FieldLegend>{t("address")}</FieldLegend>
+                    <FieldLegend className="font-heading font-medium text-green data-[variant=legend]:text-[26px]">{t("address")}</FieldLegend>
                     <FieldDescription>{t("addressHelp")}</FieldDescription>
                     <FieldGroup>
                         <Controller
@@ -254,7 +254,7 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileFormValue
                 </FieldSet>
 
                 <FieldSet>
-                    <FieldLegend>{t("community")}</FieldLegend>
+                    <FieldLegend className="font-heading font-medium text-green data-[variant=legend]:text-[26px]">{t("community")}</FieldLegend>
                     <FieldDescription>{t("communityHelp")}</FieldDescription>
                     <FieldGroup>
                         <Controller

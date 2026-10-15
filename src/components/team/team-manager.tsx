@@ -168,8 +168,8 @@ export function TeamManager({ currentUserId }: { currentUserId: string }) {
 
     return (
         <div className="flex flex-col gap-10">
-            <section className="flex flex-col gap-4" aria-labelledby="invite-heading">
-                <h2 id="invite-heading" className="font-heading text-2xl font-normal">
+            <section className="flex flex-col gap-4 rounded-2xl border border-green/10 bg-field p-6" aria-labelledby="invite-heading">
+                <h2 id="invite-heading" className="font-heading text-[26px] font-medium text-green">
                     {t("inviteTitle")}
                 </h2>
                 <InviteForm onInvited={setNotice} />
@@ -199,10 +199,10 @@ export function TeamManager({ currentUserId }: { currentUserId: string }) {
             ) : (
                 <>
                     <section className="flex flex-col gap-4" aria-labelledby="staff-heading">
-                        <h2 id="staff-heading" className="font-heading text-2xl font-normal">
+                        <h2 id="staff-heading" className="font-heading text-[26px] font-medium text-green">
                             {t("currentTeam")}
                         </h2>
-                        <div className="rounded-xl border bg-card">
+                        <div className="overflow-hidden rounded-2xl border border-green/10 bg-field">
                             <Table>
                                 <TableHeader>
                                     <TableRow>
@@ -303,10 +303,10 @@ export function TeamManager({ currentUserId }: { currentUserId: string }) {
                     </section>
 
                     <section className="flex flex-col gap-4" aria-labelledby="invites-heading">
-                        <h2 id="invites-heading" className="font-heading text-2xl font-normal">
+                        <h2 id="invites-heading" className="font-heading text-[26px] font-medium text-green">
                             {t("pendingInvites")}
                         </h2>
-                        <div className="rounded-xl border bg-card">
+                        <div className="overflow-hidden rounded-2xl border border-green/10 bg-field">
                             <Table>
                                 <TableHeader>
                                     <TableRow>

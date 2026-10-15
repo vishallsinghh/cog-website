@@ -9,9 +9,8 @@ function lazy<T>(parse: () => T) {
 const required = z.string().min(1);
 
 const dbSchema = z.object({
-    CLOUDFLARE_ACCOUNT_ID: required,
-    CLOUDFLARE_DATABASE_ID: required,
-    CLOUDFLARE_D1_TOKEN: required,
+    TURSO_DATABASE_URL: required,
+    TURSO_AUTH_TOKEN: z.string().optional(),
 });
 
 const authSchema = z.object({

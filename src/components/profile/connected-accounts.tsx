@@ -89,7 +89,7 @@ export function ConnectedAccounts({ google }: { google: GoogleAccount | null }) 
 
     return (
         <>
-            <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border bg-card p-5">
+            <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-green/10 bg-white p-5">
                 <div className="flex items-center gap-4">
                     <span className="flex size-11 items-center justify-center rounded-lg border bg-background">
                         <GoogleIcon className="size-5" />

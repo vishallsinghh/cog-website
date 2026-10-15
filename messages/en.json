@@ -6,8 +6,6 @@
   },
   "Common": {
     "brandName": "The Council of Gujarat",
-    "brandCaption": "THE COUNCIL OF GUJARAT",
-    "brandSub": "KSI JAMAATS · SINCE 1987",
     "brandHome": "Council of Gujarat home",
     "motto": "UNITY · SERVICE · PROGRESS",
     "language": "Language",
@@ -17,7 +15,7 @@
     },
     "languageShort": {
       "en": "EN",
-      "gu": "ગુ"
+      "gu": "ગુજ"
     },
     "switchLanguage": "Choose language",
     "dash": "—",
@@ -25,7 +23,8 @@
     "refreshError": "Please refresh the page and try again.",
     "cancel": "Cancel",
     "placeholder": "Awaiting content from COG",
-    "readMore": "Read more"
+    "readMore": "Read more",
+    "logoAlt": "The Council of Gujarat, KSI Jamaats, since 1987"
   },
   "Roles": {
     "member": "Member",
@@ -52,42 +51,40 @@
     "cityTooLong": "City is too long",
     "jamaatTooLong": "Jamaat is too long",
     "pincodeInvalid": "Enter a 6-digit pincode",
-    "roleInvalid": "Choose a role"
+    "roleInvalid": "Choose a role",
+    "amountInvalid": "Enter an amount of ₹1 or more"
   },
   "Header": {
-    "announcement": "CELEBRATING FOUR DECADES OF SERVICE · 1987–2027",
-    "announcementLink": "Explore our story ↗",
+    "announcement": "Celebrating 40 years of service · 1987–2027",
+    "announcementLink": "Our journey",
     "mainNav": "Main navigation",
     "toggleNav": "Toggle navigation",
     "nav": {
+      "about": "About",
+      "work": "Our Work",
+      "journey": "Our Journey",
+      "leadership": "Leadership",
+      "impact": "Impact",
+      "nextGeneration": "Next Generation"
+    },
+    "memberLogin": "Member Login",
+    "donate": "Donate"
+  },
+  "Footer": {
+    "explore": "Explore",
+    "getInvolved": "Get involved",
+    "contact": "Contact",
+    "links": {
       "about": "About us",
       "work": "Our work",
       "journey": "Our journey",
       "leadership": "Leadership",
       "impact": "Impact",
-      "contact": "Contact"
-    },
-    "memberPortal": "Member portal",
-    "memberLogin": "Member login ↗",
-    "donate": "Donate now"
-  },
-  "Footer": {
-    "tagline": "Uniting the KSI Jamaats of Gujarat to build stronger, more resilient communities since 1987.",
-    "explore": "Explore",
-    "getInvolved": "Get involved",
-    "contact": "Contact",
-    "links": {
-      "about": "About the Council",
-      "work": "Our work",
-      "journey": "Our journey",
-      "leadership": "Leadership",
-      "impact": "Our impact",
-      "nextGeneration": "The next generation",
-      "updates": "News & updates",
-      "donate": "Make a donation",
-      "assistance": "Request assistance",
-      "member": "Member portal",
-      "contact": "Contact us"
+      "nextGeneration": "Next generation",
+      "updates": "Updates",
+      "donate": "Donate",
+      "assistance": "Apply for assistance",
+      "member": "Member login"
     },
     "address": "Council House, Gopnath Road, Talaja 364140, Gujarat, India",
     "social": {
@@ -95,197 +92,509 @@
       "instagram": "Instagram",
       "youtube": "YouTube"
     },
-    "copyright": "© {year} The Council of Gujarat. All rights reserved.",
-    "privacy": "Privacy policy",
-    "terms": "Terms of use"
+    "copyright": "© {year} The Council of Gujarat K.S.I. Jamaats",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "emblemAlt": "COG emblem",
+    "name": "The Council of Gujarat K.S.I. Jamaats"
   },
   "Home": {
-    "heroAlt": "Community members together",
-    "kicker": "THE COUNCIL OF GUJARAT",
-    "heroTitle": "United by faith.",
-    "heroTitleEm": "Driven by service.",
-    "heroText": "Bringing KSI Jamaats together to uplift lives, strengthen communities and shape a better tomorrow.",
-    "exploreWork": "Explore our work",
-    "discoverStory": "Discover our story",
-    "heroBottom": {
-      "place": "GUJARAT, INDIA",
-      "established": "ESTABLISHED 1987",
-      "motto": "UNITY • SERVICE • PROGRESS"
-    },
+    "kicker": "KSI Jamaats · Since 1987",
+    "heroTitle": "Uniting Gujarat.",
+    "heroTitleEm": "Building communities.",
+    "heroText": "Since 1987, COG has brought KSI Jamaats across Gujarat together to serve, support and strengthen our communities through education, housing, healthcare, welfare and community development.",
+    "donateNow": "Donate now",
+    "applyAssistance": "Apply for assistance",
+    "heroAlt": "Families of the community gathered together in a courtyard",
+    "badgeTop": "Years of",
+    "badgeBottom": "service",
     "stats": {
       "years": "Years of service",
-      "jamaats": "KSI Jamaats united",
-      "people": "Community members",
-      "villages": "Cities & villages"
+      "jamaats": "KSI Jamaats",
+      "people": "People in our community",
+      "villages": "Villages & cities"
     },
-    "storyAlt": "Young community members learning together",
-    "plaqueEst": "EST.",
-    "plaquePlace": "GUJARAT",
-    "whoWeAre": "WHO WE ARE",
-    "storyTitle": "Rooted in community.",
-    "storyTitleEm": "Growing together.",
-    "storyP1": "For nearly four decades, The Council of Gujarat has brought together Khoja Shia Ithna-Asheri Jamaats across the state with one shared belief: when communities stand together, meaningful progress becomes possible.",
-    "storyP2": "From education and housing to healthcare, welfare and disaster relief, our work is rooted in dignity, compassion and collective responsibility.",
-    "storyLink": "More about our journey",
-    "workEyebrow": "THE WORK WE DO",
-    "workTitle": "Serving people.",
-    "workTitleEm": "Changing lives.",
-    "workText": "Every initiative starts with a simple purpose: making a meaningful difference where it's needed most.",
-    "workLink": "View all programmes",
-    "cardLabel": "{number} / OUR WORK",
+    "storyAlt": "Students studying together in a library",
+    "established": "Established",
+    "plaqueName": "The Council of Gujarat",
+    "plaquePlace": "K.S.I. Jamaats · June 1987",
+    "whoWeAre": "Who we are",
+    "storyTitle": "Our roots,",
+    "storyTitleEm": "a brighter tomorrow.",
+    "storyP1": "Established in June 1987, The Council of Gujarat K.S.I. Jamaats was created with a simple but enduring purpose: to bring the community together and contribute meaningfully to its development and wellbeing.",
+    "storyP2": "Our strength lies in collective action, connecting Jamaats, leaders, volunteers and supporters around shared needs and shared responsibility.",
+    "values": {
+      "unity": {
+        "title": "Unity",
+        "text": "Together, as one"
+      },
+      "service": {
+        "title": "Service",
+        "text": "For our people"
+      },
+      "progress": {
+        "title": "Progress",
+        "text": "A brighter tomorrow"
+      }
+    },
+    "readStory": "Read our story",
+    "band": {
+      "eyebrow": "44 Jamaats · 35,000+ people",
+      "text": "Different Jamaats. Different communities.",
+      "textEm": "One collective purpose."
+    },
+    "workEyebrow": "Our work",
+    "workTitle": "Service that reaches",
+    "workTitleEm": "every home.",
+    "workLink": "View all five programmes",
+    "learnMore": "Learn more →",
+    "cards": {
+      "education": {
+        "alt": "Student writing in a notebook in a library",
+        "label": "01 · Education",
+        "title": "Education & scholarships",
+        "text": "School fee assistance and interest-free higher education support for deserving students."
+      },
+      "housing": {
+        "alt": "Community housing buildings with landscaped courtyard",
+        "label": "02 · Housing",
+        "title": "Housing & community",
+        "text": "Creating greater security for families through housing initiatives across Gujarat."
+      },
+      "healthcare": {
+        "alt": "Doctor speaking warmly with an elderly woman",
+        "label": "03 · Healthcare",
+        "title": "Healthcare & welfare",
+        "text": "Medical assistance, support for higher treatment, and annual help for elderly women in need."
+      }
+    },
     "quote": "An institution becomes meaningful when its work continues beyond the people who built it.",
-    "quoteBy": "— Late Alhaj Gulamabbas “Gulubhai” Noormahmad Bhurani",
+    "quoteBy": "Late Alhaj Gulamabbas “Gulubhai” Noormahmad Bhurani",
     "quoteRole": "Lifetime Chairman, The Council of Gujarat",
     "quoteLink": "Meet our leadership",
-    "impactEyebrow": "OUR IMPACT",
-    "impactTitle": "Progress that",
-    "impactTitleEm": "touches lives.",
-    "impactText": "Beyond the numbers are families empowered, opportunities created and communities brought closer together.",
-    "impactLink": "Discover our impact",
-    "ctaEyebrow": "BE PART OF THE CHANGE",
-    "ctaTitle": "Together, we can build",
-    "ctaTitleEm": "a brighter tomorrow.",
-    "ctaText": "Your support helps transform collective care into lasting impact.",
-    "ctaDonate": "Support our mission",
-    "ctaAssistance": "Explore assistance"
+    "impactEyebrow": "Our impact",
+    "impactTitle": "Behind every number,",
+    "impactTitleEm": "a family.",
+    "impactText": "Four decades of collective work by Jamaats, donors and volunteers, measured in homes, families and futures.",
+    "impactLink": "See our full impact",
+    "impactFigures": {
+      "housing": {
+        "label": "Homeless families helped",
+        "area": "Housing"
+      },
+      "elderlyWomen": {
+        "label": "Elderly women supported",
+        "area": "Welfare"
+      },
+      "marriages": {
+        "label": "Marriages conducted",
+        "area": "Group marriages"
+      },
+      "families": {
+        "label": "Families participated",
+        "area": "Social development"
+      }
+    },
+    "ctaEyebrow": "Get involved",
+    "ctaTitle": "A stronger tomorrow,",
+    "ctaTitleEm": "together.",
+    "ctaText": "Support a student, a family or a home, or reach out if your family needs help.",
+    "ctaDonate": {
+      "title": "Donate",
+      "text": "Give to a programme you care about"
+    },
+    "ctaAssistance": {
+      "title": "Assistance",
+      "text": "Seven programmes for families in need"
+    }
   },
   "About": {
     "metaTitle": "About us",
-    "eyebrow": "ABOUT THE COUNCIL",
-    "title": "A legacy of collective service.",
-    "description": "Founded in June 1987, The Council of Gujarat unites Khoja Shia Ithna-Asheri Jamaats in a shared mission of welfare, dignity and progress.",
-    "whoTitle": "Who we are",
-    "whoP1": "The Council of Gujarat (COG) is a community institution serving the Khoja Shia Ithna-Asheri Jamaats of Gujarat.",
-    "whoP2": "Established in June 1987, COG was created with a clear purpose: to contribute to the welfare, development and wellbeing of the community, with particular attention to women and children and their physical, mental and educational development.",
-    "whoP3": "Over the years, that purpose has grown into a broad programme of community service spanning education, higher education, housing, medical assistance, welfare, social development, group marriages and relief during times of hardship and natural calamity.",
-    "whoP4": "Today, COG's work reaches across more than 100 cities and villages in Gujarat, bringing Jamaats, community leadership, volunteers, donors and well-wishers together around a shared responsibility: to serve our community and build a stronger future for the generations that follow.",
-    "mission": "To strengthen the community through unity, service and sustained development, with dignity, responsibility and a commitment to future generations.",
-    "messageTitle": "A message from the Council",
-    "messageP1": "Since its establishment in June 1987, The Council of Gujarat has carried a simple but enduring responsibility: to serve the community, strengthen our Jamaats and create opportunities for the generations to come.",
-    "messageP2": "Our work has always been rooted in a belief that when a community stands together, its collective strength can become a force for meaningful change. As we look towards the future, our responsibility remains unchanged: to preserve what has been built, strengthen what is needed today, and create what will serve tomorrow.",
-    "messageBy": "Nihalbhai Bhurani, President, The Council of Gujarat",
-    "valuesTitle": "What guides us",
+    "eyebrow": "About COG",
+    "title": "An institution built on",
+    "titleEm": "shared responsibility.",
+    "description": "The Council of Gujarat is a community institution serving the Khoja Shia Ithna-Asheri Jamaats of Gujarat, bringing Jamaats, leaders, volunteers and donors together since June 1987.",
+    "heroAlt": "Families of the community gathered together in a courtyard",
+    "missionEyebrow": "Our mission",
+    "missionA": "To strengthen the community through ",
+    "missionEmA": "unity, service",
+    "missionB": " and sustained development, with dignity, responsibility and a commitment to ",
+    "missionEmB": "future generations.",
+    "beganEyebrow": "Where we began",
+    "beganTitle": "The roots of collective",
+    "beganTitleEm": "community development.",
+    "beganP1": "The story of the Council did not begin in isolation. For years, the KSI community in Gujarat had recognised the need for collective action to respond to poverty, strengthen education, improve housing and support families in difficulty.",
+    "beganP2": "As those needs grew, so did the need for a dedicated institution that could bring the Jamaats of Gujarat together around a common platform, with particular care for the wellbeing of women and children.",
+    "t1979": {
+      "year": "1979",
+      "title": "The Gujarat Federation is established",
+      "text": "An earlier phase of organised development across Kutch and Kathiawad: housing, education, agriculture, employment, medical help and relief."
+    },
+    "t1987": {
+      "year": "June 1987",
+      "title": "The Council of Gujarat K.S.I. Jamaats is founded",
+      "text": "A Gujarat-wide institution through which Jamaats could work collectively and address community needs with continuity and scale."
+    },
+    "t2001": {
+      "year": "2001",
+      "title": "Standing together after the Gujarat earthquake",
+      "text": "Shelter, water, medicine and food, followed by temporary housing, income support and the rebuilding of permanent homes."
+    },
+    "t2027": {
+      "year": "2027",
+      "title": "Forty years of service",
+      "text": "Ten presidential terms. 44 Jamaats. One continuing institution.",
+      "link": "See the full journey →"
+    },
+    "valuesEyebrow": "What guides us",
+    "valuesTitle": "Three values, ",
+    "valuesTitleEm": "one spirit.",
     "values": {
       "unity": {
-        "label": "OUR FOUNDATION",
         "title": "Unity",
-        "text": "Bringing Jamaats and families together around shared responsibility."
+        "text": "Unity in our community. When a community stands together, its collective strength becomes a force for meaningful change."
       },
       "service": {
-        "label": "OUR COMMITMENT",
         "title": "Service",
-        "text": "Responding with compassion, practical assistance and dignity."
+        "text": "Service in our actions. An institution founded on responsibility, dignity and care for every family it reaches."
       },
       "progress": {
-        "label": "OUR FUTURE",
         "title": "Progress",
-        "text": "Creating opportunities that last for generations to come."
+        "text": "Progress for our future. Preserving what has been built, strengthening what is needed today, creating what will serve tomorrow."
       }
     },
-    "howTitle": "How we serve",
-    "how": {
-      "h1": "Uniting KSI Jamaats",
-      "h2": "Identifying community needs",
-      "h3": "Mobilising collective support",
-      "h4": "Delivering practical solutions",
-      "h5": "Building long-term impact",
-      "h6": "Strengthening future generations"
+    "howEyebrow": "How we work",
+    "howTitle": "From a shared need",
+    "howTitleEm": "to lasting impact.",
+    "howText": "Different Jamaats. Different communities. One collective purpose, carried through five steps.",
+    "steps": {
+      "s1": {
+        "title": "Uniting KSI Jamaats",
+        "text": "44 Jamaats on one common platform."
+      },
+      "s2": {
+        "title": "Identifying needs",
+        "text": "Local Jamaats know their families best."
+      },
+      "s3": {
+        "title": "Mobilising support",
+        "text": "Donors, volunteers and well-wishers, together."
+      },
+      "s4": {
+        "title": "Practical solutions",
+        "text": "Fees paid, homes built, treatment funded."
+      },
+      "s5": {
+        "title": "Long-term impact",
+        "text": "Stronger families for the next generation."
+      }
     },
-    "networkTitle": "One community. 44 Jamaats. 35,000+ people.",
-    "networkText": "COG brings together 44 KSI Jamaats across Gujarat, representing a community of more than 35,000 people. Since 1987, it has provided a platform through which Jamaats come together, share responsibility and respond collectively. COG's journey has also been connected with wider KSI institutional networks, including the India Federation.",
-    "journeyLink": "Read our journey"
+    "messageEyebrow": "A message from the President",
+    "messageQuote": "“As we look towards the future, our responsibility remains unchanged: to preserve what has been built, strengthen what is needed today, and create what will serve tomorrow.”",
+    "messageBy": "Nihalbhai Bhurani",
+    "messageRole": "President, The Council of Gujarat",
+    "messageLeadership": "Meet our leadership",
+    "messageWork": "Explore our work"
   },
   "Journey": {
     "metaTitle": "Our journey",
-    "eyebrow": "OUR JOURNEY",
-    "title": "Four decades of building, serving and evolving.",
-    "description": "1987–2027: from a shared commitment to collective responsibility to an institution serving communities across Gujarat.",
-    "rootsTitle": "Where we began",
-    "rootsP1": "The story of the Council of Gujarat did not begin in isolation in 1987. For years, the KSI community in Gujarat had recognised the need for collective action to respond to poverty, strengthen education, improve housing, support families in difficulty and create opportunities for a more secure future.",
-    "rootsP2": "The archival record of the period before COG reflects a growing tradition of organised community development across Kutch and Kathiawad, including initiatives in housing, education, agriculture, employment, medical assistance, relief and group marriages.",
-    "timelineTitle": "Milestones",
-    "milestones": {
-      "m1979": {
-        "year": "1979",
-        "title": "The Gujarat Federation",
-        "text": "The Gujarat Federation is established and plays an important role in an earlier phase of organised community development."
+    "eyebrow": "Our journey · 1987 → 2027",
+    "title": "Four decades of building,",
+    "titleEm": "serving & evolving.",
+    "description": "From a dedicated platform for the KSI Jamaats of Gujarat in 1987 to an institution preparing for its next forty years.",
+    "established": "Established",
+    "establishedDate": "June 1987",
+    "periods": {
+      "p1": {
+        "years": "1987 – 1993",
+        "title": "Founding the institution",
+        "text": "Established in June 1987 as a dedicated platform for the KSI Jamaats of Gujarat. Early work focused on building the institution and responding collectively to community needs.",
+        "tags": "Education · Welfare · Community development"
       },
-      "m1987": {
-        "year": "1987",
-        "title": "The Council of Gujarat is founded",
-        "text": "In June 1987, The Council of Gujarat K.S.I. Jamaat is established: a Gujarat-wide institution dedicated to the upliftment of the community, with particular emphasis on the wellbeing of women and children."
+      "p2": {
+        "years": "1993 – 1999",
+        "title": "Building the foundation",
+        "text": "Expanded and strengthened community service through education, housing, welfare and development initiatives.",
+        "tags": "Education · Housing · Welfare"
       },
-      "m2001": {
-        "year": "2001",
-        "title": "Relief after the Gujarat earthquake",
-        "text": "COG and the wider KSI network provide shelter, water, medicine and food, followed by temporary housing, income support and the rebuilding of permanent homes and community facilities."
+      "p3": {
+        "years": "1999 – 2004",
+        "title": "Growth & resilience",
+        "text": "Housing and community development continued to grow. During the 2001 Gujarat earthquake, COG worked with wider community institutions on relief, temporary housing, livelihood support and rehabilitation.",
+        "tags": "Relief · Housing · Livelihood · Rehabilitation",
+        "alt": "A volunteer handing relief supplies to an elderly woman"
       },
-      "mHousing": {
-        "year": "",
-        "title": "Housing at Talaja",
-        "text": "COG's housing work includes the Talaja 36-flat project. The modern Talaja development is publicly identified as Gulubhai Wadi."
+      "p4": {
+        "years": "2004 – 2010",
+        "title": "Building at scale",
+        "text": "Continued development of housing, education, medical assistance, welfare and social development programmes across Gujarat.",
+        "tags": "Housing · Education · Healthcare · Welfare"
       },
-      "m2027": {
-        "year": "2027",
-        "title": "Forty years of service",
-        "text": "Four decades of institutional continuity, and a renewed commitment to preparing the next generation to serve."
+      "p5": {
+        "years": "2010 – 2015",
+        "title": "Expanding community service",
+        "text": "Strengthened programme-based assistance, including education, housing, medical aid, welfare and group marriage initiatives.",
+        "tags": "Education · Housing · Medical aid · Social development",
+        "alt": "A group marriage ceremony with families gathered"
+      },
+      "p6": {
+        "years": "2015 – 2020",
+        "title": "Strengthening collective unity",
+        "text": "Continued serving Gujarat while strengthening cooperation with wider KSI institutional networks and collective community bodies.",
+        "tags": "Jamaat network · Cooperation · Community development"
+      },
+      "p7": {
+        "years": "2020 – 2025",
+        "title": "Modernising service",
+        "text": "Strengthened structured approaches to education, higher education, housing, healthcare and welfare, adapting service to changing community needs.",
+        "tags": "Education · Higher education · Housing · Welfare",
+        "alt": "Student writing in a notebook in a library"
+      },
+      "p8": {
+        "years": "2025 – 2027",
+        "title": "Building the next chapter",
+        "text": "Continued investment in education, housing and community development, including current housing initiatives in Talaja and wider Gujarat.",
+        "tags": "40 years · Future · Progress",
+        "alt": "Community housing buildings with a landscaped courtyard"
       }
     },
-    "yearPending": "Year to be confirmed",
-    "timelineNote": "The full illustrated timeline from the 40 Years catalogue will be added once COG shares the milestone details.",
-    "closing": "What began as a commitment to collective responsibility grew, over the decades that followed, into an institution serving communities across Gujarat.",
-    "leadershipLink": "Meet the leaders who carried it forward"
+    "bandFrom": "1987",
+    "bandTo": "2027",
+    "bandLine1": "Different generations. Different leaders.",
+    "bandLine2": "One continuing institution.",
+    "bandLeaders": "Meet the leaders",
+    "bandWork": "Explore our work"
   },
   "Leadership": {
     "metaTitle": "Leadership",
-    "eyebrow": "LEADERSHIP",
-    "title": "The people who carried the institution forward.",
-    "description": "Different generations. Different leaders. One continuing institution.",
-    "intro": "The Council of Gujarat has been guided by successive generations of community leaders. Each presidency has contributed to the institution's continuity, development and service to the KSI Jamaats of Gujarat.",
-    "chairmanRole": "LIFETIME CHAIRMAN",
-    "chairmanName": "Late Alhaj Gulamabbas “Gulubhai” Noormahmad Bhurani",
-    "chairmanTagline": "A life of leadership. A legacy of service.",
-    "chairmanP1": "He did not merely serve the Council; he helped shape the institution it became. Gulubhai Bhurani stands among the principal figures in the development and institutionalisation of modern COG.",
-    "chairmanP2": "His leadership was closely associated with the growth of the Council's housing and community-development work, its response during times of crisis, and its wider journey towards stronger collective institutions.",
-    "legacyTitle": "A legacy built through action",
+    "eyebrow": "Leadership",
+    "title": "The people who carried",
+    "titleEm": "the institution forward.",
+    "description": "The Council has been guided by successive generations of community leaders. Each presidency has contributed to its continuity, development and service to the KSI Jamaats of Gujarat.",
+    "stats": {
+      "terms": "Presidential terms",
+      "years": "Years of continuity",
+      "responsibility": "Shared responsibility"
+    },
+    "founderAlt": "Late Alhaj Gulamabbas “Gulubhai” Noormahmad Bhurani",
+    "chairmanRole": "Lifetime Chairman",
+    "chairmanName": "Gulubhai Bhurani",
+    "chairmanFull": "Late Alhaj Gulamabbas Noormahmad Bhurani",
+    "chairmanTagline": "He did not merely serve the Council; he helped shape the institution it became.",
+    "chairmanText": "Gulubhai Bhurani stands among the principal figures in the development of modern COG. His leadership was closely tied to the Council’s housing and community-development work, its response in times of crisis, and its journey towards stronger collective institutions.",
     "legacy": {
       "housing": {
-        "title": "Housing & community development",
-        "text": "His involvement in COG's housing work included the Talaja 36-flat project and the wider development of community infrastructure."
+        "title": "Housing & community",
+        "text": "The Talaja 36-flat project and wider community infrastructure"
       },
       "crisis": {
         "title": "Leadership in crisis",
-        "text": "During the 2001 Gujarat earthquake, Gulubhai served as President of COG and was part of the wider effort to coordinate relief, resettlement and rehabilitation."
+        "text": "President during the 2001 earthquake relief and rehabilitation"
       },
       "institutions": {
-        "title": "Building collective institutions",
-        "text": "He was directly involved in discussions with Dr. Asgar Moledina in Talaja that led towards a stronger India-wide KSI institutional framework."
+        "title": "Collective institutions",
+        "text": "Helped shape a stronger India-wide KSI framework"
       },
       "lasting": {
         "title": "A lasting legacy",
-        "text": "The modern Talaja housing development is publicly identified as Gulubhai Wadi, carrying his name into a new generation of community development."
+        "text": "Talaja’s Gulubhai Wadi carries his name forward"
       }
     },
-    "termsTitle": "10 presidential terms. Four decades of continuity.",
-    "termsText": "Leaders change. The mission continues.",
-    "termLabel": "TERM {number}",
-    "termPresident": "President",
-    "termPending": "Name and years to be confirmed",
-    "currentTerm": "CURRENT TERM",
-    "currentPresident": "Nihalbhai Bhurani",
-    "termsNote": "Names and years for each presidential term will be added once COG confirms them."
+    "presidentsEyebrow": "1987 → present",
+    "presidentsTitle": "Presidents of ",
+    "presidentsTitleEm": "the Council",
+    "presidentsNote": "Leaders change. The mission continues.",
+    "currentPresident": "Current President",
+    "presidents": {
+      "p1": {
+        "term": "1987 – 1993",
+        "name": "Late Haji Umeedali Gulamali Merchant",
+        "meta": "Mumbai"
+      },
+      "p2": {
+        "term": "1993 – 1996",
+        "name": "Late Haji Rajabali Mahmadali Dosani",
+        "meta": "Ahmedabad"
+      },
+      "p3": {
+        "term": "1996 – 1999",
+        "name": "Haji Hasanali Jafarali Merchant",
+        "meta": "Mahuva"
+      },
+      "p4": {
+        "term": "1999 – 2002",
+        "name": "Late Haji Gulamabbas Nurmohammad Bhurani",
+        "meta": "Talaja"
+      },
+      "p5": {
+        "term": "2002 – July 2004",
+        "name": "Late Haji Noorali Sherali Mukhi",
+        "meta": "Mahuva"
+      },
+      "p6": {
+        "term": "July – Nov 2004",
+        "name": "Late Haji Vajirali I. Badami",
+        "meta": "Mahuva · Acting President"
+      },
+      "p7": {
+        "term": "Nov 2004 – 2015",
+        "name": "Late Haji Gulamabbas Nurmohammad Bhurani",
+        "meta": "Talaja · Second term"
+      },
+      "p8": {
+        "term": "2015 – 2018",
+        "name": "Haji Amirali Yusufali Dosani",
+        "meta": "Ahmedabad"
+      },
+      "p9": {
+        "term": "2018 – 2023",
+        "name": "Haji Arifali Turabali Rasbhariya (Zain)",
+        "meta": "Rajula"
+      },
+      "p10": {
+        "term": "2023 – present",
+        "name": "Haji Nihalbhai Gulamabbas Bhurani",
+        "meta": "Talaja"
+      }
+    },
+    "closingLine": "Leaders change.",
+    "closingLineEm": "The mission continues.",
+    "motto": "UNITY · SERVICE · PROGRESS",
+    "closingLink": "Follow our journey"
   },
   "OurWork": {
     "metaTitle": "Our work",
-    "eyebrow": "OUR AREAS OF IMPACT",
-    "title": "Support that makes a difference.",
-    "description": "Education, housing, healthcare, welfare, group marriages and relief: the programmes at the heart of our mission.",
-    "intro": "Our work responds to the evolving needs of communities across Gujarat. Each programme represents a commitment to collective care.",
-    "cardLabel": "{number} / PROGRAMME",
-    "learnMore": "Learn more",
-    "assistanceTitle": "Need assistance?",
-    "assistanceText": "Members will be able to apply for education, housing, medical, widow and sports assistance online once the application system opens.",
-    "assistanceLink": "See assistance programmes"
+    "eyebrow": "Our work",
+    "title": "Five programmes.",
+    "titleEm": "One purpose.",
+    "description": "For nearly four decades, COG has worked in the areas that touch the foundations of community life, so that no member of our community feels alone when they need help.",
+    "navLabel": "Programmes",
+    "chips": {
+      "education": "Education",
+      "housing": "Housing",
+      "healthcare": "Healthcare & welfare",
+      "marriages": "Group marriages",
+      "relief": "Relief"
+    },
+    "programmes": {
+      "education": {
+        "label": "01 · Investing in possibility",
+        "title": "Education",
+        "text": "Every child deserves the opportunity to learn. From school fees for families in need to interest-free higher education support, COG works so that money never stands between a student and their future.",
+        "alt": "Student writing in a notebook in a library",
+        "link": "Explore education",
+        "i1": {
+          "title": "School education",
+          "text": "Help with the cost of primary schooling"
+        },
+        "i2": {
+          "title": "Higher education",
+          "text": "Interest-free assistance for deserving students"
+        },
+        "i3": {
+          "title": "Professional pathways",
+          "text": "Medicine, CA, engineering, diploma, pharmacy"
+        },
+        "i4": {
+          "title": "Education as empowerment",
+          "text": "An educated generation strengthens all"
+        }
+      },
+      "housing": {
+        "label": "02 · Building homes, building security",
+        "title": "Housing",
+        "text": "A home is more than four walls. It is security, dignity, and a place where families can build their future. From individual support to larger community projects, COG helps families move towards a safe place to call home.",
+        "alt": "Community housing buildings with a landscaped courtyard",
+        "link": "Explore housing",
+        "i1": {
+          "title": "Community housing",
+          "text": "Projects such as Gulubhai Wadi, Talaja"
+        },
+        "i2": {
+          "title": "A home of their own",
+          "text": "Individual housing assistance"
+        },
+        "i3": {
+          "value": "681",
+          "text": "Homeless families helped"
+        },
+        "i4": {
+          "title": "Looking ahead",
+          "text": "Secure housing for the next generation"
+        }
+      },
+      "healthcare": {
+        "label": "03 · Care when it matters",
+        "title": "Healthcare & welfare",
+        "text": "When health becomes a challenge, support should not be out of reach. COG helps families access medical care, supports higher treatment where required, and extends welfare to vulnerable members of the community.",
+        "alt": "Doctor speaking warmly with an elderly woman",
+        "link": "Explore healthcare & welfare",
+        "i1": {
+          "title": "Medical assistance",
+          "text": "Support in emergencies and special needs"
+        },
+        "i2": {
+          "title": "Access to healthcare",
+          "text": "Including Ayushman Card camps"
+        },
+        "i3": {
+          "title": "Higher treatment",
+          "text": "Help with the burden of specialised care"
+        },
+        "i4": {
+          "value": "~700",
+          "text": "Elderly women supported yearly"
+        }
+      },
+      "marriages": {
+        "label": "04 · Strengthening families",
+        "title": "Group marriages & ",
+        "titleEm": "social development",
+        "text": "When families come together, communities grow stronger. Group marriage programmes let families celebrate with dignity while easing the financial and social pressures of the occasion.",
+        "link": "Explore group marriages",
+        "s1": {
+          "value": "43",
+          "text": "Group marriage programmes"
+        },
+        "s2": {
+          "value": "830",
+          "text": "Marriages conducted"
+        },
+        "s3": {
+          "value": "1,660",
+          "text": "Families participated"
+        }
+      },
+      "relief": {
+        "label": "05 · Standing together in times of need",
+        "title": "Relief & resilience",
+        "text": "When difficult times come, community becomes strength. Through drought, natural calamity and the 2001 Gujarat earthquake, COG has stood beside families until they could begin rebuilding their lives.",
+        "alt": "A volunteer handing relief supplies to an elderly woman",
+        "link": "Explore relief",
+        "i1": {
+          "title": "Responding to hardship",
+          "text": "Help through drought and difficulty"
+        },
+        "i2": {
+          "title": "Relief in disaster",
+          "text": "Shelter, water, medicine and food"
+        },
+        "i3": {
+          "title": "Rebuilding lives",
+          "text": "Temporary homes, then permanent ones"
+        },
+        "i4": {
+          "title": "Standing together",
+          "text": "Jamaats and volunteers, side by side"
+        }
+      }
+    },
+    "cta": {
+      "title": "Does your family need support?",
+      "text": "Seven assistance programmes: primary and higher education, medical, housing, widow sahay, Ramzan sahay and sports.",
+      "primary": "See assistance programmes",
+      "secondary": "Support a programme"
+    }
   },
   "Programmes": {
     "backToWork": "All programmes",
@@ -547,13 +856,58 @@
   },
   "Donate": {
     "metaTitle": "Donate",
-    "eyebrow": "SUPPORT OUR MISSION",
-    "title": "Every contribution matters.",
-    "description": "Your generosity helps support education, housing, medical care and community welfare across Gujarat.",
-    "panelTitle": "Give with purpose",
-    "panelText": "Online giving will support one-time and monthly donations to a programme of your choice, with a receipt for every confirmed payment.",
+    "eyebrow": "Donate",
+    "title": "Your gift,",
+    "titleEm": "their tomorrow.",
+    "description": "Every contribution joins four decades of collective giving by Jamaats, donors and well-wishers, in India and abroad.",
+    "imageAlt": "Students studying together in a library",
+    "stats": {
+      "families": "Families housed",
+      "marriages": "Marriages",
+      "women": "Women supported"
+    },
+    "formLabel": "Donation",
+    "frequencyLabel": "Frequency",
+    "frequency": {
+      "once": "One-time",
+      "monthly": "Monthly"
+    },
+    "programmeTitle": "Choose a programme",
+    "programmes": {
+      "need": "Where most needed",
+      "education": "Education",
+      "housing": "Housing",
+      "healthcare": "Healthcare & welfare",
+      "marriages": "Group marriages",
+      "relief": "Relief"
+    },
+    "amountTitle": "Amount",
+    "customLabel": "Or enter another amount",
+    "customPlaceholder": "Amount in rupees",
+    "detailsTitle": "Your details",
+    "name": "Full name",
+    "mobile": "Mobile",
+    "email": "Email for your receipt",
+    "summaryOnce": "{programme} · one-time",
+    "summaryMonthly": "{programme} · monthly",
+    "perMonth": "{amount} / month",
+    "pay": "Donate {amount}",
+    "payMonthly": "Donate {amount} monthly",
+    "payEmpty": "Enter an amount",
+    "secureNote": "Secure payment by UPI, card or net banking. A receipt is emailed to you.",
     "notice": "Online donations are not open yet. Please contact the Council to give in the meantime.",
-    "contactLink": "Contact the Council ↗"
+    "contactLink": "Contact the Council ↗",
+    "otherTitle": "Other ways ",
+    "otherTitleEm": "to give",
+    "otherText": "Prefer to give in person, through your Jamaat, or by bank transfer? We’re happy to help.",
+    "bank": {
+      "title": "Bank transfer",
+      "name": "[Account name]",
+      "details": "[Bank · Account no. · IFSC]"
+    },
+    "talk": {
+      "title": "Talk to us"
+    }
   },
   "Updates": {
     "metaTitle": "News & updates",
@@ -604,23 +958,46 @@
     "home": "Back to home"
   },
   "Auth": {
-    "showcaseKicker": "THE COUNCIL OF GUJARAT",
-    "showcaseTitle": "One account for everything we do",
-    "showcaseTitleEm": "together.",
-    "showcaseText": "Your profile, assistance applications, donations and notifications, all in one secure place.",
+    "backToWebsite": "Back to website",
+    "showcaseKicker": "Member portal",
+    "showcaseTitle": "Your community,",
+    "showcaseTitleEm": "one sign-in away.",
+    "showcaseImageAlt": "A volunteer handing relief supplies to an elderly woman",
     "highlights": {
-      "otp": "Sign in with a one-time code. There is no password to remember.",
-      "review": "Every account is reviewed and approved by COG.",
-      "since": "Serving KSI Jamaats across Gujarat since 1987."
+      "memberId": {
+        "title": "Your Member ID",
+        "text": "Issued once your Jamaat approves"
+      },
+      "secure": {
+        "title": "Private & secure",
+        "text": "Aadhaar shown as last 4 digits only"
+      },
+      "language": {
+        "title": "English & ગુજરાતી",
+        "text": "Choose your language anytime"
+      }
     },
+    "logoAlt": "The Council of Gujarat",
+    "account": "Account",
     "progress": "Sign in progress",
+    "stepOf": "Step {step} of 3 · {name}",
+    "stepNames": {
+      "details": "Your details",
+      "otp": "Verify",
+      "pending": "Done"
+    },
+    "stepNext": {
+      "details": "Verify · Done",
+      "otp": "Done",
+      "pending": ""
+    },
     "signin": "Sign in",
-    "signup": "Sign up",
+    "signup": "Create account",
     "signinTitle": "Welcome back",
-    "signinDescription": "Enter your mobile number and we will text you a one-time code.",
+    "signinDescription": "We’ll send a 6-digit code to your mobile.",
     "signinSubmit": "Sign in",
     "signupTitle": "Join the community",
-    "signupDescription": "Create your COG account with your name, mobile number and Aadhaar.",
+    "signupDescription": "Your Jamaat will review and approve your request.",
     "signupSubmit": "Create account",
     "requestReceived": "Request received",
     "awaitingApproval": "Awaiting approval",
@@ -630,20 +1007,21 @@
     "checkPhone": "Check your phone",
     "codeSent": "Enter the 6-digit code we sent to {phone}.",
     "fullName": "Full name",
-    "fullNamePlaceholder": "As you would like us to address you",
+    "fullNamePlaceholder": "As on your Aadhaar",
     "mobile": "Mobile number",
-    "mobileHelp": "We only send a code to verify it is you.",
     "aadhaar": "Aadhaar number",
     "aadhaarHelp": "Stored encrypted and reduced to the last 4 digits once COG approves your account.",
     "consent": "I agree to COG storing my details, including my Aadhaar number until my account is approved, and contacting me about my membership, in line with the privacy policy and terms.",
-    "sendCode": "Send code",
+    "sendOtp": "Send OTP",
+    "signupContinue": "Continue",
     "or": "or",
     "google": "Continue with Google",
+    "googleNote": "Google sign-in works once you’ve linked it from your profile.",
     "otpLabel": "One-time code",
     "resend": "Resend code",
     "resendIn": "Resend code in {seconds}s",
-    "signinFoot": "New to COG? Choose Sign up above to create your account.",
-    "signupFoot": "Your account will be reviewed and approved by COG before you can log in."
+    "signupFoot": "Your account will be reviewed and approved by COG before you can log in.",
+    "help": "Need help? Call"
   },
   "AuthErrors": {
     "generic": "Something went wrong. Please try again.",
@@ -717,30 +1095,152 @@
   },
   "Dashboard": {
     "brandTooltip": "Council of Gujarat",
-    "brandLine1": "COUNCIL OF GUJARAT",
-    "brandLine2": "MEMBER PORTAL",
-    "eyebrow": "DASHBOARD",
-    "welcome": "Welcome back, {name}",
+    "brandName": "Council of Gujarat",
+    "brandPortal": "Portal",
+    "emblemAlt": "COG",
+    "soon": "Soon",
+    "viewWebsite": "View website ↗",
+    "welcome": "Welcome back,",
     "description": "Everything you can do at COG, in one place.",
-    "memberId": "Member ID {id}",
-    "memberIdPending": "Member ID pending",
-    "name": "Name",
-    "mobile": "Mobile number",
-    "access": "Access level",
-    "workspace": "Your workspace",
+    "memberId": "Member ID",
+    "memberIdPending": "Pending",
+    "mobile": "Mobile",
+    "status": "Status",
+    "access": "Role",
+    "goTo": "Go to",
+    "comingSoon": "Coming soon",
     "profileMenu": "Profile",
     "publicSite": "Public website",
     "signOut": "Sign out",
-    "eyebrows": {
-      "workspace": "WORKSPACE",
-      "community": "COMMUNITY",
-      "administration": "ADMINISTRATION"
+    "accountMenu": "Account menu for {name}",
+    "banner": {
+      "pending": {
+        "title": "Awaiting approval",
+        "text": "Thank you for joining. Your Jamaat is reviewing your request. Once approved, you’ll receive your Member ID here."
+      },
+      "approved": {
+        "title": "You’re a member of the community",
+        "text": "Your request has been approved. Your Member ID is now active across COG services."
+      },
+      "rejected": {
+        "title": "Your request was not approved",
+        "text": "We couldn’t confirm your details with your Jamaat. Please call the COG office and we’ll help you sort it out."
+      }
+    },
+    "steps": {
+      "sent": {
+        "title": "Details sent",
+        "text": "Submitted"
+      },
+      "verified": {
+        "title": "Mobile verified",
+        "text": "OTP confirmed"
+      },
+      "review": {
+        "title": "Jamaat approval",
+        "text": "In review"
+      }
+    },
+    "memberCards": {
+      "profile": {
+        "title": "Your profile",
+        "text": "Add your address and Jamaat, and choose your language."
+      },
+      "assistance": {
+        "title": "Assistance programmes",
+        "text": "Education, medical, housing and more. Online applications are coming soon."
+      }
+    },
+    "help": {
+      "title": "Need help?",
+      "text": "Call the COG office or speak to your Jamaat."
     }
   },
   "Placeholder": {
-    "title": "{section} is on its way",
-    "text": "This section is built later in the roadmap. You can see it because your role has access to it.",
-    "badge": "Coming soon"
+    "badge": "Coming soon",
+    "planned": "What’s planned",
+    "sections": {
+      "donations": {
+        "headline": "Online giving is on its way.",
+        "lede": "Soon you’ll see every donation in one place, with receipts sent automatically and tools to manage refunds.",
+        "p1": {
+          "title": "Online payments",
+          "text": "UPI, cards and net banking from the Donate page"
+        },
+        "p2": {
+          "title": "Automatic receipts",
+          "text": "Emailed to donors as soon as a gift arrives"
+        },
+        "p3": {
+          "title": "Donor history",
+          "text": "Each donor’s gifts, by programme and date"
+        },
+        "p4": {
+          "title": "Refunds & export",
+          "text": "Issue refunds and export to CSV for accounts"
+        }
+      },
+      "applications": {
+        "headline": "Assistance applications, online.",
+        "lede": "Families will apply for any of the seven programmes from their phone, and staff will review everything here.",
+        "p1": {
+          "title": "Seven application forms",
+          "text": "Primary, higher education, medical, housing, widow, Ramzan and sports"
+        },
+        "p2": {
+          "title": "Private documents",
+          "text": "Uploads stay private, with no public links"
+        },
+        "p3": {
+          "title": "Review queue",
+          "text": "Verify, ask for more details, and decide"
+        },
+        "p4": {
+          "title": "Notifications",
+          "text": "Applicants hear back by SMS or email"
+        }
+      },
+      "reports": {
+        "headline": "Clear numbers, ready to share.",
+        "lede": "Summaries of members, donations and applications, ready to download for committee meetings.",
+        "p1": {
+          "title": "Member summary",
+          "text": "Growth and approvals by Jamaat"
+        },
+        "p2": {
+          "title": "Donation summary",
+          "text": "Totals by programme and month"
+        },
+        "p3": {
+          "title": "Application summary",
+          "text": "Requests, decisions and amounts"
+        },
+        "p4": {
+          "title": "CSV export",
+          "text": "Every report downloads as a spreadsheet"
+        }
+      },
+      "content": {
+        "headline": "Publish updates to the website.",
+        "lede": "Editors will write news and updates here, and publish them straight to the website’s Updates page.",
+        "p1": {
+          "title": "Write in both languages",
+          "text": "English and ગુજરાતી side by side"
+        },
+        "p2": {
+          "title": "Review before publishing",
+          "text": "Drafts, review and publish steps"
+        },
+        "p3": {
+          "title": "Feeds the Updates page",
+          "text": "Published posts appear on the website"
+        },
+        "p4": {
+          "title": "History",
+          "text": "Every change recorded in the audit log"
+        }
+      }
+    }
   },
   "Paging": {
     "range": "{first}–{last} of {total}",
@@ -752,7 +1252,6 @@
   },
   "Profile": {
     "metaTitle": "Profile",
-    "eyebrow": "PROFILE",
     "title": "Your details",
     "description": "Keep your information up to date so COG can reach you and process your requests.",
     "facts": {
@@ -792,7 +1291,8 @@
     "saved": "Profile updated",
     "saveError": "We could not save your changes. Please try again.",
     "connectedTitle": "Connected accounts",
-    "connectedText": "Sign in faster by linking accounts you already use."
+    "connectedText": "Sign in faster by linking accounts you already use.",
+    "membership": "Membership"
   },
   "Connected": {
     "google": "Google",

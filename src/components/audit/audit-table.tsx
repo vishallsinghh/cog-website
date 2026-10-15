@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { PagingBar } from "@/components/dashboard/paging-bar";
+import { Badge } from "@/components/ui/badge";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -43,7 +44,7 @@ export function AuditTable() {
 
     return (
         <div className="flex flex-col gap-6">
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-4 rounded-2xl border border-green/10 bg-field p-4 sm:grid-cols-2 lg:grid-cols-4">
                 <Field>
                     <FieldLabel htmlFor="audit-action">{t("action")}</FieldLabel>
                     <NativeSelect
@@ -125,7 +126,7 @@ export function AuditTable() {
                 </div>
             ) : (
                 <>
-                    <div className="rounded-xl border bg-card">
+                    <div className="overflow-hidden rounded-2xl border border-green/10 bg-field">
                         <Table>
                             <TableHeader>
                                 <TableRow>
@@ -150,7 +151,11 @@ export function AuditTable() {
                                                 {formatDateTime(row.createdAt, locale)}
                                             </TableCell>
                                             <TableCell>{row.actorName ?? (row.actorId ? t("unknown") : t("system"))}</TableCell>
-                                            <TableCell className="font-mono text-xs">{row.action}</TableCell>
+                                            <TableCell>
+                                                <Badge variant="secondary" className="font-mono">
+                                                    {row.action}
+                                                </Badge>
+                                            </TableCell>
                                             <TableCell className="max-w-56 truncate">
                                                 {row.entityType
                                                     ? `${row.entityType}${row.entityId ? ` · ${row.entityId}` : ""}`
