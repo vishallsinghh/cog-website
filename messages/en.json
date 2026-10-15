@@ -958,23 +958,46 @@
     "home": "Back to home"
   },
   "Auth": {
-    "showcaseKicker": "THE COUNCIL OF GUJARAT",
-    "showcaseTitle": "One account for everything we do",
-    "showcaseTitleEm": "together.",
-    "showcaseText": "Your profile, assistance applications, donations and notifications, all in one secure place.",
+    "backToWebsite": "Back to website",
+    "showcaseKicker": "Member portal",
+    "showcaseTitle": "Your community,",
+    "showcaseTitleEm": "one sign-in away.",
+    "showcaseImageAlt": "A volunteer handing relief supplies to an elderly woman",
     "highlights": {
-      "otp": "Sign in with a one-time code. There is no password to remember.",
-      "review": "Every account is reviewed and approved by COG.",
-      "since": "Serving KSI Jamaats across Gujarat since 1987."
+      "memberId": {
+        "title": "Your Member ID",
+        "text": "Issued once your Jamaat approves"
+      },
+      "secure": {
+        "title": "Private & secure",
+        "text": "Aadhaar shown as last 4 digits only"
+      },
+      "language": {
+        "title": "English & ગુજરાતી",
+        "text": "Choose your language anytime"
+      }
     },
+    "logoAlt": "The Council of Gujarat",
+    "account": "Account",
     "progress": "Sign in progress",
+    "stepOf": "Step {step} of 3 · {name}",
+    "stepNames": {
+      "details": "Your details",
+      "otp": "Verify",
+      "pending": "Done"
+    },
+    "stepNext": {
+      "details": "Verify · Done",
+      "otp": "Done",
+      "pending": ""
+    },
     "signin": "Sign in",
-    "signup": "Sign up",
+    "signup": "Create account",
     "signinTitle": "Welcome back",
-    "signinDescription": "Enter your mobile number and we will text you a one-time code.",
+    "signinDescription": "We’ll send a 6-digit code to your mobile.",
     "signinSubmit": "Sign in",
     "signupTitle": "Join the community",
-    "signupDescription": "Create your COG account with your name, mobile number and Aadhaar.",
+    "signupDescription": "Your Jamaat will review and approve your request.",
     "signupSubmit": "Create account",
     "requestReceived": "Request received",
     "awaitingApproval": "Awaiting approval",
@@ -984,20 +1007,21 @@
     "checkPhone": "Check your phone",
     "codeSent": "Enter the 6-digit code we sent to {phone}.",
     "fullName": "Full name",
-    "fullNamePlaceholder": "As you would like us to address you",
+    "fullNamePlaceholder": "As on your Aadhaar",
     "mobile": "Mobile number",
-    "mobileHelp": "We only send a code to verify it is you.",
     "aadhaar": "Aadhaar number",
     "aadhaarHelp": "Stored encrypted and reduced to the last 4 digits once COG approves your account.",
     "consent": "I agree to COG storing my details, including my Aadhaar number until my account is approved, and contacting me about my membership, in line with the privacy policy and terms.",
-    "sendCode": "Send code",
+    "sendOtp": "Send OTP",
+    "signupContinue": "Continue",
     "or": "or",
     "google": "Continue with Google",
+    "googleNote": "Google sign-in works once you’ve linked it from your profile.",
     "otpLabel": "One-time code",
     "resend": "Resend code",
     "resendIn": "Resend code in {seconds}s",
-    "signinFoot": "New to COG? Choose Sign up above to create your account.",
-    "signupFoot": "Your account will be reviewed and approved by COG before you can log in."
+    "signupFoot": "Your account will be reviewed and approved by COG before you can log in.",
+    "help": "Need help? Call"
   },
   "AuthErrors": {
     "generic": "Something went wrong. Please try again.",

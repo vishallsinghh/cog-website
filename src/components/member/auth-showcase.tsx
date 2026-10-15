@@ -1,61 +1,95 @@
-import Image from "next/image";
-import { HeartHandshakeIcon, ShieldCheckIcon, SmartphoneIcon } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import { Separator } from "@/components/ui/separator";
+import { LangSwitch } from "@/components/lang-switch";
+import { Arch, ArchPattern } from "@/components/page-parts";
+import { Link } from "@/i18n/navigation";
 
-const highlights = [
-    { icon: SmartphoneIcon, key: "otp" },
-    { icon: ShieldCheckIcon, key: "review" },
-    { icon: HeartHandshakeIcon, key: "since" },
+const HIGHLIGHTS = [
+    {
+        key: "memberId",
+        icon: (
+            <>
+                <rect x="3" y="5" width="18" height="14" rx="2" />
+                <path d="M7 10h6M7 14h4" />
+            </>
+        ),
+    },
+    {
+        key: "secure",
+        icon: (
+            <>
+                <path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z" />
+                <path d="m9 12 2 2 4-4" />
+            </>
+        ),
+    },
+    {
+        key: "language",
+        icon: (
+            <>
+                <circle cx="12" cy="12" r="9" />
+                <path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18" />
+            </>
+        ),
+    },
 ] as const;
 
 export async function AuthShowcase() {
     const t = await getTranslations("Auth");
 
     return (
-        <section className="relative isolate flex overflow-hidden bg-primary text-primary-foreground">
-            <Image
-                src="/images/community-hero.jpg"
-                alt=""
-                fill
-                priority
-                sizes="(min-width: 1024px) 52vw, 100vw"
-                className="-z-20 object-cover object-[center_40%]"
-            />
-            <div className="absolute inset-0 -z-10 bg-linear-to-br from-primary/95 via-primary/90 to-primary/70" />
-            <div className="absolute -right-24 -bottom-24 -z-10 size-96 rounded-full bg-accent/20 blur-3xl" />
-
-            <div className="flex w-full flex-col justify-between gap-12 px-6 py-9 sm:px-10 sm:py-12 lg:px-14 lg:py-16">
-                <div className="flex flex-col gap-4 lg:gap-6">
-                    <p className="text-xs font-bold tracking-[0.3em] text-accent">
-                        {t("showcaseKicker")}
-                    </p>
-                    <h1 className="max-w-lg font-heading text-3xl leading-[1.1] font-normal tracking-tight sm:text-4xl lg:text-5xl">
-                        {t("showcaseTitle")}{" "}
-                        <span className="text-accent italic">{t("showcaseTitleEm")}</span>
+        <aside className="on-dark relative flex min-w-0 flex-[1_1_520px] flex-col justify-between overflow-hidden bg-green px-[clamp(24px,4vw,64px)] py-12 text-cream">
+            <ArchPattern opacity={0.25} />
+            <div className="relative flex flex-wrap items-center justify-between gap-4">
+                <Link href="/" className="inline-flex items-center gap-2.5 text-[15px] text-cream hover:text-gold-light">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+                        <path d="M19 12H5M11 6l-6 6 6 6" />
+                    </svg>
+                    {t("backToWebsite")}
+                </Link>
+                <LangSwitch />
+            </div>
+            <div className="relative my-10 flex flex-wrap items-end gap-10">
+                <Arch
+                    src="/images/relief.jpg"
+                    alt={t("showcaseImageAlt")}
+                    radius={120}
+                    heroZoom
+                    priority
+                    imageClassName=""
+                    className="h-[330px] w-[240px] flex-none border border-gold/60"
+                    sizes="240px"
+                />
+                <div className="min-w-0 flex-[1_1_240px]">
+                    <div className="label text-gold-light">{t("showcaseKicker")}</div>
+                    <h1 className="display mt-4 text-[clamp(40px,4vw,52px)] leading-[1.02]">
+                        {t("showcaseTitle")}
+                        <br />
+                        <em className="text-gold-light">{t("showcaseTitleEm")}</em>
                     </h1>
-                    <div className="h-0.5 w-16 bg-accent" />
-                    <p className="hidden max-w-md text-base leading-relaxed sm:block text-primary-foreground/80">
-                        {t("showcaseText")}
-                    </p>
-                </div>
-
-                <div className="hidden flex-col gap-6 lg:flex">
-                    <Separator className="bg-primary-foreground/20" />
-                    <ul className="flex flex-col gap-5">
-                        {highlights.map(({ icon: Icon, key }) => (
-                            <li key={key} className="flex items-start gap-4">
-                                <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-foreground/10 ring-1 ring-primary-foreground/20">
-                                    <Icon className="size-5 text-accent" />
-                                </span>
-                                <span className="max-w-sm pt-2 text-sm leading-snug text-primary-foreground/85">
-                                    {t(`highlights.${key}`)}
-                                </span>
-                            </li>
-                        ))}
-                    </ul>
                 </div>
             </div>
-        </section>
+            <ul className="relative m-0 grid list-none grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-6 border-t border-gold/40 p-0 pt-7">
+                {HIGHLIGHTS.map((item) => (
+                    <li key={item.key} className="flex gap-3">
+                        <svg
+                            width="22"
+                            height="22"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="#C29A43"
+                            strokeWidth="1.6"
+                            aria-hidden="true"
+                            className="mt-0.5 flex-none"
+                        >
+                            {item.icon}
+                        </svg>
+                        <span>
+                            <span className="block font-semibold">{t(`highlights.${item.key}.title`)}</span>
+                            <span className="text-[14px] text-cream/75">{t(`highlights.${item.key}.text`)}</span>
+                        </span>
+                    </li>
+                ))}
+            </ul>
+        </aside>
     );
 }

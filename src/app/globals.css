@@ -255,3 +255,9 @@
 :lang(gu) :is(h1,h2,h3){letter-spacing:normal}
 @media(max-width:1050px){.figure-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:560px){.figure-grid{grid-template-columns:1fr}}
+
+.on-dark .lang-switch{border-color:rgba(246,242,230,.35)}
+.on-dark .lang-switch a{color:var(--cream)}
+.on-dark .lang-switch a[aria-current="true"]{background:var(--cream);color:var(--green)}
+.on-dark .lang-switch a:not([aria-current="true"]):hover{color:var(--gold-light)}
+
