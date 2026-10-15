@@ -8,7 +8,7 @@ export default async function Page() {
 
     return (
         <div className="flex flex-col gap-8">
-            <NavPageHeader item={item} eyebrow="administration" />
+            <NavPageHeader item={item} />
             <TeamManager currentUserId={session?.user.id ?? ""} />
         </div>
     );

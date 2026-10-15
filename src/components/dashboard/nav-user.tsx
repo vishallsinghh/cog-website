@@ -53,15 +53,20 @@ export function NavUser({ user }: { user: NavUserData }) {
             <SidebarMenuItem>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <SidebarMenuButton size="lg" tooltip={user.name}>
-                            <Avatar className="size-8">
-                                <AvatarFallback className="bg-primary text-xs font-semibold text-primary-foreground">
+                        <SidebarMenuButton
+                            size="lg"
+                            tooltip={user.name}
+                            aria-label={t("accountMenu", { name: user.name })}
+                            className="min-h-14 rounded-xl border border-cream/15 bg-cream/5 p-2.5 text-cream hover:bg-cream/10 hover:text-cream data-open:bg-cream/10 data-[state=open]:bg-cream/10 data-[state=open]:text-cream"
+                        >
+                            <Avatar className="size-9">
+                                <AvatarFallback className="bg-gold text-[14px] font-bold text-green-ink">
                                     {initials(user.name)}
                                 </AvatarFallback>
                             </Avatar>
                             <span className="flex min-w-0 flex-col text-left leading-tight">
-                                <span className="truncate text-sm font-medium">{user.name}</span>
-                                <span className="truncate text-xs text-muted-foreground">
+                                <span className="truncate text-[15px] font-semibold">{user.name}</span>
+                                <span className="truncate text-[13px] font-normal text-cream/70">
                                     {user.roleLabel}
                                 </span>
                             </span>

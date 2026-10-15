@@ -20,7 +20,9 @@ async function ProtectedShell({ children }: { children: React.ReactNode }) {
     return (
         <TRPCReactProvider>
             <TooltipProvider>
-                <SidebarProvider>
+                <SidebarProvider
+                    style={{ "--sidebar-width": "15.5rem", "--sidebar-width-icon": "5.25rem" } as React.CSSProperties}
+                >
                     <AppSidebar
                         groups={navForRole(user.role)}
                         user={{
@@ -31,7 +33,7 @@ async function ProtectedShell({ children }: { children: React.ReactNode }) {
                     />
                     <SidebarInset>
                         <DashboardHeader />
-                        <div className="flex flex-1 flex-col p-4 sm:p-6 lg:p-10">{children}</div>
+                        <div className="flex flex-1 flex-col px-[clamp(20px,3vw,48px)] pt-6 pb-12">{children}</div>
                     </SidebarInset>
                 </SidebarProvider>
                 <Toaster position="top-right" />

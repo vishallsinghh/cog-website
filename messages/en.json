@@ -1095,30 +1095,152 @@
   },
   "Dashboard": {
     "brandTooltip": "Council of Gujarat",
-    "brandLine1": "COUNCIL OF GUJARAT",
-    "brandLine2": "MEMBER PORTAL",
-    "eyebrow": "DASHBOARD",
-    "welcome": "Welcome back, {name}",
+    "brandName": "Council of Gujarat",
+    "brandPortal": "Portal",
+    "emblemAlt": "COG",
+    "soon": "Soon",
+    "viewWebsite": "View website ↗",
+    "welcome": "Welcome back,",
     "description": "Everything you can do at COG, in one place.",
-    "memberId": "Member ID {id}",
-    "memberIdPending": "Member ID pending",
-    "name": "Name",
-    "mobile": "Mobile number",
-    "access": "Access level",
-    "workspace": "Your workspace",
+    "memberId": "Member ID",
+    "memberIdPending": "Pending",
+    "mobile": "Mobile",
+    "status": "Status",
+    "access": "Role",
+    "goTo": "Go to",
+    "comingSoon": "Coming soon",
     "profileMenu": "Profile",
     "publicSite": "Public website",
     "signOut": "Sign out",
-    "eyebrows": {
-      "workspace": "WORKSPACE",
-      "community": "COMMUNITY",
-      "administration": "ADMINISTRATION"
+    "accountMenu": "Account menu for {name}",
+    "banner": {
+      "pending": {
+        "title": "Awaiting approval",
+        "text": "Thank you for joining. Your Jamaat is reviewing your request. Once approved, you’ll receive your Member ID here."
+      },
+      "approved": {
+        "title": "You’re a member of the community",
+        "text": "Your request has been approved. Your Member ID is now active across COG services."
+      },
+      "rejected": {
+        "title": "Your request was not approved",
+        "text": "We couldn’t confirm your details with your Jamaat. Please call the COG office and we’ll help you sort it out."
+      }
+    },
+    "steps": {
+      "sent": {
+        "title": "Details sent",
+        "text": "Submitted"
+      },
+      "verified": {
+        "title": "Mobile verified",
+        "text": "OTP confirmed"
+      },
+      "review": {
+        "title": "Jamaat approval",
+        "text": "In review"
+      }
+    },
+    "memberCards": {
+      "profile": {
+        "title": "Your profile",
+        "text": "Add your address and Jamaat, and choose your language."
+      },
+      "assistance": {
+        "title": "Assistance programmes",
+        "text": "Education, medical, housing and more. Online applications are coming soon."
+      }
+    },
+    "help": {
+      "title": "Need help?",
+      "text": "Call the COG office or speak to your Jamaat."
     }
   },
   "Placeholder": {
-    "title": "{section} is on its way",
-    "text": "This section is built later in the roadmap. You can see it because your role has access to it.",
-    "badge": "Coming soon"
+    "badge": "Coming soon",
+    "planned": "What’s planned",
+    "sections": {
+      "donations": {
+        "headline": "Online giving is on its way.",
+        "lede": "Soon you’ll see every donation in one place, with receipts sent automatically and tools to manage refunds.",
+        "p1": {
+          "title": "Online payments",
+          "text": "UPI, cards and net banking from the Donate page"
+        },
+        "p2": {
+          "title": "Automatic receipts",
+          "text": "Emailed to donors as soon as a gift arrives"
+        },
+        "p3": {
+          "title": "Donor history",
+          "text": "Each donor’s gifts, by programme and date"
+        },
+        "p4": {
+          "title": "Refunds & export",
+          "text": "Issue refunds and export to CSV for accounts"
+        }
+      },
+      "applications": {
+        "headline": "Assistance applications, online.",
+        "lede": "Families will apply for any of the seven programmes from their phone, and staff will review everything here.",
+        "p1": {
+          "title": "Seven application forms",
+          "text": "Primary, higher education, medical, housing, widow, Ramzan and sports"
+        },
+        "p2": {
+          "title": "Private documents",
+          "text": "Uploads stay private, with no public links"
+        },
+        "p3": {
+          "title": "Review queue",
+          "text": "Verify, ask for more details, and decide"
+        },
+        "p4": {
+          "title": "Notifications",
+          "text": "Applicants hear back by SMS or email"
+        }
+      },
+      "reports": {
+        "headline": "Clear numbers, ready to share.",
+        "lede": "Summaries of members, donations and applications, ready to download for committee meetings.",
+        "p1": {
+          "title": "Member summary",
+          "text": "Growth and approvals by Jamaat"
+        },
+        "p2": {
+          "title": "Donation summary",
+          "text": "Totals by programme and month"
+        },
+        "p3": {
+          "title": "Application summary",
+          "text": "Requests, decisions and amounts"
+        },
+        "p4": {
+          "title": "CSV export",
+          "text": "Every report downloads as a spreadsheet"
+        }
+      },
+      "content": {
+        "headline": "Publish updates to the website.",
+        "lede": "Editors will write news and updates here, and publish them straight to the website’s Updates page.",
+        "p1": {
+          "title": "Write in both languages",
+          "text": "English and ગુજરાતી side by side"
+        },
+        "p2": {
+          "title": "Review before publishing",
+          "text": "Drafts, review and publish steps"
+        },
+        "p3": {
+          "title": "Feeds the Updates page",
+          "text": "Published posts appear on the website"
+        },
+        "p4": {
+          "title": "History",
+          "text": "Every change recorded in the audit log"
+        }
+      }
+    }
   },
   "Paging": {
     "range": "{first}–{last} of {total}",
@@ -1130,7 +1252,6 @@
   },
   "Profile": {
     "metaTitle": "Profile",
-    "eyebrow": "PROFILE",
     "title": "Your details",
     "description": "Keep your information up to date so COG can reach you and process your requests.",
     "facts": {
@@ -1170,7 +1291,8 @@
     "saved": "Profile updated",
     "saveError": "We could not save your changes. Please try again.",
     "connectedTitle": "Connected accounts",
-    "connectedText": "Sign in faster by linking accounts you already use."
+    "connectedText": "Sign in faster by linking accounts you already use.",
+    "membership": "Membership"
   },
   "Connected": {
     "google": "Google",

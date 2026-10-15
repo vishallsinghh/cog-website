@@ -18,6 +18,7 @@ export type NavItem = {
     key: NavKey;
     href: string;
     permission?: RequiredPermissions;
+    soon?: boolean;
 };
 
 export type NavGroup = {
@@ -37,19 +38,19 @@ export const NAV_GROUPS: NavGroup[] = [
         key: "community",
         items: [
             { key: "members", href: "/members", permission: { member: ["read"] } },
-            { key: "applications", href: "/applications", permission: { application: ["read"] } },
+            { key: "applications", href: "/applications", permission: { application: ["read"] }, soon: true },
         ],
     },
     {
         key: "finance",
         items: [
-            { key: "donations", href: "/donations", permission: { donation: ["read"] } },
-            { key: "reports", href: "/reports", permission: { report: ["read"] } },
+            { key: "donations", href: "/donations", permission: { donation: ["read"] }, soon: true },
+            { key: "reports", href: "/reports", permission: { report: ["read"] }, soon: true },
         ],
     },
     {
         key: "content",
-        items: [{ key: "content", href: "/content", permission: { content: ["read"] } }],
+        items: [{ key: "content", href: "/content", permission: { content: ["read"] }, soon: true }],
     },
     {
         key: "administration",
