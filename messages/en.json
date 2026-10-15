@@ -6,8 +6,6 @@
   },
   "Common": {
     "brandName": "The Council of Gujarat",
-    "brandCaption": "THE COUNCIL OF GUJARAT",
-    "brandSub": "KSI JAMAATS · SINCE 1987",
     "brandHome": "Council of Gujarat home",
     "motto": "UNITY · SERVICE · PROGRESS",
     "language": "Language",
@@ -17,7 +15,7 @@
     },
     "languageShort": {
       "en": "EN",
-      "gu": "ગુ"
+      "gu": "ગુજ"
     },
     "switchLanguage": "Choose language",
     "dash": "—",
@@ -25,7 +23,8 @@
     "refreshError": "Please refresh the page and try again.",
     "cancel": "Cancel",
     "placeholder": "Awaiting content from COG",
-    "readMore": "Read more"
+    "readMore": "Read more",
+    "logoAlt": "The Council of Gujarat, KSI Jamaats, since 1987"
   },
   "Roles": {
     "member": "Member",
@@ -55,39 +54,36 @@
     "roleInvalid": "Choose a role"
   },
   "Header": {
-    "announcement": "CELEBRATING FOUR DECADES OF SERVICE · 1987–2027",
-    "announcementLink": "Explore our story ↗",
+    "announcement": "Celebrating 40 years of service · 1987–2027",
+    "announcementLink": "Our journey",
     "mainNav": "Main navigation",
     "toggleNav": "Toggle navigation",
     "nav": {
+      "about": "About",
+      "work": "Our Work",
+      "journey": "Our Journey",
+      "leadership": "Leadership",
+      "impact": "Impact",
+      "nextGeneration": "Next Generation"
+    },
+    "memberLogin": "Member Login",
+    "donate": "Donate"
+  },
+  "Footer": {
+    "explore": "Explore",
+    "getInvolved": "Get involved",
+    "contact": "Contact",
+    "links": {
       "about": "About us",
       "work": "Our work",
       "journey": "Our journey",
       "leadership": "Leadership",
       "impact": "Impact",
-      "contact": "Contact"
-    },
-    "memberPortal": "Member portal",
-    "memberLogin": "Member login ↗",
-    "donate": "Donate now"
-  },
-  "Footer": {
-    "tagline": "Uniting the KSI Jamaats of Gujarat to build stronger, more resilient communities since 1987.",
-    "explore": "Explore",
-    "getInvolved": "Get involved",
-    "contact": "Contact",
-    "links": {
-      "about": "About the Council",
-      "work": "Our work",
-      "journey": "Our journey",
-      "leadership": "Leadership",
-      "impact": "Our impact",
-      "nextGeneration": "The next generation",
-      "updates": "News & updates",
-      "donate": "Make a donation",
-      "assistance": "Request assistance",
-      "member": "Member portal",
-      "contact": "Contact us"
+      "nextGeneration": "Next generation",
+      "updates": "Updates",
+      "donate": "Donate",
+      "assistance": "Apply for assistance",
+      "member": "Member login"
     },
     "address": "Council House, Gopnath Road, Talaja 364140, Gujarat, India",
     "social": {
@@ -95,9 +91,11 @@
       "instagram": "Instagram",
       "youtube": "YouTube"
     },
-    "copyright": "© {year} The Council of Gujarat. All rights reserved.",
-    "privacy": "Privacy policy",
-    "terms": "Terms of use"
+    "copyright": "© {year} The Council of Gujarat K.S.I. Jamaats",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "emblemAlt": "COG emblem",
+    "name": "The Council of Gujarat K.S.I. Jamaats"
   },
   "Home": {
     "heroAlt": "Community members together",

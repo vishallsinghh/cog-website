@@ -7,8 +7,6 @@
   },
   "Common": {
     "brandName": "ધ કાઉન્સિલ ઓફ ગુજરાત",
-    "brandCaption": "ધ કાઉન્સિલ ઓફ ગુજરાત",
-    "brandSub": "KSI જમાતો · ૧૯૮૭થી",
     "brandHome": "કાઉન્સિલ ઓફ ગુજરાત હોમ",
     "motto": "એકતા · સેવા · પ્રગતિ",
     "language": "ભાષા",
@@ -18,7 +16,7 @@
     },
     "languageShort": {
       "en": "EN",
-      "gu": "ગુ"
+      "gu": "ગુજ"
     },
     "switchLanguage": "ભાષા પસંદ કરો",
     "dash": "—",
@@ -26,7 +24,8 @@
     "refreshError": "કૃપા કરીને પેજ રિફ્રેશ કરીને ફરી પ્રયાસ કરો.",
     "cancel": "રદ કરો",
     "placeholder": "COG તરફથી માહિતીની રાહ",
-    "readMore": "વધુ વાંચો"
+    "readMore": "વધુ વાંચો",
+    "logoAlt": "ધ કાઉન્સિલ ઓફ ગુજરાત, કે.એસ.આઈ. જમાઆતો"
   },
   "Roles": {
     "member": "સભ્ય",
@@ -56,8 +55,8 @@
     "roleInvalid": "ભૂમિકા પસંદ કરો"
   },
   "Header": {
-    "announcement": "સેવાના ચાર દાયકાની ઉજવણી · ૧૯૮૭–૨૦૨૭",
-    "announcementLink": "અમારી કહાણી જુઓ ↗",
+    "announcement": "સેવાના ૪૦ વર્ષની ઉજવણી · ૧૯૮૭–૨૦૨૭",
+    "announcementLink": "અમારી સફર",
     "mainNav": "મુખ્ય નેવિગેશન",
     "toggleNav": "મેનુ ખોલો/બંધ કરો",
     "nav": {
@@ -65,30 +64,27 @@
       "work": "અમારું કાર્ય",
       "journey": "અમારી સફર",
       "leadership": "નેતૃત્વ",
-      "impact": "અસર",
-      "contact": "સંપર્ક"
+      "impact": "પ્રભાવ",
+      "nextGeneration": "નવી પેઢી"
     },
-    "memberPortal": "સભ્ય પોર્ટલ",
-    "memberLogin": "સભ્ય લોગિન ↗",
+    "memberLogin": "સભ્ય લૉગિન",
     "donate": "દાન કરો"
   },
   "Footer": {
-    "tagline": "૧૯૮૭થી ગુજરાતની KSI જમાતોને એક કરીને વધુ મજબૂત અને સક્ષમ સમુદાયોનું નિર્માણ.",
     "explore": "જાણો",
     "getInvolved": "જોડાઓ",
     "contact": "સંપર્ક",
     "links": {
-      "about": "કાઉન્સિલ વિશે",
+      "about": "અમારા વિશે",
       "work": "અમારું કાર્ય",
       "journey": "અમારી સફર",
       "leadership": "નેતૃત્વ",
-      "impact": "અમારી અસર",
-      "nextGeneration": "આવનારી પેઢી",
-      "updates": "સમાચાર અને અપડેટ્સ",
+      "impact": "પ્રભાવ",
+      "nextGeneration": "નવી પેઢી",
+      "updates": "અપડેટ્સ",
       "donate": "દાન કરો",
-      "assistance": "સહાય માટે અરજી",
-      "member": "સભ્ય પોર્ટલ",
-      "contact": "અમારો સંપર્ક કરો"
+      "assistance": "સહાય માટે અરજી કરો",
+      "member": "સભ્ય લૉગિન"
     },
     "address": "કાઉન્સિલ હાઉસ, ગોપનાથ રોડ, તળાજા ૩૬૪૧૪૦, ગુજરાત, ભારત",
     "social": {
@@ -96,9 +92,11 @@
       "instagram": "Instagram",
       "youtube": "YouTube"
     },
-    "copyright": "© {year} ધ કાઉન્સિલ ઓફ ગુજરાત. સર્વ હક્ક સુરક્ષિત.",
-    "privacy": "ગોપનીયતા નીતિ",
-    "terms": "ઉપયોગની શરતો"
+    "copyright": "© {year} ધ કાઉન્સિલ ઓફ ગુજરાત કે.એસ.આઈ. જમાઆતો",
+    "privacy": "ગોપનીયતા",
+    "terms": "શરતો",
+    "emblemAlt": "COG પ્રતીક",
+    "name": "ધ કાઉન્સિલ ઓફ ગુજરાત કે.એસ.આઈ. જમાઆતો"
   },
   "Home": {
     "heroAlt": "સાથે મળેલા સમુદાયના સભ્યો",
