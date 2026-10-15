@@ -179,11 +179,17 @@ export function PageBanner({
     description: string;
 }) {
     return (
-        <section className="page-banner">
-            <div className="container">
-                <div className="eyebrow light">{eyebrow}</div>
-                <h1>{title}</h1>
-                <p>{description}</p>
+        <section className="relative overflow-hidden bg-green text-cream">
+            <div className="arch-bg absolute inset-0" aria-hidden="true" style={{ opacity: 0.3 }} />
+            <div
+                aria-hidden="true"
+                className="absolute inset-0"
+                style={{ background: "radial-gradient(ellipse at 80% 20%, rgba(194,154,67,0.2), transparent 55%)" }}
+            />
+            <div className="wrap relative pt-24 pb-20">
+                <div className="intro label eyebrow-line eyebrow-light">{eyebrow}</div>
+                <h1 className="intro d1 display mt-6 max-w-[980px] text-[clamp(44px,5.6vw,80px)] leading-[1]">{title}</h1>
+                <p className="intro d2 mt-6 max-w-[660px] text-[19px] leading-[1.7] font-light text-cream/85">{description}</p>
             </div>
         </section>
     );

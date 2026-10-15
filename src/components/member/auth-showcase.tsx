@@ -15,7 +15,7 @@ export async function AuthShowcase() {
     return (
         <section className="relative isolate flex overflow-hidden bg-primary text-primary-foreground">
             <Image
-                src="/images/community-hero.png"
+                src="/images/community-hero.jpg"
                 alt=""
                 fill
                 priority
