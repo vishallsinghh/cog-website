@@ -12,6 +12,7 @@ const hind = Hind_Vadodara({
     weight: ["300", "400", "500", "600", "700"],
     variable: "--font-hind",
     display: "swap",
+    
 });
 const rasa = Rasa({
     subsets: ["latin", "gujarati"],
