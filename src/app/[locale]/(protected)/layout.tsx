@@ -8,7 +8,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { getTranslations } from "next-intl/server";
 import { primaryRole } from "@/lib/access";
 import { requireAuth } from "@/lib/auth.utils";
-import { navForRole } from "@/lib/navigation";
+import { navForUser } from "@/lib/navigation";
+import { isApproved } from "@/lib/permissions";
 import { TRPCReactProvider } from "@/trpc/client";
 
 export const instant = false;
@@ -16,6 +17,7 @@ export const instant = false;
 async function ProtectedShell({ children }: { children: React.ReactNode }) {
     const { user } = await requireAuth();
     const tr = await getTranslations("Roles");
+    const approved = isApproved(user.status);
 
     return (
         <TRPCReactProvider>
@@ -24,11 +26,12 @@ async function ProtectedShell({ children }: { children: React.ReactNode }) {
                     style={{ "--sidebar-width": "15.5rem", "--sidebar-width-icon": "5.25rem" } as React.CSSProperties}
                 >
                     <AppSidebar
-                        groups={navForRole(user.role)}
+                        groups={navForUser(user.role, approved)}
                         user={{
                             name: user.name,
                             phoneNumber: user.phoneNumber ?? "",
                             roleLabel: tr(primaryRole(user.role)),
+                            approved,
                         }}
                     />
                     <SidebarInset>

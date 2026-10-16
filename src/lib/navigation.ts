@@ -68,6 +68,12 @@ export function navForRole(role: string | null | undefined): NavGroup[] {
     })).filter((group) => group.items.length > 0);
 }
 
+export function navForUser(role: string | null | undefined, approved: boolean): NavGroup[] {
+    if (!approved) return [{ key: "overview", items: [NAV_GROUPS[0].items[0]] }];
+
+    return navForRole(role);
+}
+
 export function findNavItem(href: string) {
     return NAV_GROUPS.flatMap((group) => group.items).find((item) => item.href === href);
 }

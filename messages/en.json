@@ -35,6 +35,8 @@
   },
   "Statuses": {
     "pending": "Pending",
+    "under_review": "Waiting for approval",
+    "documents_required": "Documents verification required",
     "approved": "Approved",
     "rejected": "Rejected"
   },
@@ -980,16 +982,14 @@
     "logoAlt": "The Council of Gujarat",
     "account": "Account",
     "progress": "Sign in progress",
-    "stepOf": "Step {step} of 3 · {name}",
+    "stepOf": "Step {step} of 2 · {name}",
     "stepNames": {
       "details": "Your details",
-      "otp": "Verify",
-      "pending": "Done"
+      "otp": "Verify"
     },
     "stepNext": {
       "details": "Verify · Done",
-      "otp": "Done",
-      "pending": ""
+      "otp": "Done"
     },
     "signin": "Sign in",
     "signup": "Create account",
@@ -999,10 +999,6 @@
     "signupTitle": "Join the community",
     "signupDescription": "Your Jamaat will review and approve your request.",
     "signupSubmit": "Create account",
-    "requestReceived": "Request received",
-    "awaitingApproval": "Awaiting approval",
-    "pendingText": "Your account is awaiting approval from COG. You will be able to log in as soon as it is approved.",
-    "backHome": "Back to home",
     "changeNumber": "Change number",
     "checkPhone": "Check your phone",
     "codeSent": "Enter the 6-digit code we sent to {phone}.",
@@ -1117,6 +1113,14 @@
       "pending": {
         "title": "Awaiting approval",
         "text": "Thank you for joining. Your Jamaat is reviewing your request. Once approved, you’ll receive your Member ID here."
+      },
+      "under_review": {
+        "title": "Waiting for approval",
+        "text": "Your details have been checked and your request is with COG for final approval. You’ll receive your Member ID here once it is approved."
+      },
+      "documents_required": {
+        "title": "Documents verification required",
+        "text": "COG needs to verify some documents before approving your request. Please call the COG office to find out what is needed."
       },
       "approved": {
         "title": "You’re a member of the community",
@@ -1350,7 +1354,53 @@
     "mobile": "Mobile",
     "memberId": "Member ID",
     "joined": "Joined",
-    "empty": "No members match these filters."
+    "empty": "No members match these filters.",
+    "actions": "Actions",
+    "rowMenu": "Actions for {name}",
+    "viewProfile": "View profile",
+    "deleteRequest": "Delete request",
+    "deleteTitle": "Delete {name}’s request?",
+    "deleteText": "This permanently removes the account and everything entered at sign-up. They can sign up again later.",
+    "delete": "Delete",
+    "deleted": "{name}’s request was deleted",
+    "sheet": {
+      "title": "Member",
+      "description": "Everything entered at sign-up and in their profile.",
+      "loadError": "Could not load this member",
+      "changeStatus": "Application status",
+      "statusHelp": "The member sees this status on their dashboard.",
+      "save": "Update status",
+      "statusSaved": "Status changed to {status}",
+      "staffNote": "This is a staff account. Manage it from the Team page.",
+      "account": "Account",
+      "identity": "Identity",
+      "contact": "Contact",
+      "address": "Address",
+      "status": "Status",
+      "memberId": "Member ID",
+      "role": "Role",
+      "joined": "Joined",
+      "consent": "Consent given",
+      "language": "Preferred language",
+      "aadhaar": "Aadhaar",
+      "aadhaarMasked": "XXXX XXXX {last4}",
+      "aadhaarVerified": "DigiLocker verification",
+      "verified": "Verified",
+      "notVerified": "Not verified yet",
+      "google": "Google account",
+      "linked": "Linked",
+      "notLinked": "Not linked",
+      "mobile": "Mobile",
+      "email": "Email address",
+      "address1": "Address line 1",
+      "address2": "Address line 2",
+      "city": "City",
+      "state": "State",
+      "pincode": "Pincode",
+      "jamaat": "Jamaat",
+      "notProvided": "Not provided",
+      "hidden": "Hidden for your role"
+    }
   },
   "Audit": {
     "action": "Action",
@@ -1375,6 +1425,8 @@
     "personNotFound": "That person was not found.",
     "notOnTeam": "That person is not on the team.",
     "superAdminNumber": "That number belongs to a Super Admin.",
-    "inviteGone": "That invite no longer exists."
+    "inviteGone": "That invite no longer exists.",
+    "staffNotMember": "Staff accounts are managed from the Team page.",
+    "approvedNotDeletable": "An approved member cannot be deleted."
   }
 }

@@ -56,6 +56,14 @@ export const STAFF_ROLES = [
     "viewer",
 ] as const satisfies readonly AppRole[];
 
-export const MEMBER_STATUSES = ["pending", "approved", "rejected"] as const;
+export const MEMBER_STATUSES = ["pending", "under_review", "documents_required", "approved", "rejected"] as const;
 
 export type MemberStatus = (typeof MEMBER_STATUSES)[number];
+
+export function isMemberStatus(value: string | null | undefined): value is MemberStatus {
+    return (MEMBER_STATUSES as readonly (string | null | undefined)[]).includes(value);
+}
+
+export function isApproved(status: string | null | undefined) {
+    return status === "approved";
+}

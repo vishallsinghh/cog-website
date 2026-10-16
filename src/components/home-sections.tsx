@@ -78,7 +78,8 @@ export async function HomeSections() {
                                         alt={t("heroAlt")}
                                         fill
                                         priority
-                                        sizes="(max-width: 900px) 100vw, 470px"
+                                        sizes="1700px"
+                                        quality={92}
                                         className="hero-scroll object-cover"
                                         style={{ objectPosition: "54% 50%" }}
                                     />

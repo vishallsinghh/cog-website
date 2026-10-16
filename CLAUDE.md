@@ -50,7 +50,7 @@ src/lib/            server and shared modules
   phone.ts          +91 validation and placeholder email helper
   rate-limit.ts     Upstash storage for Better Auth and the OTP guards
   redis.ts          Upstash client
-  sms.ts            OTP delivery (console in dev, MSG91 in production)
+  sms.ts            OTP delivery (MSG91 when both keys are set, otherwise the server log)
 src/components/     site shell, shadcn components in ui/, feature components (member/, team/, members/, audit/, profile/)
 src/trpc/           tRPC init, routers, server and client wiring
 src/generated/      Prisma client output, never edit
@@ -67,7 +67,7 @@ migrations/         D1 SQL migrations applied with wrangler
 - Forms use react-hook-form with `zodResolver` and the shadcn `FieldGroup` / `Field` / `Controller` pattern (`data-invalid` on `Field`, `aria-invalid` on the control). Read `.claude/skills/shadcn` before adding or changing UI.
 - Phone numbers are `+91` followed by a 10-digit mobile starting 6 to 9. Validate with `INDIAN_MOBILE` from `src/lib/phone.ts`.
 - There are no passwords. OTP is the only login. Google can only be linked from inside a logged-in account and must never create a user.
-- Accounts start as `pending`. Only `approved` users get a session. Approval is done by an admin and issues the COG Member ID.
+- Accounts start as `pending`. Statuses are `pending`, `under_review`, `documents_required`, `approved` and `rejected`. Every account except a rejected one gets a session, but until it is `approved` it only sees the review screen on `/dashboard`: pages go through `requireApproved` (or `requirePermission` / `requireNavAccess`) and tRPC through `protectedProcedure`, which all require `approved`. Approval is done by an admin from the members sheet and issues the COG Member ID.
 - Roles: `member`, `super_admin`, `admin`, `editor`, `viewer`. Check permissions through `src/lib/permissions.ts`, never by comparing role strings in feature code.
 - Every admin action and every denied access attempt writes an `AuditLog` row.
 - Uploaded documents are private. Never expose a public URL for them.
@@ -101,13 +101,14 @@ Seed the Super Admin with `SUPER_ADMIN_PHONE` and `SUPER_ADMIN_NAME` set in `.en
 ## Environment variables
 
 Required: `AADHAAR_ENCRYPTION_KEY` (32 random bytes, base64; generate with `openssl rand -base64 32`), `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_DATABASE_ID`, `CLOUDFLARE_D1_TOKEN`.
-Production OTP delivery: `MSG91_AUTH_KEY`, `MSG91_OTP_TEMPLATE_ID`.
+OTP delivery: `MSG91_AUTH_KEY`, `MSG91_OTP_TEMPLATE_ID`. Until both are set, OTPs are written to the server log in every environment, production included.
 Seed only: `SUPER_ADMIN_PHONE`, `SUPER_ADMIN_NAME`.
 
 ## Known gaps
 
 - tRPC has no per-user / per-IP rate-limit middleware yet. Denied permission checks are audited through `staffProcedure` in `src/trpc/init.ts`; use it (not `protectedProcedure`) for every admin procedure.
-- No approve or reject flow exists yet, so nothing calls `purgeFullAadhaar()`; encrypted Aadhaar numbers stay until Part 9 adds it. Add a retention job as a safety net.
+- Approving or rejecting from the members sheet calls `purgeFullAadhaar()`, but accounts that are never decided keep their encrypted Aadhaar. Add a retention job as a safety net.
+- OTPs go to the server log while MSG91 is not configured; anyone with Vercel log access can sign in as any number until it is.
 - Consent is stored on `user.consentAcceptedAt` only; the `Consent` table is not written yet.
 - Leadership names and years, the full journey timeline, social links, privacy and terms text are placeholders until COG supplies them.
 - Turnstile, the daily OTP cap with admin alert, and Member ID issuing on approval are not built yet.

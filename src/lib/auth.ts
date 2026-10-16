@@ -269,18 +269,11 @@ export const auth = betterAuth({
                     const record = await ctx?.context.internalAdapter.findUserById(session.userId);
                     const status = (record as { status?: string } | null | undefined)?.status;
 
-                    if (status === "approved") return;
-
-                    if (status === "rejected") {
-                        throw APIError.from("FORBIDDEN", {
-                            code: "ACCOUNT_REJECTED",
-                            message: "Your membership request was not approved. Please contact COG.",
-                        });
-                    }
+                    if (status !== "rejected") return;
 
                     throw APIError.from("FORBIDDEN", {
-                        code: "ACCOUNT_PENDING_APPROVAL",
-                        message: "Your account is awaiting approval. You will be able to log in once COG approves it.",
+                        code: "ACCOUNT_REJECTED",
+                        message: "Your membership request was not approved. Please contact COG.",
                     });
                 },
             },

@@ -26,6 +26,7 @@ export type NavUserData = {
     name: string;
     phoneNumber: string;
     roleLabel: string;
+    approved: boolean;
 };
 
 function initials(name: string) {
@@ -85,12 +86,14 @@ export function NavUser({ user }: { user: NavUserData }) {
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuGroup>
-                            <DropdownMenuItem asChild>
-                                <Link href="/profile">
-                                    <UserRoundIcon />
-                                    {t("profileMenu")}
-                                </Link>
-                            </DropdownMenuItem>
+                            {user.approved && (
+                                <DropdownMenuItem asChild>
+                                    <Link href="/profile">
+                                        <UserRoundIcon />
+                                        {t("profileMenu")}
+                                    </Link>
+                                </DropdownMenuItem>
+                            )}
                             <DropdownMenuItem asChild>
                                 <Link href="/">
                                     <GlobeIcon />

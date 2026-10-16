@@ -2,9 +2,29 @@
 
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { EllipsisVerticalIcon, Trash2Icon, UserRoundIcon } from "lucide-react";
+import { toast } from "sonner";
 import { PagingBar } from "@/components/dashboard/paging-bar";
-import { Badge } from "@/components/ui/badge";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -14,15 +34,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { formatDate, formatPhone } from "@/lib/format";
 import { MEMBER_STATUSES, STAFF_ROLES } from "@/lib/permissions";
 import { useTRPC } from "@/trpc/client";
+import { MemberSheet } from "./member-sheet";
+import { StatusBadge } from "./status-badge";
 
-const STATUS_VARIANT = {
-    pending: "secondary",
-    approved: "default",
-    rejected: "destructive",
-} as const;
-
-function isStatus(value: string): value is (typeof MEMBER_STATUSES)[number] {
-    return (MEMBER_STATUSES as readonly string[]).includes(value);
+function errorMessage(error: unknown, fallback: string) {
+    return error instanceof Error && error.message ? error.message : fallback;
 }
 
 const ROLE_FILTERS = ["member", ...STAFF_ROLES] as const;
@@ -38,6 +54,11 @@ export function MembersTable() {
     const ts = useTranslations("Statuses");
     const locale = useLocale();
     const trpc = useTRPC();
+    const queryClient = useQueryClient();
+
+    const [viewing, setViewing] = useState<string | null>(null);
+    const [deleting, setDeleting] = useState<{ id: string; name: string } | null>(null);
+    const remove = useMutation(trpc.members.delete.mutationOptions());
 
     const [searchInput, setSearchInput] = useState("");
     const [search, setSearch] = useState("");
@@ -74,6 +95,20 @@ export function MembersTable() {
 
     const data = query.data;
     const resetPage = () => setPage(1);
+
+    async function confirmDelete() {
+        if (!deleting) return;
+
+        try {
+            await remove.mutateAsync({ userId: deleting.id });
+            toast.success(t("deleted", { name: deleting.name }));
+        } catch (error) {
+            toast.error(errorMessage(error, tc("genericError")));
+        } finally {
+            setDeleting(null);
+            await queryClient.invalidateQueries({ queryKey: trpc.members.list.queryKey() });
+        }
+    }
 
     return (
         <div className="flex flex-col gap-6">
@@ -181,12 +216,15 @@ export function MembersTable() {
                                     <TableHead>{t("status")}</TableHead>
                                     <TableHead>{t("role")}</TableHead>
                                     <TableHead>{t("joined")}</TableHead>
+                                    <TableHead className="w-12">
+                                        <span className="sr-only">{t("actions")}</span>
+                                    </TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {data.rows.length === 0 ? (
                                     <TableRow>
-                                        <TableCell colSpan={6} className="py-10 text-center text-muted-foreground">
+                                        <TableCell colSpan={7} className="py-10 text-center text-muted-foreground">
                                             {t("empty")}
                                         </TableCell>
                                     </TableRow>
@@ -197,16 +235,45 @@ export function MembersTable() {
                                             <TableCell className="whitespace-nowrap">{formatPhone(row.phone)}</TableCell>
                                             <TableCell>{row.memberId ?? tc("dash")}</TableCell>
                                             <TableCell>
-                                                {isStatus(row.status) ? (
-                                                    <Badge variant={STATUS_VARIANT[row.status]}>
-                                                        {ts(row.status)}
-                                                    </Badge>
-                                                ) : (
-                                                    <Badge variant="outline">{row.status}</Badge>
-                                                )}
+                                                <StatusBadge status={row.status} />
                                             </TableCell>
                                             <TableCell>{isRole(row.role) ? tr(row.role) : row.role}</TableCell>
                                             <TableCell className="whitespace-nowrap">{formatDate(row.joinedAt, locale)}</TableCell>
+                                            <TableCell className="text-right">
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger asChild>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon-sm"
+                                                            aria-label={t("rowMenu", { name: row.name })}
+                                                        >
+                                                            <EllipsisVerticalIcon />
+                                                        </Button>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="end" className="min-w-44">
+                                                        <DropdownMenuGroup>
+                                                            <DropdownMenuItem onSelect={() => setViewing(row.id)}>
+                                                                <UserRoundIcon />
+                                                                {t("viewProfile")}
+                                                            </DropdownMenuItem>
+                                                        </DropdownMenuGroup>
+                                                        {row.deletable && (
+                                                            <>
+                                                                <DropdownMenuSeparator />
+                                                                <DropdownMenuGroup>
+                                                                    <DropdownMenuItem
+                                                                        variant="destructive"
+                                                                        onSelect={() => setDeleting({ id: row.id, name: row.name })}
+                                                                    >
+                                                                        <Trash2Icon />
+                                                                        {t("deleteRequest")}
+                                                                    </DropdownMenuItem>
+                                                                </DropdownMenuGroup>
+                                                            </>
+                                                        )}
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
+                                            </TableCell>
                                         </TableRow>
                                     ))
                                 )}
@@ -226,6 +293,23 @@ export function MembersTable() {
                     />
                 </>
             )}
+
+            <MemberSheet userId={viewing} onOpenChange={(open) => !open && setViewing(null)} />
+
+            <AlertDialog open={Boolean(deleting)} onOpenChange={(open) => !open && setDeleting(null)}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>{t("deleteTitle", { name: deleting?.name ?? "" })}</AlertDialogTitle>
+                        <AlertDialogDescription>{t("deleteText")}</AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel disabled={remove.isPending}>{tc("cancel")}</AlertDialogCancel>
+                        <AlertDialogAction variant="destructive" disabled={remove.isPending} onClick={() => void confirmDelete()}>
+                            {t("delete")}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 }
