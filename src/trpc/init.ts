@@ -8,6 +8,7 @@ import { routing, type AppLocale } from "@/i18n/routing";
 import { getSession } from "@/lib/auth.utils";
 import { hasPermission as roleHasPermission, type RequiredPermissions } from "@/lib/access";
 import { getClientIp, writeAuditLog } from "@/lib/audit";
+import { isApproved } from "@/lib/permissions";
 
 export const LOCALE_HEADER = "x-cog-locale";
 
@@ -56,6 +57,24 @@ const hasSession = t.middleware(async ({ ctx, next }) => {
     });
 });
 
+const isApprovedAccount = t.middleware(async ({ ctx, next, path, type }) => {
+    if (!isApproved(ctx.auth?.user?.status)) {
+        await writeAuditLog({
+            actorId: ctx.auth?.user?.id,
+            action: "access.denied",
+            entityType: "trpc",
+            entityId: path,
+            metadata: { procedure: path, type, status: ctx.auth?.user?.status ?? null },
+            ipAddress: await getClientIp(),
+        });
+
+        const e = await errorsFor(ctx.locale);
+        throw new TRPCError({ code: "FORBIDDEN", message: e("forbidden") });
+    }
+
+    return next();
+});
+
 const hasPermission = (required: RequiredPermissions) =>
     t.middleware(async ({ ctx, next, path, type }) => {
         if (!roleHasPermission(ctx.auth?.user?.role, required)) {
@@ -83,7 +102,8 @@ const hasPermission = (required: RequiredPermissions) =>
 export const createTRPCRouter = t.router;
 export const createCallerFactory = t.createCallerFactory;
 export const baseProcedure = t.procedure;
-export const protectedProcedure = t.procedure.use(hasSession);
+export const sessionProcedure = t.procedure.use(hasSession);
+export const protectedProcedure = sessionProcedure.use(isApprovedAccount);
 export const permissionProcedure = (required: RequiredPermissions) =>
     protectedProcedure.use(hasPermission(required));
 export const staffProcedure = permissionProcedure;

@@ -2,7 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { LANGUAGES, profileFormSchema, type ProfileFormValues } from "@/lib/profile.schemas";
-import { createTRPCRouter, errorsFor, protectedProcedure } from "../init";
+import { createTRPCRouter, errorsFor, protectedProcedure, sessionProcedure } from "../init";
 
 const nullIfEmpty = (value: string) => (value === "" ? null : value);
 
@@ -69,7 +69,7 @@ export const profileRouter = createTRPCRouter({
     }),
 
     /** Saves the language chosen from the dashboard switcher. */
-    setLanguage: protectedProcedure
+    setLanguage: sessionProcedure
         .input(z.object({ language: z.enum(LANGUAGES) }))
         .mutation(async ({ ctx, input }) => {
             await db.user.update({

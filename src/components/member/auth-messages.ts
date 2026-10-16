@@ -52,9 +52,8 @@ export function linkErrorMessage(code: string, t: AuthErrorsT) {
 }
 
 export function oauthErrorMessage(code: string, t: AuthErrorsT) {
-    if (code === "ACCOUNT_PENDING_APPROVAL") return { pending: true, message: "" };
-    if (code === "signup_disabled") return { pending: false, message: t("signup_disabled") };
-    if (code === "ACCOUNT_REJECTED") return { pending: false, message: t("ACCOUNT_REJECTED") };
+    if (code === "signup_disabled") return t("signup_disabled");
+    if (code === "ACCOUNT_REJECTED") return t("ACCOUNT_REJECTED");
 
-    return { pending: false, message: t("googleIncomplete") };
+    return t("googleIncomplete");
 }

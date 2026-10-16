@@ -7,10 +7,12 @@ import { hasPermission, type RequiredPermissions } from "./access";
 import { getClientIp, writeAuditLog } from "./audit";
 import { auth } from "./auth";
 import { findNavItem } from "./navigation";
+import { isApproved } from "./permissions";
 
 export const getSession = cache(async () => {
     const session = await auth.api.getSession({
-        headers: await headers()
+        headers: await headers(),
+        query: { disableCookieCache: true },
     });
 
     return session;
@@ -22,6 +24,17 @@ export const requireAuth = cache(async () => {
 
     if (!session?.user) {
         return redirect({ href: "/member", locale: await getLocale() });
+    }
+
+    return session;
+});
+
+
+export const requireApproved = cache(async () => {
+    const session = await requireAuth();
+
+    if (!isApproved(session.user.status)) {
+        return redirect({ href: "/dashboard", locale: await getLocale() });
     }
 
     return session;
@@ -40,7 +53,7 @@ export const requireUnAuth = cache(async () => {
 
 
 export async function requirePermission(required: RequiredPermissions, page?: string) {
-    const session = await requireAuth();
+    const session = await requireApproved();
 
     if (!hasPermission(session.user.role, required)) {
         // Every denied access attempt is recorded, pages as well as tRPC calls.
@@ -68,7 +81,7 @@ export async function requireNavAccess(href: string) {
     if (item.permission) {
         await requirePermission(item.permission, href);
     } else {
-        await requireAuth();
+        await requireApproved();
     }
 
     return item;

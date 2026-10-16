@@ -25,25 +25,10 @@ const redisSchema = z.object({
     UPSTASH_REDIS_REST_TOKEN: required,
 });
 
-const smsSchema = z
-    .object({
-        NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
-        MSG91_AUTH_KEY: z.string().optional(),
-        MSG91_OTP_TEMPLATE_ID: z.string().optional(),
-    })
-    .superRefine((value, ctx) => {
-        if (value.NODE_ENV !== "production") return;
-
-        for (const key of ["MSG91_AUTH_KEY", "MSG91_OTP_TEMPLATE_ID"] as const) {
-            if (!value[key]) {
-                ctx.addIssue({
-                    code: "custom",
-                    path: [key],
-                    message: `${key} is required in production`,
-                });
-            }
-        }
-    });
+const smsSchema = z.object({
+    MSG91_AUTH_KEY: z.string().optional(),
+    MSG91_OTP_TEMPLATE_ID: z.string().optional(),
+});
 
 const aadhaarSchema = z.object({
     AADHAAR_ENCRYPTION_KEY: z
