@@ -92,13 +92,13 @@ export default async function DashboardPage() {
                                 <span className="display mt-4 block text-[24px] text-green">{t("memberCards.profile.title")}</span>
                                 <span className="mt-1 block text-[14px] leading-[1.5] text-muted-ink">{t("memberCards.profile.text")}</span>
                             </Link>
-                            <div className="rounded-2xl border border-green/10 bg-field p-6">
+                            <Link href="/my-applications" className={`${TILE} p-6`}>
                                 <span className={ICON_BOX}>
-                                    <NavIcon name="applications" />
+                                    <NavIcon name="myApplications" />
                                 </span>
                                 <span className="display mt-4 block text-[24px] text-green">{t("memberCards.assistance.title")}</span>
                                 <span className="mt-1 block text-[14px] leading-[1.5] text-muted-ink">{t("memberCards.assistance.text")}</span>
-                            </div>
+                            </Link>
                         </>
                     )}
                     <div className="rounded-2xl bg-cream-deep p-6">

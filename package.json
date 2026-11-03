@@ -13,6 +13,7 @@
     "typecheck": "tsc --noEmit",
     "db:migration:diff": "tsx scripts/db.ts apply-schema-check && prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --script",
     "db:seed": "tsx --env-file=.env prisma/seed.ts",
+    "db:seed:forms": "tsx --env-file=.env prisma/seed-forms.ts",
     "db:migrate": "tsx --env-file=.env scripts/db.ts apply"
   },
   "dependencies": {
@@ -29,12 +30,14 @@
     "@trpc/tanstack-react-query": "^11.19.0",
     "@upstash/ratelimit": "^2.2.0",
     "@upstash/redis": "^1.39.0",
+    "aws4fetch": "^1.0.20",
     "better-auth": "^1.7.7",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "date-fns": "^4.4.0",
     "embla-carousel-react": "^8.6.0",
+    "exceljs": "^4.4.0",
     "input-otp": "^1.5.0",
     "lucide-react": "^1.55.0",
     "next": "16.4.0",

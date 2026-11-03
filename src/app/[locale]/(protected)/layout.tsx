@@ -34,7 +34,7 @@ async function ProtectedShell({ children }: { children: React.ReactNode }) {
                             approved,
                         }}
                     />
-                    <SidebarInset>
+                    <SidebarInset className="min-w-0">
                         <DashboardHeader />
                         <div className="flex flex-1 flex-col px-[clamp(20px,3vw,48px)] pt-6 pb-12">{children}</div>
                     </SidebarInset>

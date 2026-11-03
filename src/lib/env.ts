@@ -28,12 +28,20 @@ const redisSchema = z.object({
 const smsSchema = z.object({
     MSG91_AUTH_KEY: z.string().optional(),
     MSG91_OTP_TEMPLATE_ID: z.string().optional(),
+    MSG91_APPLICATION_TEMPLATE_ID: z.string().optional(),
 });
 
 const aadhaarSchema = z.object({
     AADHAAR_ENCRYPTION_KEY: z
         .string()
         .refine((value) => Buffer.from(value, "base64").length === 32, "Must be 32 random bytes, base64 encoded"),
+});
+
+const storageSchema = z.object({
+    R2_ACCOUNT_ID: required,
+    R2_ACCESS_KEY_ID: required,
+    R2_SECRET_ACCESS_KEY: required,
+    R2_BUCKET: required,
 });
 
 const seedSchema = z.object({
@@ -46,4 +54,5 @@ export const authEnv = lazy(() => authSchema.parse(process.env));
 export const redisEnv = lazy(() => redisSchema.parse(process.env));
 export const smsEnv = lazy(() => smsSchema.parse(process.env));
 export const aadhaarEnv = lazy(() => aadhaarSchema.parse(process.env));
+export const storageEnv = lazy(() => storageSchema.parse(process.env));
 export const seedEnv = lazy(() => seedSchema.parse(process.env));

@@ -2,7 +2,7 @@ import { superjson } from "./transformer";
 import { cache } from "react";
 import { headers } from "next/headers";
 import { initTRPC, TRPCError } from "@trpc/server";
-import { hasLocale } from "next-intl";
+import { hasLocale, type Messages } from "next-intl";
 import { getLocale, getTranslations } from "next-intl/server";
 import { routing, type AppLocale } from "@/i18n/routing";
 import { getSession } from "@/lib/auth.utils";
@@ -38,6 +38,11 @@ export const t = initTRPC.context<Context>().create({
 /** Error messages for the caller's language (messages.Errors). */
 export function errorsFor(locale: AppLocale) {
     return getTranslations({ locale, namespace: "Errors" });
+}
+
+export async function fail(locale: AppLocale, code: TRPCError["code"], key: keyof Messages["Errors"]): Promise<never> {
+    const e = await errorsFor(locale);
+    throw new TRPCError({ code, message: e(key) });
 }
 
 const hasSession = t.middleware(async ({ ctx, next }) => {
