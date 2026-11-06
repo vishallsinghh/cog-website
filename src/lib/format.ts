@@ -32,3 +32,31 @@ export function formatPhone(value: string) {
 
     return match ? `+91 ${match[1]} ${match[2]}` : value;
 }
+
+const rupeeFormatters = new Map<string, Intl.NumberFormat>();
+
+/** Money is held in paise; this renders it as rupees. */
+export function formatRupees(paise: number, locale = "en") {
+    let value = rupeeFormatters.get(locale);
+
+    if (!value) {
+        value = new Intl.NumberFormat(INTL_LOCALE[locale] ?? "en-IN", {
+            style: "currency",
+            currency: "INR",
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2,
+        });
+        rupeeFormatters.set(locale, value);
+    }
+
+    return value.format(paise / 100);
+}
+
+export function formatFileSize(bytes: number) {
+    if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+/** "2026-03-14" -> "14 Mar 2026", read as a calendar date with no time zone shift. */
+export const formatIsoDate = (value: string, locale = "en") => formatDate(new Date(`${value}T12:00:00Z`), locale);

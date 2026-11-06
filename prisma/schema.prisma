@@ -31,6 +31,11 @@ model User {
   consents            Consent[]
   auditLogs           AuditLog[]
   invitesSent         StaffInvite[]
+  applications        Application[]
+  applicationEvents   ApplicationEvent[]
+  applicationNotes    ApplicationNote[]
+  formAccess          FormAccess[]
+  formVersions        FormVersion[]
 
   @@unique([email])
   @@unique([phoneNumber])
@@ -162,4 +167,137 @@ model OtpDailyUsage {
   updatedAt DateTime  @updatedAt
 
   @@map("otp_daily_usage")
+}
+
+model Form {
+  id           String        @id @default(cuid())
+  slug         String
+  code         String
+  titleEn      String
+  titleGu      String
+  summaryEn    String
+  summaryGu    String
+  isOpen       Boolean       @default(false)
+  position     Int           @default(0)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  versions     FormVersion[]
+  applications Application[]
+  access       FormAccess[]
+
+  @@unique([slug])
+  @@unique([code])
+  @@map("form")
+}
+
+model FormVersion {
+  id           String        @id @default(cuid())
+  formId       String
+  form         Form          @relation(fields: [formId], references: [id], onDelete: Cascade)
+  version      Int
+  definition   String
+  publishedAt  DateTime?
+  createdById  String?
+  createdBy    User?         @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  applications Application[]
+
+  @@unique([formId, version])
+  @@map("form_version")
+}
+
+model FormAccess {
+  id        String   @id @default(cuid())
+  formId    String
+  form      Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  level     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([formId, userId])
+  @@index([userId])
+  @@map("form_access")
+}
+
+model Application {
+  id            String                @id @default(cuid())
+  number        String?
+  formId        String
+  form          Form                  @relation(fields: [formId], references: [id], onDelete: Restrict)
+  formVersionId String
+  formVersion   FormVersion           @relation(fields: [formVersionId], references: [id], onDelete: Restrict)
+  userId        String
+  user          User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status        String                @default("draft")
+  answers       String                @default("{}")
+  jamaat        String?
+  city          String?
+  submittedAt   DateTime?
+  decidedAt     DateTime?
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+  documents     ApplicationDocument[]
+  events        ApplicationEvent[]
+  notes         ApplicationNote[]
+
+  @@unique([number])
+  @@index([formId, status])
+  @@index([userId])
+  @@index([submittedAt])
+  @@map("application")
+}
+
+model ApplicationDocument {
+  id            String      @id @default(cuid())
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  fieldId       String
+  storageKey    String
+  fileName      String
+  contentType   String
+  size          Int
+  uploadedAt    DateTime?
+  createdAt     DateTime    @default(now())
+
+  @@unique([storageKey])
+  @@index([applicationId])
+  @@map("application_document")
+}
+
+model ApplicationEvent {
+  id            String      @id @default(cuid())
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  actorId       String?
+  actor         User?       @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  fromStatus    String?
+  toStatus      String
+  message       String?
+  createdAt     DateTime    @default(now())
+
+  @@index([applicationId])
+  @@map("application_event")
+}
+
+model ApplicationNote {
+  id            String      @id @default(cuid())
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  authorId      String?
+  author        User?       @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  body          String
+  createdAt     DateTime    @default(now())
+
+  @@index([applicationId])
+  @@map("application_note")
+}
+
+model ApplicationCounter {
+  key   String @id
+  value Int    @default(0)
+
+  @@map("application_counter")
 }

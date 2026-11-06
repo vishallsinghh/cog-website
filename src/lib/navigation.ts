@@ -4,11 +4,13 @@ import { hasPermission, type RequiredPermissions } from "./access";
 export type NavKey =
     | "dashboard"
     | "profile"
+    | "myApplications"
     | "members"
     | "applications"
     | "donations"
     | "reports"
     | "content"
+    | "forms"
     | "audit"
     | "team";
 
@@ -32,13 +34,14 @@ export const NAV_GROUPS: NavGroup[] = [
         items: [
             { key: "dashboard", href: "/dashboard" },
             { key: "profile", href: "/profile" },
+            { key: "myApplications", href: "/my-applications" },
         ],
     },
     {
         key: "community",
         items: [
             { key: "members", href: "/members", permission: { member: ["read"] } },
-            { key: "applications", href: "/applications", permission: { application: ["read"] }, soon: true },
+            { key: "applications", href: "/applications", permission: { application: ["read"] } },
         ],
     },
     {
@@ -55,6 +58,7 @@ export const NAV_GROUPS: NavGroup[] = [
     {
         key: "administration",
         items: [
+            { key: "forms", href: "/forms", permission: { form: ["read"] } },
             { key: "audit", href: "/audit-log", permission: { auditLog: ["read"] } },
             { key: "team", href: "/team", permission: { user: ["set-role"] } },
         ],

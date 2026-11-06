@@ -1,8 +1,10 @@
 import {
     ChartColumnIcon,
     ClipboardListIcon,
+    FileTextIcon,
     HandCoinsIcon,
     LayoutDashboardIcon,
+    ListChecksIcon,
     NewspaperIcon,
     ScrollTextIcon,
     ShieldCheckIcon,
@@ -15,11 +17,13 @@ import type { NavKey } from "@/lib/navigation";
 const ICONS: Record<NavKey, LucideIcon> = {
     dashboard: LayoutDashboardIcon,
     profile: UserRoundIcon,
+    myApplications: FileTextIcon,
     members: UsersIcon,
     applications: ClipboardListIcon,
     donations: HandCoinsIcon,
     reports: ChartColumnIcon,
     content: NewspaperIcon,
+    forms: ListChecksIcon,
     audit: ScrollTextIcon,
     team: ShieldCheckIcon,
 };

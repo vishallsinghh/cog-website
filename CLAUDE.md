@@ -19,13 +19,14 @@ Skip the brief only for trivial fixes (typos, a one-line bug) the user has alrea
 
 - Next.js 16 (App Router) + React 19 + TypeScript. Read `node_modules/next/dist/docs/` before writing Next.js code; APIs differ from older versions.
 - Tailwind CSS 4
-- Prisma 7 with the SQLite provider, talking to Cloudflare D1 over its HTTP API through `@prisma/adapter-d1` (no Workers binding, because the site runs on Vercel)
+- Prisma 7 with the SQLite provider, talking to Turso (libSQL) through `@prisma/adapter-libsql`
 - Better Auth: phone-number OTP plugin, admin plugin for roles, Google linking only
 - Upstash Redis: Better Auth rate limits and the OTP guards
 - tRPC 11 + TanStack Query + superjson
 - Zod for all validation, including env
 - next-intl for `/en/...` and `/gu/...` routes
 - Razorpay for payments, MSG91 for OTP SMS, Cloudflare Turnstile for bot checks (planned)
+- Cloudflare R2 for private uploaded documents, signed with `aws4fetch`
 - Hosting: Vercel, DNS through Cloudflare
 
 ## Folder structure
@@ -40,8 +41,8 @@ src/lib/            server and shared modules
   auth.ts           Better Auth server config
   auth.client.ts    Better Auth browser client
   auth.utils.ts     getSession / requireAuth helpers for server components
-  db.ts             Prisma client on D1
-  env.ts            Zod-validated env in lazy groups (dbEnv, authEnv, redisEnv, smsEnv, seedEnv); never read process.env elsewhere
+  db.ts             Prisma client on Turso
+  env.ts            Zod-validated env in lazy groups (dbEnv, authEnv, redisEnv, smsEnv, aadhaarEnv, storageEnv, seedEnv); never read process.env elsewhere
   auth.schemas.ts   Zod schemas shared by the auth config and the sign-in form
   aadhaar.ts        Aadhaar format, checksum and last-4 helpers (client-safe)
   aadhaar.server.ts store, read and purge the encrypted Aadhaar
@@ -50,13 +51,16 @@ src/lib/            server and shared modules
   phone.ts          +91 validation and placeholder email helper
   rate-limit.ts     Upstash storage for Better Auth and the OTP guards
   redis.ts          Upstash client
-  sms.ts            OTP delivery (MSG91 when both keys are set, otherwise the server log)
-src/components/     site shell, shadcn components in ui/, feature components (member/, team/, members/, audit/, profile/)
+  sms.ts            OTP and application-status SMS (MSG91 when the keys are set, otherwise the server log)
+  storage.ts        R2 signed upload and download links, HEAD and DELETE for documents
+  forms/            assistance forms: the JSON definition format, answer validation, application statuses, document limits, staff review access (review.server.ts)
+src/components/     site shell, shadcn components in ui/, feature components (member/, team/, members/, audit/, profile/, applications/, review/, forms-admin/)
 src/trpc/           tRPC init, routers, server and client wiring
 src/generated/      Prisma client output, never edit
 prisma/schema.prisma
 prisma/seed.ts      Super Admin seed
-migrations/         D1 SQL migrations applied with wrangler
+prisma/seed-forms.ts the six assistance forms with starter questions
+migrations/         SQL migrations applied by scripts/db.ts
 ```
 
 ## Rules
@@ -70,26 +74,29 @@ migrations/         D1 SQL migrations applied with wrangler
 - Accounts start as `pending`. Statuses are `pending`, `under_review`, `documents_required`, `approved` and `rejected`. Every account except a rejected one gets a session, but until it is `approved` it only sees the review screen on `/dashboard`: pages go through `requireApproved` (or `requirePermission` / `requireNavAccess`) and tRPC through `protectedProcedure`, which all require `approved`. Approval is done by an admin from the members sheet and issues the COG Member ID.
 - Roles: `member`, `super_admin`, `admin`, `editor`, `viewer`. Check permissions through `src/lib/permissions.ts`, never by comparing role strings in feature code.
 - Every admin action and every denied access attempt writes an `AuditLog` row.
-- Uploaded documents are private. Never expose a public URL for them.
-- Prisma on D1 has no transactions. Design writes so a partial failure is safe to retry.
+- Uploaded documents are private. Never expose a public URL for them. Staff open them through a permission-checked route that writes an `AuditLog` row and hands out a short-lived R2 link.
+- Staff see an assistance form's applications only through `formAccessLevel()` in `src/lib/forms/review.server.ts`. Roles with `form: ["assign"]` (Super Admin) see every form and manage `FormAccess` grants; everyone else needs a grant, and their level (`view`, `review`, `decide`) is capped by their role's `application` permissions. Contact answers are masked for roles without `member: ["readContact"]`, in the review screen and the Excel export.
+- Forms are built at `/forms` (`formsAdmin` router): `form: ["read"]` views, `form: ["write"]` edits. Saving keeps one unpublished `FormVersion`; publishing stamps `publishedAt` on it. A question's answer type is locked once any published version contains it, and a form can only be opened after its first publish. New question, section, choice and column IDs come from `newId()` in `src/lib/forms/builder.ts` and must never be reused for something else.
+- Assistance forms are data, not code. Each `Form` has numbered `FormVersion` rows whose `definition` is JSON checked by `formDefinitionSchema`; a published version is never edited, so changes create a new version. An `Application` keeps the version it was started on. Validate answers with `buildAnswersSchema(definition, "draft" | "submit")`. Money answers are number fields with `money: true`, stored in paise.
+- Use `db.$transaction` when several writes must land together. Otherwise design writes so a partial failure is safe to retry.
 - User-facing text lives in `messages/en.json` and `messages/gu.json`, never hardcoded in components. Add every key to both files. `gu.json` is a draft translation pending COG review.
 - Use `Link`, `redirect`, `useRouter` and `usePathname` from `@/i18n/navigation`, not `next/link` or `next/navigation`, so the locale is kept.
 - Zod error messages are keys from `messages.Validation`; render them with `FormFieldError`. tRPC errors use `errorsFor(ctx.locale)`.
 - Secrets live only in `.env` and Vercel env. Do not commit them or print them.
 
-## Database workflow (D1)
+## Database workflow
 
-`prisma migrate dev` does not work against D1. For every schema change:
+Migrations are plain SQL files applied by `scripts/db.ts`, not `prisma migrate`. For every schema change:
 
 1. Edit `prisma/schema.prisma`.
 2. `npm run db:migration:new -- <name>` creates an empty file in `migrations/`.
-3. `npm run db:migration:diff` prints the SQL; paste it into that file.
-4. `npm run db:migrate:local`, check it, then `npm run db:migrate:remote`.
+3. `npm run db:migration:diff` applies the existing migrations to `.local/schema-check.db` and prints the SQL still missing; paste it into that file. Run it again and it should print nothing.
+4. `npm run db:migrate` applies pending migrations to `TURSO_DATABASE_URL`.
 5. `npm run db:generate` to refresh the client.
 
 After adding a Better Auth plugin or user field, regenerate its tables with `npx auth@latest generate` and review the diff before migrating.
 
-Seed the Super Admin with `SUPER_ADMIN_PHONE` and `SUPER_ADMIN_NAME` set in `.env`, then `npm run db:seed`. It is safe to re-run.
+Seed the Super Admin with `SUPER_ADMIN_PHONE` and `SUPER_ADMIN_NAME` set in `.env`, then `npm run db:seed`. Seed the assistance forms with `npm run db:seed:forms`; they start closed and a form that already has questions is left alone. Both are safe to re-run.
 
 ## Commands
 
@@ -100,8 +107,10 @@ Seed the Super Admin with `SUPER_ADMIN_PHONE` and `SUPER_ADMIN_NAME` set in `.en
 
 ## Environment variables
 
-Required: `AADHAAR_ENCRYPTION_KEY` (32 random bytes, base64; generate with `openssl rand -base64 32`), `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_DATABASE_ID`, `CLOUDFLARE_D1_TOKEN`.
+Required: `AADHAAR_ENCRYPTION_KEY` (32 random bytes, base64; generate with `openssl rand -base64 32`), `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`, `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`.
+Documents: `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`. The bucket stays private and needs a CORS rule allowing `PUT` with a `content-type` header from the site's origins.
 OTP delivery: `MSG91_AUTH_KEY`, `MSG91_OTP_TEMPLATE_ID`. Until both are set, OTPs are written to the server log in every environment, production included.
+Application SMS: `MSG91_APPLICATION_TEMPLATE_ID`, a MSG91 flow template with `##number##` and `##status##` variables. Until it and `MSG91_AUTH_KEY` are set, status messages go to the server log.
 Seed only: `SUPER_ADMIN_PHONE`, `SUPER_ADMIN_NAME`.
 
 ## Known gaps
