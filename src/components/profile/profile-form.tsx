@@ -1,5 +1,6 @@
 "use client";
 
+import { useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
@@ -47,6 +48,8 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileFormValue
     });
 
     const { isSubmitting, isDirty } = form.formState;
+    const [navigating, startNavigation] = useTransition();
+    const saving = isSubmitting || navigating;
 
     async function onSubmit(values: ProfileFormValues) {
         try {
@@ -56,11 +59,13 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileFormValue
             toast.success(t("saved"));
 
             // Choosing a different preferred language also switches the dashboard to it.
-            if (values.preferredLanguage !== locale) {
-                router.replace(pathname, { locale: values.preferredLanguage });
-            } else {
-                router.refresh();
-            }
+            startNavigation(() => {
+                if (values.preferredLanguage !== locale) {
+                    router.replace(pathname, { locale: values.preferredLanguage });
+                } else {
+                    router.refresh();
+                }
+            });
         } catch {
             toast.error(t("saveError"));
         }
@@ -276,15 +281,15 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileFormValue
                 </FieldSet>
 
                 <Field orientation="horizontal">
-                    <Button type="submit" size="lg" disabled={isSubmitting || !isDirty}>
-                        {isSubmitting && <Spinner data-icon="inline-start" />}
+                    <Button type="submit" size="lg" disabled={saving || !isDirty}>
+                        {saving && <Spinner data-icon="inline-start" />}
                         {t("save")}
                     </Button>
                     <Button
                         type="button"
                         variant="outline"
                         size="lg"
-                        disabled={isSubmitting || !isDirty}
+                        disabled={saving || !isDirty}
                         onClick={() => form.reset()}
                     >
                         {t("discard")}

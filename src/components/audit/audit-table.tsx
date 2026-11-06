@@ -7,7 +7,7 @@ import { PagingBar } from "@/components/dashboard/paging-bar";
 import { Badge } from "@/components/ui/badge";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
 import { Field, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+import { DatePicker } from "@/components/ui/date-picker";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -85,26 +85,26 @@ export function AuditTable() {
                 </Field>
                 <Field>
                     <FieldLabel htmlFor="audit-from">{t("from")}</FieldLabel>
-                    <Input
+                    <DatePicker
                         id="audit-from"
-                        type="date"
+                        clearable
                         value={from}
                         max={to || undefined}
-                        onChange={(event) => {
-                            setFrom(event.target.value);
+                        onChange={(value) => {
+                            setFrom(value);
                             setPage(1);
                         }}
                     />
                 </Field>
                 <Field>
                     <FieldLabel htmlFor="audit-to">{t("to")}</FieldLabel>
-                    <Input
+                    <DatePicker
                         id="audit-to"
-                        type="date"
+                        clearable
                         value={to}
                         min={from || undefined}
-                        onChange={(event) => {
-                            setTo(event.target.value);
+                        onChange={(value) => {
+                            setTo(value);
                             setPage(1);
                         }}
                     />

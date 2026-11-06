@@ -10,9 +10,9 @@ import { storeAadhaarForUser } from "./aadhaar.server";
 import { writeAuditLog } from "./audit";
 import { signUpDetailsSchema } from "./auth.schemas";
 import { db } from "./db";
-import { authEnv } from "./env";
+import { authEnv, smsEnv } from "./env";
 import { ac, roles } from "./permissions";
-import { isIndianMobile, tempEmailForPhone } from "./phone";
+import { DEV_OTP_HEADER, isIndianMobile, tempEmailForPhone } from "./phone";
 import {
     OTP_ALLOWED_ATTEMPTS,
     assertCanSendOtp,
@@ -285,7 +285,8 @@ export const auth = betterAuth({
             otpLength: 6,
             allowedAttempts: OTP_ALLOWED_ATTEMPTS,
             phoneNumberValidator: isIndianMobile,
-            sendOTP: async ({ phoneNumber: number, code }) => {
+            sendOTP: async ({ phoneNumber: number, code }, ctx) => {
+                if (smsEnv().EXPOSE_OTP_TO_BROWSER) ctx?.setHeader(DEV_OTP_HEADER, code);
                 await sendOtpSms(number, code);
             },
             signUpOnVerification: {

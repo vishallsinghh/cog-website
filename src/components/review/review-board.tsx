@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { DatePicker } from "@/components/ui/date-picker";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -193,7 +194,7 @@ export function ReviewBoard({ initialForm }: { initialForm?: string }) {
                 </div>
             </div>
 
-            <div className="grid gap-4 rounded-2xl border border-green/10 bg-field p-4 sm:grid-cols-2 xl:grid-cols-5">
+            <div className="grid gap-4 rounded-2xl border border-green/10 bg-field p-4 sm:grid-cols-2 xl:grid-cols-6">
                 <Field className="sm:col-span-2">
                     <FieldLabel htmlFor="review-search">{t("search")}</FieldLabel>
                     <Input
@@ -242,29 +243,29 @@ export function ReviewBoard({ initialForm }: { initialForm?: string }) {
                         ))}
                     </NativeSelect>
                 </Field>
-                <div className="grid grid-cols-2 gap-4 sm:col-span-2 xl:col-span-1">
+                <div className="grid grid-cols-2 gap-4 sm:col-span-2">
                     <Field>
                         <FieldLabel htmlFor="review-from">{t("submittedFrom")}</FieldLabel>
-                        <Input
+                        <DatePicker
                             id="review-from"
-                            type="date"
+                            clearable
                             value={from}
                             max={to || undefined}
-                            onChange={(event) => {
-                                setFrom(event.target.value);
+                            onChange={(value) => {
+                                setFrom(value);
                                 resetPage();
                             }}
                         />
                     </Field>
                     <Field>
                         <FieldLabel htmlFor="review-to">{t("submittedTo")}</FieldLabel>
-                        <Input
+                        <DatePicker
                             id="review-to"
-                            type="date"
+                            clearable
                             value={to}
                             min={from || undefined}
-                            onChange={(event) => {
-                                setTo(event.target.value);
+                            onChange={(value) => {
+                                setTo(value);
                                 resetPage();
                             }}
                         />

@@ -7,6 +7,7 @@ import { Controller, useFieldArray, useFormState, type Control, type FieldError 
 import { FormFieldError } from "@/components/form/form-field-error";
 import { Button } from "@/components/ui/button";
 import { Field, FieldDescription, FieldLabel, FieldLegend, FieldSet } from "@/components/ui/field";
+import { DatePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -157,16 +158,16 @@ export function AnswerControl({ field, name, control, disabled }: ControlProps) 
                             <Field data-invalid={invalid}>
                                 {label}
                                 {description}
-                                <Input
+                                <DatePicker
                                     id={id}
-                                    type="date"
                                     name={input.name}
                                     ref={input.ref}
                                     value={typeof input.value === "string" ? input.value : ""}
-                                    onChange={(event) => input.onChange(event.target.value)}
+                                    onChange={input.onChange}
                                     onBlur={input.onBlur}
                                     disabled={disabled}
-                                    className="w-fit min-w-44"
+                                    clearable={!field.required}
+                                    className="max-w-72"
                                     aria-invalid={invalid}
                                 />
                                 {error}

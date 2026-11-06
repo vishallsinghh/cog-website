@@ -1,10 +1,13 @@
 "use client";
 
 import { ChevronsUpDownIcon, GlobeIcon, LogOutIcon, UserRoundIcon } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { toast } from "sonner";
 import { authClient } from "@/lib/auth.client";
 import { formatPhone } from "@/lib/format";
-import { Link, useRouter } from "@/i18n/navigation";
+import { getPathname, Link } from "@/i18n/navigation";
+import { Spinner } from "@/components/ui/spinner";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
     DropdownMenu,
@@ -39,14 +42,26 @@ function initials(name: string) {
 }
 
 export function NavUser({ user }: { user: NavUserData }) {
-    const router = useRouter();
+    const locale = useLocale();
     const t = useTranslations("Dashboard");
+    const tc = useTranslations("Common");
     const { isMobile } = useSidebar();
+    const [signingOut, setSigningOut] = useState(false);
 
-    async function signOut() {
-        await authClient.signOut();
-        router.push("/member");
-        router.refresh();
+    async function signOut(event: Event) {
+        event.preventDefault();
+        if (signingOut) return;
+
+        setSigningOut(true);
+        const { error } = await authClient.signOut();
+
+        if (error) {
+            setSigningOut(false);
+            toast.error(tc("genericError"));
+            return;
+        }
+
+        window.location.assign(getPathname({ href: "/member", locale }));
     }
 
     return (
@@ -103,8 +118,8 @@ export function NavUser({ user }: { user: NavUserData }) {
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />
                         <DropdownMenuGroup>
-                            <DropdownMenuItem onSelect={signOut}>
-                                <LogOutIcon />
+                            <DropdownMenuItem onSelect={(event) => void signOut(event)} disabled={signingOut}>
+                                {signingOut ? <Spinner /> : <LogOutIcon />}
                                 {t("signOut")}
                             </DropdownMenuItem>
                         </DropdownMenuGroup>

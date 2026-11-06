@@ -26,6 +26,11 @@
     "readMore": "Read more",
     "logoAlt": "The Council of Gujarat, KSI Jamaats, since 1987"
   },
+  "DatePicker": {
+    "placeholder": "Select a date",
+    "clear": "Clear",
+    "today": "Today"
+  },
   "Roles": {
     "member": "Member",
     "super_admin": "Super Admin",
@@ -1677,10 +1682,8 @@
       "neverPublished": "This form has not been published yet. Members cannot apply until it is published and opened.",
       "draftInfo": "Unpublished changes, last saved {date}.",
       "readOnly": "You can view this form but not change it.",
-      "saveDraft": "Save draft",
       "publish": "Publish",
       "discard": "Discard changes",
-      "draftSaved": "Draft saved.",
       "published": "Version {version} published.",
       "discarded": "Changes discarded.",
       "fixErrors": "Some questions need attention. Check the highlighted fields.",

@@ -15,9 +15,9 @@ import {
     type DetailsFormValues,
     type OtpFormValues,
 } from "@/lib/auth.schemas";
-import { formatMobileInput, normalizeIndianMobile } from "@/lib/phone";
+import { DEV_OTP_HEADER, formatMobileInput, normalizeIndianMobile } from "@/lib/phone";
 import { cn } from "@/lib/utils";
-import { getPathname, useRouter } from "@/i18n/navigation";
+import { getPathname } from "@/i18n/navigation";
 import { FormFieldError } from "@/components/form/form-field-error";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -40,7 +40,6 @@ function formatMobile(phoneNumber: string) {
 }
 
 export function MemberAuth() {
-    const router = useRouter();
     const locale = useLocale();
     const t = useTranslations("Auth");
     const te = useTranslations("AuthErrors");
@@ -54,6 +53,7 @@ export function MemberAuth() {
     const [googleLoading, setGoogleLoading] = useState(false);
     const [cooldown, setCooldown] = useState(0);
     const [resending, setResending] = useState(false);
+    const [redirecting, setRedirecting] = useState(false);
 
     const detailsForm = useForm<DetailsFormValues>({
         resolver: zodResolver(detailsFormSchema(mode)),
@@ -88,7 +88,15 @@ export function MemberAuth() {
     }
 
     async function requestCode(number: string) {
-        const { error } = await authClient.phoneNumber.sendOtp({ phoneNumber: number });
+        const { error } = await authClient.phoneNumber.sendOtp(
+            { phoneNumber: number },
+            {
+                onResponse: ({ response }) => {
+                    const devCode = response.headers.get(DEV_OTP_HEADER);
+                    if (devCode) console.info(`[otp] ${number}: ${devCode}`);
+                },
+            },
+        );
 
         if (error) {
             setServerError(authErrorMessage(error, te));
@@ -130,9 +138,8 @@ export function MemberAuth() {
             return setServerError(authErrorMessage(error, te));
         }
 
-        detailsForm.reset();
-        router.push("/dashboard");
-        router.refresh();
+        setRedirecting(true);
+        window.location.assign(getPathname({ href: "/dashboard", locale }));
     }
 
     async function signInWithGoogle() {
@@ -163,7 +170,7 @@ export function MemberAuth() {
             ? { title: t("signinTitle"), description: t("signinDescription"), submit: t("signinSubmit") }
             : { title: t("signupTitle"), description: t("signupDescription"), submit: t("signupSubmit") };
     const detailsSubmitting = detailsForm.formState.isSubmitting;
-    const otpSubmitting = otpForm.formState.isSubmitting;
+    const otpSubmitting = otpForm.formState.isSubmitting || redirecting;
     const stepNumber = step === "details" ? 1 : 2;
     const nextLabel = t(`stepNext.${step}`);
 

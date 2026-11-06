@@ -1,5 +1,6 @@
 "use client";
 
+import { useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
@@ -81,6 +82,8 @@ export function NewFormDialog({ open, onOpenChange }: { open: boolean; onOpenCha
     const trpc = useTRPC();
     const queryClient = useQueryClient();
     const create = useMutation(trpc.formsAdmin.create.mutationOptions());
+    const [navigating, startNavigation] = useTransition();
+    const creating = create.isPending || (create.isSuccess && navigating);
 
     const form = useForm<FormMeta>({ resolver: zodResolver(createFormSchema), defaultValues: EMPTY });
 
@@ -89,16 +92,14 @@ export function NewFormDialog({ open, onOpenChange }: { open: boolean; onOpenCha
             const created = await create.mutateAsync(values);
             toast.success(t("created"));
             await queryClient.invalidateQueries({ queryKey: trpc.formsAdmin.list.queryKey() });
-            onOpenChange(false);
-            form.reset(EMPTY);
-            router.push(`/forms/${created.id}`);
+            startNavigation(() => router.push(`/forms/${created.id}`));
         } catch (error) {
             toast.error(errorMessage(error, tc("genericError")));
         }
     }
 
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
+        <Dialog open={open} onOpenChange={(next) => !creating && onOpenChange(next)}>
             <DialogContent className="max-h-[90svh] overflow-y-auto sm:max-w-lg">
                 <DialogHeader>
                     <DialogTitle className="font-heading text-[24px] text-green">{t("title")}</DialogTitle>
@@ -133,11 +134,11 @@ export function NewFormDialog({ open, onOpenChange }: { open: boolean; onOpenCha
                         />
                     </FieldGroup>
                     <DialogFooter className="mt-6">
-                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={create.isPending}>
+                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={creating}>
                             {tc("cancel")}
                         </Button>
-                        <Button type="submit" disabled={create.isPending}>
-                            {create.isPending && <Spinner data-icon="inline-start" />}
+                        <Button type="submit" disabled={creating}>
+                            {creating && <Spinner data-icon="inline-start" />}
                             {t("submit")}
                         </Button>
                     </DialogFooter>

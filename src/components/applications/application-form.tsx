@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { InfoIcon } from "lucide-react";
@@ -56,6 +56,7 @@ export function ApplicationForm({
     const [documents, setDocuments] = useState(initialDocuments);
     const [confirmingSubmit, setConfirmingSubmit] = useState<Answers | null>(null);
     const [confirmingDiscard, setConfirmingDiscard] = useState(false);
+    const [navigating, startNavigation] = useTransition();
 
     const documentsOnly = status === "documents_required";
     const schema = useMemo(() => buildAnswersSchema(definition, "submit"), [definition]);
@@ -66,7 +67,9 @@ export function ApplicationForm({
         mode: "onTouched",
     });
 
-    const busy = saveDraft.isPending || submit.isPending || discard.isPending;
+    const submitting = submit.isPending || (submit.isSuccess && navigating);
+    const discarding = discard.isPending || (discard.isSuccess && navigating);
+    const busy = saveDraft.isPending || submitting || discarding;
 
     async function save({ quiet }: { quiet: boolean }) {
         try {
@@ -82,9 +85,8 @@ export function ApplicationForm({
 
         try {
             const result = await submit.mutateAsync({ id: applicationId, answers: confirmingSubmit });
-            setConfirmingSubmit(null);
             toast.success(t("submitted", { number: result.number }));
-            router.refresh();
+            startNavigation(() => router.refresh());
         } catch (error) {
             setConfirmingSubmit(null);
             toast.error(errorMessage(error, tc("genericError")));
@@ -95,7 +97,7 @@ export function ApplicationForm({
         try {
             await discard.mutateAsync({ id: applicationId });
             toast.success(t("discarded"));
-            router.push("/my-applications");
+            startNavigation(() => router.push("/my-applications"));
         } catch (error) {
             setConfirmingDiscard(false);
             toast.error(errorMessage(error, tc("genericError")));
@@ -195,7 +197,7 @@ export function ApplicationForm({
 
             <div className="sticky bottom-0 z-10 -mx-1 flex flex-wrap items-center gap-3 border-t border-green/10 bg-background/95 px-1 py-3 backdrop-blur">
                 <Button type="submit" size="lg" disabled={busy}>
-                    {submit.isPending && <Spinner data-icon="inline-start" />}
+                    {submitting && <Spinner data-icon="inline-start" />}
                     {t("submit")}
                 </Button>
                 <Button type="button" variant="outline" size="lg" disabled={busy} onClick={() => void save({ quiet: false })}>
@@ -216,35 +218,48 @@ export function ApplicationForm({
                 )}
             </div>
 
-            <AlertDialog open={Boolean(confirmingSubmit)} onOpenChange={(open) => !open && setConfirmingSubmit(null)}>
+            <AlertDialog
+                open={Boolean(confirmingSubmit)}
+                onOpenChange={(open) => !open && !submitting && setConfirmingSubmit(null)}
+            >
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>{t("submitTitle")}</AlertDialogTitle>
                         <AlertDialogDescription>{t("submitText")}</AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel disabled={submit.isPending}>{tc("cancel")}</AlertDialogCancel>
-                        <AlertDialogAction disabled={submit.isPending} onClick={() => void confirmSubmit()}>
-                            {submit.isPending && <Spinner data-icon="inline-start" />}
+                        <AlertDialogCancel disabled={submitting}>{tc("cancel")}</AlertDialogCancel>
+                        <AlertDialogAction
+                            disabled={submitting}
+                            onClick={(event) => {
+                                event.preventDefault();
+                                void confirmSubmit();
+                            }}
+                        >
+                            {submitting && <Spinner data-icon="inline-start" />}
                             {t("submit")}
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
 
-            <AlertDialog open={confirmingDiscard} onOpenChange={setConfirmingDiscard}>
+            <AlertDialog open={confirmingDiscard} onOpenChange={(open) => !discarding && setConfirmingDiscard(open)}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>{t("discardTitle")}</AlertDialogTitle>
                         <AlertDialogDescription>{t("discardText")}</AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel disabled={discard.isPending}>{tc("cancel")}</AlertDialogCancel>
+                        <AlertDialogCancel disabled={discarding}>{tc("cancel")}</AlertDialogCancel>
                         <AlertDialogAction
                             variant="destructive"
-                            disabled={discard.isPending}
-                            onClick={() => void confirmDiscard()}
+                            disabled={discarding}
+                            onClick={(event) => {
+                                event.preventDefault();
+                                void confirmDiscard();
+                            }}
                         >
+                            {discarding && <Spinner data-icon="inline-start" />}
                             {t("discard")}
                         </AlertDialogAction>
                     </AlertDialogFooter>
