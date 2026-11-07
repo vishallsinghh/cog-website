@@ -11,7 +11,7 @@ import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/u
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { DatePicker } from "@/components/ui/date-picker";
-import { NativeSelect } from "@/components/ui/native-select";
+import { ResponsiveSelect } from "@/components/ui/responsive-select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Link, useRouter } from "@/i18n/navigation";
@@ -207,41 +207,37 @@ export function ReviewBoard({ initialForm }: { initialForm?: string }) {
                 </Field>
                 <Field>
                     <FieldLabel htmlFor="review-jamaat">{t("jamaat")}</FieldLabel>
-                    <NativeSelect
+                    <ResponsiveSelect
                         id="review-jamaat"
                         className="w-full"
                         value={jamaat}
-                        onChange={(event) => {
-                            setJamaat(event.target.value);
+                        onValueChange={(next) => {
+                            setJamaat(next);
                             resetPage();
                         }}
-                    >
-                        <option value="">{t("allJamaats")}</option>
-                        {filters.data?.jamaats.map((value) => (
-                            <option key={value} value={value}>
-                                {value}
-                            </option>
-                        ))}
-                    </NativeSelect>
+                        label={t("jamaat")}
+                        options={[
+                            { value: "", label: t("allJamaats") },
+                            ...(filters.data?.jamaats ?? []).map((value) => ({ value, label: value })),
+                        ]}
+                    />
                 </Field>
                 <Field>
                     <FieldLabel htmlFor="review-city">{t("city")}</FieldLabel>
-                    <NativeSelect
+                    <ResponsiveSelect
                         id="review-city"
                         className="w-full"
                         value={city}
-                        onChange={(event) => {
-                            setCity(event.target.value);
+                        onValueChange={(next) => {
+                            setCity(next);
                             resetPage();
                         }}
-                    >
-                        <option value="">{t("allCities")}</option>
-                        {filters.data?.cities.map((value) => (
-                            <option key={value} value={value}>
-                                {value}
-                            </option>
-                        ))}
-                    </NativeSelect>
+                        label={t("city")}
+                        options={[
+                            { value: "", label: t("allCities") },
+                            ...(filters.data?.cities ?? []).map((value) => ({ value, label: value })),
+                        ]}
+                    />
                 </Field>
                 <div className="grid grid-cols-2 gap-4 sm:col-span-2">
                     <Field>

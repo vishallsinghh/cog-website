@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { NativeSelect } from "@/components/ui/native-select";
+import { ResponsiveSelect } from "@/components/ui/responsive-select";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "@/i18n/navigation";
@@ -102,20 +102,20 @@ export function ReviewActions({
                         render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
                                 <FieldLabel htmlFor="review-status">{t("newStatus")}</FieldLabel>
-                                <NativeSelect
-                                    {...field}
+                                <ResponsiveSelect
                                     id="review-status"
+                                    name={field.name}
+                                    ref={field.ref}
+                                    value={field.value}
+                                    onValueChange={field.onChange}
+                                    onBlur={field.onBlur}
                                     className="w-full"
                                     disabled={applying}
                                     aria-invalid={fieldState.invalid}
-                                >
-                                    <option value="">{t("choose")}</option>
-                                    {transitions.map((value) => (
-                                        <option key={value} value={value}>
-                                            {ts(value)}
-                                        </option>
-                                    ))}
-                                </NativeSelect>
+                                    label={t("newStatus")}
+                                    placeholder={t("choose")}
+                                    options={transitions.map((value) => ({ value, label: ts(value) }))}
+                                />
                                 <FormFieldError error={fieldState.error} />
                             </Field>
                         )}

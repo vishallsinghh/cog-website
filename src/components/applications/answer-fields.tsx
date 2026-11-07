@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldDescription, FieldLabel, FieldLegend, FieldSet } from "@/components/ui/field";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
-import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
+import { ResponsiveSelect } from "@/components/ui/responsive-select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import type { Answers, TableRow } from "@/lib/forms/answers";
@@ -213,24 +213,26 @@ export function AnswerControl({ field, name, control, disabled }: ControlProps) 
                             <Field data-invalid={invalid}>
                                 {label}
                                 {description}
-                                <NativeSelect
+                                <ResponsiveSelect
                                     id={id}
                                     name={input.name}
                                     ref={input.ref}
                                     value={value}
-                                    onChange={(event) => input.onChange(event.target.value)}
+                                    onValueChange={input.onChange}
                                     onBlur={input.onBlur}
                                     disabled={disabled}
                                     className="w-full sm:w-80"
                                     aria-invalid={invalid}
-                                >
-                                    <NativeSelectOption value="">{t("choose")}</NativeSelectOption>
-                                    {field.options.map((option) => (
-                                        <NativeSelectOption key={option.value} value={option.value}>
-                                            {localize(option.label, locale)}
-                                        </NativeSelectOption>
-                                    ))}
-                                </NativeSelect>
+                                    label={localize(field.label, locale)}
+                                    placeholder={t("choose")}
+                                    options={[
+                                        ...(field.required ? [] : [{ value: "", label: t("choose") }]),
+                                        ...field.options.map((option) => ({
+                                            value: option.value,
+                                            label: localize(option.label, locale),
+                                        })),
+                                    ]}
+                                />
                                 {error}
                             </Field>
                         );

@@ -12,7 +12,7 @@ import { FormFieldError } from "@/components/form/form-field-error";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { NativeSelect } from "@/components/ui/native-select";
+import { ResponsiveSelect } from "@/components/ui/responsive-select";
 import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -159,22 +159,17 @@ export function FormAccessSheet({
                                                             <Trash2Icon />
                                                         </Button>
                                                     </div>
-                                                    <NativeSelect
+                                                    <ResponsiveSelect
                                                         className="w-full"
                                                         aria-label={t("levelFor", { name })}
+                                                        label={t("levelFor", { name })}
                                                         value={wanted}
                                                         disabled={busy}
-                                                        onChange={(event) => {
-                                                            const next = event.target.value;
+                                                        onValueChange={(next) => {
                                                             if (isFormAccessLevel(next)) void save(userId, next, name);
                                                         }}
-                                                    >
-                                                        {FORM_ACCESS_LEVELS.map((value) => (
-                                                            <option key={value} value={value}>
-                                                                {tl(value)}
-                                                            </option>
-                                                        ))}
-                                                    </NativeSelect>
+                                                        options={FORM_ACCESS_LEVELS.map((value) => ({ value, label: tl(value) }))}
+                                                    />
                                                     {effective !== wanted && (
                                                         <p className="text-[13px] text-muted-foreground">
                                                             {t("limited", { level: tl(effective) })}
@@ -204,20 +199,23 @@ export function FormAccessSheet({
                                             render={({ field, fieldState }) => (
                                                 <Field data-invalid={fieldState.invalid}>
                                                     <FieldLabel htmlFor="access-person">{t("person")}</FieldLabel>
-                                                    <NativeSelect
-                                                        {...field}
+                                                    <ResponsiveSelect
                                                         id="access-person"
+                                                        name={field.name}
+                                                        ref={field.ref}
+                                                        value={field.value}
+                                                        onValueChange={field.onChange}
+                                                        onBlur={field.onBlur}
                                                         className="w-full"
                                                         disabled={busy}
                                                         aria-invalid={fieldState.invalid}
-                                                    >
-                                                        <option value="">{t("choose")}</option>
-                                                        {grantable.map((person) => (
-                                                            <option key={person.id} value={person.id}>
-                                                                {person.name} ({roleLabel(person.role)})
-                                                            </option>
-                                                        ))}
-                                                    </NativeSelect>
+                                                        label={t("person")}
+                                                        placeholder={t("choose")}
+                                                        options={grantable.map((person) => ({
+                                                            value: person.id,
+                                                            label: `${person.name} (${roleLabel(person.role)})`,
+                                                        }))}
+                                                    />
                                                     <FormFieldError error={fieldState.error} />
                                                 </Field>
                                             )}
@@ -228,19 +226,19 @@ export function FormAccessSheet({
                                             render={({ field, fieldState }) => (
                                                 <Field data-invalid={fieldState.invalid}>
                                                     <FieldLabel htmlFor="access-level">{t("level")}</FieldLabel>
-                                                    <NativeSelect
-                                                        {...field}
+                                                    <ResponsiveSelect
                                                         id="access-level"
+                                                        name={field.name}
+                                                        ref={field.ref}
+                                                        value={field.value}
+                                                        onValueChange={field.onChange}
+                                                        onBlur={field.onBlur}
                                                         className="w-full"
                                                         disabled={busy}
                                                         aria-invalid={fieldState.invalid}
-                                                    >
-                                                        {FORM_ACCESS_LEVELS.map((value) => (
-                                                            <option key={value} value={value}>
-                                                                {tl(value)}
-                                                            </option>
-                                                        ))}
-                                                    </NativeSelect>
+                                                        label={t("level")}
+                                                        options={FORM_ACCESS_LEVELS.map((value) => ({ value, label: tl(value) }))}
+                                                    />
                                                     <FormFieldError error={fieldState.error} />
                                                 </Field>
                                             )}

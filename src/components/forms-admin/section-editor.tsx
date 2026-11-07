@@ -7,7 +7,7 @@ import { Controller, get, useFieldArray, useFormContext, useFormState } from "re
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
-import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
+import { ResponsiveSelect } from "@/components/ui/responsive-select";
 import { blankField, convertField } from "@/lib/forms/builder";
 import {
     FIELD_TYPES,
@@ -145,19 +145,15 @@ function QuestionEditor({
                             render={({ field }) => (
                                 <Field className="w-full sm:w-64">
                                     <FieldLabel htmlFor={typeId}>{t("type")}</FieldLabel>
-                                    <NativeSelect
+                                    <ResponsiveSelect
                                         id={typeId}
                                         className="w-full"
                                         value={field.value as string}
                                         disabled={Boolean(lockedType)}
-                                        onChange={(event) => onTypeChange(event.target.value as FieldType)}
-                                    >
-                                        {FIELD_TYPES.map((value) => (
-                                            <NativeSelectOption key={value} value={value}>
-                                                {tt(value)}
-                                            </NativeSelectOption>
-                                        ))}
-                                    </NativeSelect>
+                                        onValueChange={(next) => onTypeChange(next as FieldType)}
+                                        label={t("type")}
+                                        options={FIELD_TYPES.map((value) => ({ value, label: tt(value) }))}
+                                    />
                                 </Field>
                             )}
                         />

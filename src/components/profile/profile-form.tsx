@@ -22,14 +22,7 @@ import {
     FieldSet,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
+import { ResponsiveSelect } from "@/components/ui/responsive-select";
 import { Spinner } from "@/components/ui/spinner";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
@@ -207,28 +200,19 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileFormValue
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
                                         <FieldLabel htmlFor="profile-state">{t("state")}</FieldLabel>
-                                        <Select
-                                            value={field.value}
-                                            onValueChange={field.onChange}
+                                        <ResponsiveSelect
+                                            id="profile-state"
                                             name={field.name}
-                                        >
-                                            <SelectTrigger
-                                                id="profile-state"
-                                                className="w-full"
-                                                aria-invalid={fieldState.invalid}
-                                            >
-                                                <SelectValue placeholder={t("statePlaceholder")} />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectGroup>
-                                                    {INDIAN_STATES.map((state) => (
-                                                        <SelectItem key={state} value={state}>
-                                                            {state}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectGroup>
-                                            </SelectContent>
-                                        </Select>
+                                            ref={field.ref}
+                                            value={field.value ?? ""}
+                                            onValueChange={field.onChange}
+                                            onBlur={field.onBlur}
+                                            className="w-full"
+                                            aria-invalid={fieldState.invalid}
+                                            label={t("state")}
+                                            placeholder={t("statePlaceholder")}
+                                            options={INDIAN_STATES.map((state) => ({ value: state, label: state }))}
+                                        />
                                         {fieldState.invalid && <FormFieldError error={fieldState.error} />}
                                     </Field>
                                 )}

@@ -11,7 +11,7 @@ import { FormFieldError } from "@/components/form/form-field-error";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { NativeSelect } from "@/components/ui/native-select";
+import { ResponsiveSelect } from "@/components/ui/responsive-select";
 import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -147,23 +147,23 @@ export function MemberSheet({ userId, onOpenChange }: { userId: string | null; o
                                             render={({ field, fieldState }) => (
                                                 <Field data-invalid={fieldState.invalid}>
                                                     <FieldLabel htmlFor="member-status">{t("changeStatus")}</FieldLabel>
-                                                    <NativeSelect
-                                                        {...field}
+                                                    <ResponsiveSelect
                                                         id="member-status"
+                                                        name={field.name}
+                                                        ref={field.ref}
+                                                        value={field.value}
+                                                        onValueChange={field.onChange}
+                                                        onBlur={field.onBlur}
                                                         className="w-full"
                                                         disabled={submitting}
                                                         aria-invalid={fieldState.invalid}
-                                                    >
-                                                        {MEMBER_STATUSES.map((value) => (
-                                                            <option
-                                                                key={value}
-                                                                value={value}
-                                                                disabled={!canMove(member.status, value, member)}
-                                                            >
-                                                                {ts(value)}
-                                                            </option>
-                                                        ))}
-                                                    </NativeSelect>
+                                                        label={t("changeStatus")}
+                                                        options={MEMBER_STATUSES.map((value) => ({
+                                                            value,
+                                                            label: ts(value),
+                                                            disabled: !canMove(member.status, value, member),
+                                                        }))}
+                                                    />
                                                     {fieldState.invalid ? (
                                                         <FormFieldError error={fieldState.error} />
                                                     ) : (
