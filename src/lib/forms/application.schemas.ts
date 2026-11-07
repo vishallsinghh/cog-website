@@ -24,6 +24,7 @@ export const requestUploadSchema = z.object({
     fileName: z.string().trim().min(1).max(200),
     contentType: z.enum(DOCUMENT_CONTENT_TYPES),
     size: z.number().int().min(1).max(MAX_DOCUMENT_BYTES),
+    replacesDocumentId: id.optional(),
 });
 
 export const documentIdSchema = z.object({ documentId: id });

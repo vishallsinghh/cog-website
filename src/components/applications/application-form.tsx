@@ -173,6 +173,16 @@ export function ApplicationForm({
                                                             );
                                                             input.onChange(value.filter((id) => id !== document.id));
                                                         }}
+                                                        onReplaced={(previous, next) => {
+                                                            setDocuments((current) => [
+                                                                ...current.filter((item) => item.id !== previous.id),
+                                                                next,
+                                                            ]);
+                                                            input.onChange(
+                                                                value.map((id) => (id === previous.id ? next.id : id)),
+                                                            );
+                                                            void save({ quiet: true });
+                                                        }}
                                                     />
                                                 );
                                             }}

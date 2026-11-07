@@ -17,11 +17,13 @@ import {
     documentStorageKey,
     headObject,
     storageConfigured,
+    UPLOAD_URL_TTL_SECONDS,
 } from "@/lib/storage";
 import { createTRPCRouter, fail, protectedProcedure, type Context } from "../init";
 
 const MAX_OPEN_DRAFTS = 10;
 const MAX_DOCUMENTS_PER_APPLICATION = 60;
+const STALE_UPLOAD_AFTER_MS = 2 * UPLOAD_URL_TTL_SECONDS * 1000;
 
 type Locale = Context["locale"];
 
@@ -53,6 +55,26 @@ async function editableApplication(locale: Locale, userId: string, id: string) {
     }
 
     return application;
+}
+
+async function purgeStaleUploads(applicationId: string) {
+    const stale = await db.applicationDocument.findMany({
+        where: {
+            applicationId,
+            uploadedAt: null,
+            createdAt: { lt: new Date(Date.now() - STALE_UPLOAD_AFTER_MS) },
+        },
+        select: { id: true, storageKey: true },
+    });
+
+    if (stale.length === 0) return;
+
+    const results = await Promise.allSettled(stale.map((document) => deleteObject(document.storageKey)));
+    const purged = stale.filter((_, index) => results[index]?.status === "fulfilled").map((document) => document.id);
+
+    if (purged.length > 0) {
+        await db.applicationDocument.deleteMany({ where: { id: { in: purged }, uploadedAt: null } });
+    }
 }
 
 function documentFieldIds(definition: FormDefinition) {
@@ -309,12 +331,31 @@ export const applicationsRouter = createTRPCRouter({
 
         if (field?.type !== "document") return fail(ctx.locale, "BAD_REQUEST", "documentInvalid");
 
+        let freedSlots = 0;
+        if (input.replacesDocumentId) {
+            const replaced = await db.applicationDocument.findUnique({ where: { id: input.replacesDocumentId } });
+            const replaceable =
+                replaced?.applicationId === application.id &&
+                replaced.fieldId === field.id &&
+                replaced.uploadedAt !== null &&
+                !(application.submittedAt && replaced.uploadedAt <= application.submittedAt);
+
+            if (!replaceable) return fail(ctx.locale, "BAD_REQUEST", "documentInvalid");
+            freedSlots = 1;
+        }
+
+        await purgeStaleUploads(application.id);
+
         const stored = parseAnswers(application.answers);
-        const attached = documentIdsIn(application.definition, { [field.id]: stored[field.id] ?? [] });
+        const attached = documentIdsIn(application.definition, { [field.id]: stored[field.id] ?? [] }).filter(
+            (id) => id !== input.replacesDocumentId,
+        );
         if (attached.length >= field.maxFiles) return fail(ctx.locale, "BAD_REQUEST", "tooManyDocuments");
 
         const total = await db.applicationDocument.count({ where: { applicationId: application.id } });
-        if (total >= MAX_DOCUMENTS_PER_APPLICATION) return fail(ctx.locale, "BAD_REQUEST", "tooManyDocuments");
+        if (total - freedSlots >= MAX_DOCUMENTS_PER_APPLICATION) {
+            return fail(ctx.locale, "BAD_REQUEST", "tooManyDocuments");
+        }
 
         const storageKey = documentStorageKey(application.id);
         const document = await db.applicationDocument.create({
