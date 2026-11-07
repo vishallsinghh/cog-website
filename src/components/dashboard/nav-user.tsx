@@ -73,20 +73,20 @@ export function NavUser({ user }: { user: NavUserData }) {
                             size="lg"
                             tooltip={user.name}
                             aria-label={t("accountMenu", { name: user.name })}
-                            className="min-h-14 rounded-xl border border-cream/15 bg-cream/5 p-2.5 text-cream hover:bg-cream/10 hover:text-cream data-open:bg-cream/10 data-[state=open]:bg-cream/10 data-[state=open]:text-cream"
+                            className="min-h-14 rounded-xl border border-cream/15 bg-cream/5 p-2.5 text-cream hover:bg-cream/10 hover:text-cream data-open:bg-cream/10 data-[state=open]:bg-cream/10 data-[state=open]:text-cream group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-14! group-data-[collapsible=icon]:justify-center"
                         >
                             <Avatar className="size-9">
                                 <AvatarFallback className="bg-gold text-[14px] font-bold text-green-ink">
                                     {initials(user.name)}
                                 </AvatarFallback>
                             </Avatar>
-                            <span className="flex min-w-0 flex-col text-left leading-tight">
+                            <span className="flex min-w-0 flex-col text-left leading-tight group-data-[collapsible=icon]:hidden">
                                 <span className="truncate text-[15px] font-semibold">{user.name}</span>
                                 <span className="truncate text-[13px] font-normal text-cream/70">
                                     {user.roleLabel}
                                 </span>
                             </span>
-                            <ChevronsUpDownIcon className="ml-auto" />
+                            <ChevronsUpDownIcon className="ml-auto group-data-[collapsible=icon]:hidden" />
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent
