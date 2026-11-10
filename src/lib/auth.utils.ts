@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
+import { connection } from "next/server";
 import { getLocale } from "next-intl/server";
 import { redirect } from "@/i18n/navigation";
 import { hasPermission, type RequiredPermissions } from "./access";
@@ -10,8 +11,11 @@ import { findNavItem } from "./navigation";
 import { isApproved } from "./permissions";
 
 export const getSession = cache(async () => {
+    const requestHeaders = await headers();
+    await connection();
+
     const session = await auth.api.getSession({
-        headers: await headers(),
+        headers: requestHeaders,
         query: { disableCookieCache: true },
     });
 

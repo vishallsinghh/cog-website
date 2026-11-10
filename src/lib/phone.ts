@@ -30,3 +30,4 @@ export function normalizeIndianMobile(input: string) {
 export function tempEmailForPhone(phoneNumber: string) {
     return `${phoneNumber.replace("+", "")}@members.cog.invalid`;
 }
+export const DEV_OTP_HEADER = "x-dev-otp";

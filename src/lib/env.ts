@@ -29,6 +29,10 @@ const smsSchema = z.object({
     MSG91_AUTH_KEY: z.string().optional(),
     MSG91_OTP_TEMPLATE_ID: z.string().optional(),
     MSG91_APPLICATION_TEMPLATE_ID: z.string().optional(),
+    EXPOSE_OTP_TO_BROWSER: z
+        .enum(["true", "false"])
+        .optional()
+        .transform((value) => value === "true"),
 });
 
 const aadhaarSchema = z.object({

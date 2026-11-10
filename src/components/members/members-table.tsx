@@ -28,7 +28,8 @@ import {
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { NativeSelect } from "@/components/ui/native-select";
+import { DatePicker } from "@/components/ui/date-picker";
+import { ResponsiveSelect } from "@/components/ui/responsive-select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { formatDate, formatPhone } from "@/lib/format";
@@ -112,7 +113,7 @@ export function MembersTable() {
 
     return (
         <div className="flex flex-col gap-6">
-            <div className="grid gap-4 rounded-2xl border border-green/10 bg-field p-4 sm:grid-cols-2 lg:grid-cols-5">
+            <div className="grid gap-4 rounded-2xl border border-green/10 bg-field p-4 sm:grid-cols-2 lg:grid-cols-6">
                 <Field className="sm:col-span-2">
                     <FieldLabel htmlFor="members-search">{t("search")}</FieldLabel>
                     <Input
@@ -125,65 +126,61 @@ export function MembersTable() {
                 </Field>
                 <Field>
                     <FieldLabel htmlFor="members-status">{t("status")}</FieldLabel>
-                    <NativeSelect
+                    <ResponsiveSelect
                         id="members-status"
                         className="w-full"
                         value={status}
-                        onChange={(event) => {
-                            setStatus(event.target.value);
+                        onValueChange={(next) => {
+                            setStatus(next);
                             resetPage();
                         }}
-                    >
-                        <option value="">{t("allStatuses")}</option>
-                        {MEMBER_STATUSES.map((value) => (
-                            <option key={value} value={value}>
-                                {ts(value)}
-                            </option>
-                        ))}
-                    </NativeSelect>
+                        label={t("status")}
+                        options={[
+                            { value: "", label: t("allStatuses") },
+                            ...MEMBER_STATUSES.map((value) => ({ value, label: ts(value) })),
+                        ]}
+                    />
                 </Field>
                 <Field>
                     <FieldLabel htmlFor="members-role">{t("role")}</FieldLabel>
-                    <NativeSelect
+                    <ResponsiveSelect
                         id="members-role"
                         className="w-full"
                         value={role}
-                        onChange={(event) => {
-                            setRole(event.target.value);
+                        onValueChange={(next) => {
+                            setRole(next);
                             resetPage();
                         }}
-                    >
-                        <option value="">{t("allRoles")}</option>
-                        {ROLE_FILTERS.map((value) => (
-                            <option key={value} value={value}>
-                                {tr(value)}
-                            </option>
-                        ))}
-                    </NativeSelect>
+                        label={t("role")}
+                        options={[
+                            { value: "", label: t("allRoles") },
+                            ...ROLE_FILTERS.map((value) => ({ value, label: tr(value) })),
+                        ]}
+                    />
                 </Field>
-                <div className="grid grid-cols-2 gap-4 sm:col-span-2 lg:col-span-1">
+                <div className="grid grid-cols-2 gap-4 sm:col-span-2">
                     <Field>
                         <FieldLabel htmlFor="members-from">{t("joinedFrom")}</FieldLabel>
-                        <Input
+                        <DatePicker
                             id="members-from"
-                            type="date"
+                            clearable
                             value={from}
                             max={to || undefined}
-                            onChange={(event) => {
-                                setFrom(event.target.value);
+                            onChange={(value) => {
+                                setFrom(value);
                                 resetPage();
                             }}
                         />
                     </Field>
                     <Field>
                         <FieldLabel htmlFor="members-to">{t("joinedTo")}</FieldLabel>
-                        <Input
+                        <DatePicker
                             id="members-to"
-                            type="date"
+                            clearable
                             value={to}
                             min={from || undefined}
-                            onChange={(event) => {
-                                setTo(event.target.value);
+                            onChange={(value) => {
+                                setTo(value);
                                 resetPage();
                             }}
                         />

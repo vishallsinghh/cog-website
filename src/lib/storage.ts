@@ -11,7 +11,7 @@ export function storageConfigured() {
 }
 import { safeFileName } from "./forms/documents";
 
-const UPLOAD_URL_TTL_SECONDS = 300;
+export const UPLOAD_URL_TTL_SECONDS = 300;
 const DOWNLOAD_URL_TTL_SECONDS = 120;
 
 let client: AwsClient | undefined;

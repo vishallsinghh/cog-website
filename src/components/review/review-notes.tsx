@@ -1,5 +1,6 @@
 "use client";
 
+import { useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
@@ -28,6 +29,8 @@ export function ReviewNotes({ applicationId, notes, canNote }: { applicationId: 
     const router = useRouter();
     const trpc = useTRPC();
     const addNote = useMutation(trpc.applicationReview.addNote.mutationOptions());
+    const [refreshing, startRefresh] = useTransition();
+    const adding = addNote.isPending || refreshing;
 
     const form = useForm<NoteValues>({
         resolver: zodResolver(noteFormSchema),
@@ -39,7 +42,7 @@ export function ReviewNotes({ applicationId, notes, canNote }: { applicationId: 
             await addNote.mutateAsync({ id: applicationId, ...values });
             toast.success(t("added"));
             form.reset({ body: "" });
-            router.refresh();
+            startRefresh(() => router.refresh());
         } catch (error) {
             toast.error(errorMessage(error, tc("genericError")));
         }
@@ -63,15 +66,15 @@ export function ReviewNotes({ applicationId, notes, canNote }: { applicationId: 
                                         {...field}
                                         id="review-note"
                                         rows={3}
-                                        disabled={addNote.isPending}
+                                        disabled={adding}
                                         aria-invalid={fieldState.invalid}
                                     />
                                     <FormFieldError error={fieldState.error} />
                                 </Field>
                             )}
                         />
-                        <Button type="submit" variant="outline" className="self-start" disabled={addNote.isPending}>
-                            {addNote.isPending && <Spinner data-icon="inline-start" />}
+                        <Button type="submit" variant="outline" className="self-start" disabled={adding}>
+                            {adding && <Spinner data-icon="inline-start" />}
                             {t("add")}
                         </Button>
                     </FieldGroup>

@@ -3,7 +3,7 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
-import { NativeSelect } from "@/components/ui/native-select";
+import { ResponsiveSelect } from "@/components/ui/responsive-select";
 import { PAGE_SIZES } from "@/lib/list.schemas";
 
 export function PagingBar({
@@ -32,19 +32,15 @@ export function PagingBar({
                 {t("range", { first, last, total })}
             </p>
             <div className="flex flex-wrap items-center gap-2">
-                <NativeSelect
+                <ResponsiveSelect
                     size="sm"
                     aria-label={t("rowsPerPage")}
-                    value={pageSize}
+                    label={t("rowsPerPage")}
+                    value={String(pageSize)}
                     disabled={disabled}
-                    onChange={(event) => onPageSizeChange(Number(event.target.value))}
-                >
-                    {PAGE_SIZES.map((size) => (
-                        <option key={size} value={size}>
-                            {t("perPage", { size })}
-                        </option>
-                    ))}
-                </NativeSelect>
+                    onValueChange={(next) => onPageSizeChange(Number(next))}
+                    options={PAGE_SIZES.map((size) => ({ value: String(size), label: t("perPage", { size }) }))}
+                />
                 <Button
                     variant="outline"
                     size="sm"

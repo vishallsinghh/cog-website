@@ -7,8 +7,8 @@ import { PagingBar } from "@/components/dashboard/paging-bar";
 import { Badge } from "@/components/ui/badge";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
 import { Field, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { NativeSelect } from "@/components/ui/native-select";
+import { DatePicker } from "@/components/ui/date-picker";
+import { ResponsiveSelect } from "@/components/ui/responsive-select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { formatDateTime } from "@/lib/format";
@@ -47,64 +47,60 @@ export function AuditTable() {
             <div className="grid gap-4 rounded-2xl border border-green/10 bg-field p-4 sm:grid-cols-2 lg:grid-cols-4">
                 <Field>
                     <FieldLabel htmlFor="audit-action">{t("action")}</FieldLabel>
-                    <NativeSelect
+                    <ResponsiveSelect
                         id="audit-action"
                         className="w-full"
                         value={action}
-                        onChange={(event) => {
-                            setAction(event.target.value);
+                        onValueChange={(next) => {
+                            setAction(next);
                             setPage(1);
                         }}
-                    >
-                        <option value="">{t("allActions")}</option>
-                        {filters.data?.actions.map((value) => (
-                            <option key={value} value={value}>
-                                {value}
-                            </option>
-                        ))}
-                    </NativeSelect>
+                        label={t("action")}
+                        options={[
+                            { value: "", label: t("allActions") },
+                            ...(filters.data?.actions ?? []).map((value) => ({ value, label: value })),
+                        ]}
+                    />
                 </Field>
                 <Field>
                     <FieldLabel htmlFor="audit-actor">{t("actor")}</FieldLabel>
-                    <NativeSelect
+                    <ResponsiveSelect
                         id="audit-actor"
                         className="w-full"
                         value={actorId}
-                        onChange={(event) => {
-                            setActorId(event.target.value);
+                        onValueChange={(next) => {
+                            setActorId(next);
                             setPage(1);
                         }}
-                    >
-                        <option value="">{t("everyone")}</option>
-                        {filters.data?.actors.map((actor) => (
-                            <option key={actor.id} value={actor.id}>
-                                {actor.name}
-                            </option>
-                        ))}
-                    </NativeSelect>
+                        label={t("actor")}
+                        options={[
+                            { value: "", label: t("everyone") },
+                            ...(filters.data?.actors ?? []).map((actor) => ({ value: actor.id, label: actor.name })),
+                        ]}
+                    />
                 </Field>
                 <Field>
                     <FieldLabel htmlFor="audit-from">{t("from")}</FieldLabel>
-                    <Input
+                    <DatePicker
                         id="audit-from"
-                        type="date"
+                        clearable
                         value={from}
                         max={to || undefined}
-                        onChange={(event) => {
-                            setFrom(event.target.value);
+                        onChange={(value) => {
+                            setFrom(value);
                             setPage(1);
                         }}
                     />
                 </Field>
                 <Field>
                     <FieldLabel htmlFor="audit-to">{t("to")}</FieldLabel>
-                    <Input
+                    <DatePicker
                         id="audit-to"
-                        type="date"
+                        clearable
                         value={to}
                         min={from || undefined}
-                        onChange={(event) => {
-                            setTo(event.target.value);
+                        onChange={(value) => {
+                            setTo(value);
                             setPage(1);
                         }}
                     />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import type { inferRouterOutputs } from "@trpc/server";
@@ -56,6 +56,8 @@ function DetailsCard({ data }: { data: EditorData }) {
     const router = useRouter();
     const trpc = useTRPC();
     const update = useMutation(trpc.formsAdmin.updateDetails.mutationOptions());
+    const [refreshing, startRefresh] = useTransition();
+    const saving = update.isPending || refreshing;
 
     const form = useForm<Details>({
         resolver: zodResolver(formDetailsSchema),
@@ -72,7 +74,7 @@ function DetailsCard({ data }: { data: EditorData }) {
             await update.mutateAsync({ id: data.id, ...values });
             toast.success(t("detailsSaved"));
             form.reset(values);
-            router.refresh();
+            startRefresh(() => router.refresh());
         } catch (error) {
             toast.error(errorMessage(error, tc("genericError")));
         }
@@ -116,9 +118,9 @@ function DetailsCard({ data }: { data: EditorData }) {
                                 type="submit"
                                 variant="outline"
                                 className="w-fit"
-                                disabled={update.isPending || !form.formState.isDirty}
+                                disabled={saving || !form.formState.isDirty}
                             >
-                                {update.isPending && <Spinner data-icon="inline-start" />}
+                                {saving && <Spinner data-icon="inline-start" />}
                                 {t("saveDetails")}
                             </Button>
                         )}
@@ -136,14 +138,14 @@ export function FormEditor({ data }: { data: EditorData }) {
     const locale = useLocale();
     const router = useRouter();
     const trpc = useTRPC();
-    const saveDraft = useMutation(trpc.formsAdmin.saveDraft.mutationOptions());
     const publish = useMutation(trpc.formsAdmin.publish.mutationOptions());
     const discard = useMutation(trpc.formsAdmin.discardDraft.mutationOptions());
     const [confirming, setConfirming] = useState<"publish" | "discard" | null>(null);
     const [pending, setPending] = useState<FormDefinition | null>(null);
+    const [navigating, startNavigation] = useTransition();
 
     const readOnly = !data.canWrite;
-    const busy = saveDraft.isPending || publish.isPending || discard.isPending;
+    const busy = publish.isPending || discard.isPending || navigating;
 
     const form = useForm<FormDefinition>({
         resolver: zodResolver(formDefinitionSchema),
@@ -154,14 +156,9 @@ export function FormEditor({ data }: { data: EditorData }) {
 
     const invalid = () => toast.error(t("fixErrors"));
 
-    async function onSaveDraft(definition: FormDefinition) {
-        try {
-            await saveDraft.mutateAsync({ id: data.id, definition });
-            toast.success(t("draftSaved"));
-            router.refresh();
-        } catch (error) {
-            toast.error(errorMessage(error, tc("genericError")));
-        }
+    function confirmPublish(definition: FormDefinition) {
+        setPending(definition);
+        setConfirming("publish");
     }
 
     async function onPublish() {
@@ -170,10 +167,13 @@ export function FormEditor({ data }: { data: EditorData }) {
         try {
             const result = await publish.mutateAsync({ id: data.id, definition: pending });
             toast.success(t("published", { version: result.version }));
-            router.refresh();
+            startNavigation(() => {
+                router.refresh();
+                setConfirming(null);
+                setPending(null);
+            });
         } catch (error) {
             toast.error(errorMessage(error, tc("genericError")));
-        } finally {
             setConfirming(null);
             setPending(null);
         }
@@ -183,10 +183,12 @@ export function FormEditor({ data }: { data: EditorData }) {
         try {
             await discard.mutateAsync({ id: data.id });
             toast.success(t("discarded"));
-            router.refresh();
+            startNavigation(() => {
+                router.refresh();
+                setConfirming(null);
+            });
         } catch (error) {
             toast.error(errorMessage(error, tc("genericError")));
-        } finally {
             setConfirming(null);
         }
     }
@@ -212,7 +214,7 @@ export function FormEditor({ data }: { data: EditorData }) {
                 <form
                     noValidate
                     className="flex flex-col gap-6"
-                    onSubmit={form.handleSubmit((definition) => void onSaveDraft(definition), invalid)}
+                    onSubmit={form.handleSubmit(confirmPublish, invalid)}
                 >
                     <h2 className="display m-0 text-[26px] text-green">{t("questionsTitle")}</h2>
 
@@ -237,21 +239,9 @@ export function FormEditor({ data }: { data: EditorData }) {
 
                     {!readOnly && (
                         <div className="sticky bottom-0 z-10 -mx-1 flex flex-wrap items-center gap-3 border-t border-green/10 bg-background/95 px-1 py-3 backdrop-blur">
-                            <Button
-                                type="button"
-                                size="lg"
-                                disabled={busy}
-                                onClick={form.handleSubmit((definition) => {
-                                    setPending(definition);
-                                    setConfirming("publish");
-                                }, invalid)}
-                            >
-                                {publish.isPending && <Spinner data-icon="inline-start" />}
+                            <Button type="submit" size="lg" disabled={busy}>
+                                {busy && confirming === "publish" && <Spinner data-icon="inline-start" />}
                                 {t("publish")}
-                            </Button>
-                            <Button type="submit" variant="outline" size="lg" disabled={busy}>
-                                {saveDraft.isPending && <Spinner data-icon="inline-start" />}
-                                {t("saveDraft")}
                             </Button>
                             {data.draft && data.publishedVersion && (
                                 <Button
@@ -270,7 +260,7 @@ export function FormEditor({ data }: { data: EditorData }) {
                 </form>
             </FormProvider>
 
-            <AlertDialog open={confirming !== null} onOpenChange={(open) => !open && setConfirming(null)}>
+            <AlertDialog open={confirming !== null} onOpenChange={(open) => !open && !busy && setConfirming(null)}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>{confirming === "discard" ? t("discardTitle") : t("publishTitle")}</AlertDialogTitle>
@@ -283,7 +273,10 @@ export function FormEditor({ data }: { data: EditorData }) {
                         <AlertDialogAction
                             variant={confirming === "discard" ? "destructive" : "default"}
                             disabled={busy}
-                            onClick={() => void (confirming === "discard" ? onDiscard() : onPublish())}
+                            onClick={(event) => {
+                                event.preventDefault();
+                                void (confirming === "discard" ? onDiscard() : onPublish());
+                            }}
                         >
                             {busy && <Spinner data-icon="inline-start" />}
                             {confirming === "discard" ? t("discard") : t("publish")}

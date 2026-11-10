@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel, FieldLegend, FieldSet } from "@/components/ui/field";
-import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
+import { ResponsiveSelect } from "@/components/ui/responsive-select";
 import { blankColumn, convertColumn, newId } from "@/lib/forms/builder";
 import {
     MAX_CHOICE_OPTIONS,
@@ -31,22 +31,20 @@ function PrefillSelect({ path }: { path: string }) {
             render={({ field }) => (
                 <Field>
                     <FieldLabel htmlFor={id}>{t("prefill")}</FieldLabel>
-                    <NativeSelect
+                    <ResponsiveSelect
                         id={id}
                         className="w-full sm:w-72"
                         name={field.name}
                         ref={field.ref}
                         value={typeof field.value === "string" ? field.value : ""}
-                        onChange={(event) => field.onChange(event.target.value || undefined)}
+                        onValueChange={(next) => field.onChange(next || undefined)}
                         onBlur={field.onBlur}
-                    >
-                        <NativeSelectOption value="">{t("noPrefill")}</NativeSelectOption>
-                        {PREFILL_SOURCES.map((source) => (
-                            <NativeSelectOption key={source} value={source}>
-                                {ts(source)}
-                            </NativeSelectOption>
-                        ))}
-                    </NativeSelect>
+                        label={t("prefill")}
+                        options={[
+                            { value: "", label: t("noPrefill") },
+                            ...PREFILL_SOURCES.map((source) => ({ value: source, label: ts(source) })),
+                        ]}
+                    />
                 </Field>
             )}
         />
@@ -168,24 +166,20 @@ function ColumnsEditor({ path }: { path: string }) {
                                     render={({ field }) => (
                                         <Field className="w-full sm:w-56">
                                             <FieldLabel htmlFor={id}>{t("type")}</FieldLabel>
-                                            <NativeSelect
+                                            <ResponsiveSelect
                                                 id={id}
                                                 className="w-full"
                                                 value={field.value as string}
-                                                onChange={(event) => {
+                                                onValueChange={(next) => {
                                                     const current = getValues(columnPath as never) as unknown as TableColumn;
                                                     columns.update(
                                                         index,
-                                                        convertColumn(current, event.target.value as TableColumn["type"]) as never,
+                                                        convertColumn(current, next as TableColumn["type"]) as never,
                                                     );
                                                 }}
-                                            >
-                                                {TABLE_COLUMN_TYPES.map((type) => (
-                                                    <NativeSelectOption key={type} value={type}>
-                                                        {tt(type)}
-                                                    </NativeSelectOption>
-                                                ))}
-                                            </NativeSelect>
+                                                label={t("type")}
+                                                options={TABLE_COLUMN_TYPES.map((type) => ({ value: type, label: tt(type) }))}
+                                            />
                                         </Field>
                                     )}
                                 />

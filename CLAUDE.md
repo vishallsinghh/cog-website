@@ -76,12 +76,14 @@ migrations/         SQL migrations applied by scripts/db.ts
 - Every admin action and every denied access attempt writes an `AuditLog` row.
 - Uploaded documents are private. Never expose a public URL for them. Staff open them through a permission-checked route that writes an `AuditLog` row and hands out a short-lived R2 link.
 - Staff see an assistance form's applications only through `formAccessLevel()` in `src/lib/forms/review.server.ts`. Roles with `form: ["assign"]` (Super Admin) see every form and manage `FormAccess` grants; everyone else needs a grant, and their level (`view`, `review`, `decide`) is capped by their role's `application` permissions. Contact answers are masked for roles without `member: ["readContact"]`, in the review screen and the Excel export.
-- Forms are built at `/forms` (`formsAdmin` router): `form: ["read"]` views, `form: ["write"]` edits. Saving keeps one unpublished `FormVersion`; publishing stamps `publishedAt` on it. A question's answer type is locked once any published version contains it, and a form can only be opened after its first publish. New question, section, choice and column IDs come from `newId()` in `src/lib/forms/builder.ts` and must never be reused for something else.
+- Forms are built at `/forms` (`formsAdmin` router): `form: ["read"]` views, `form: ["write"]` edits. The builder has no Save draft button: Publish saves and publishes in one step. Older unpublished `FormVersion` drafts can still be discarded. A question's answer type is locked once any published version contains it, and a form can only be opened after its first publish. New question, section, choice and column IDs come from `newId()` in `src/lib/forms/builder.ts` and must never be reused for something else.
 - Assistance forms are data, not code. Each `Form` has numbered `FormVersion` rows whose `definition` is JSON checked by `formDefinitionSchema`; a published version is never edited, so changes create a new version. An `Application` keeps the version it was started on. Validate answers with `buildAnswersSchema(definition, "draft" | "submit")`. Money answers are number fields with `money: true`, stored in paise.
 - Use `db.$transaction` when several writes must land together. Otherwise design writes so a partial failure is safe to retry.
 - User-facing text lives in `messages/en.json` and `messages/gu.json`, never hardcoded in components. Add every key to both files. `gu.json` is a draft translation pending COG review.
 - Use `Link`, `redirect`, `useRouter` and `usePathname` from `@/i18n/navigation`, not `next/link` or `next/navigation`, so the locale is kept.
 - Zod error messages are keys from `messages.Validation`; render them with `FormFieldError`. tRPC errors use `errorsFor(ctx.locale)`.
+- The screen never looks idle while work is still going on. After a submit or any awaited call that ends in a navigation or refresh, keep the loader on until the next screen has rendered: run `router.push` / `router.refresh` / `router.replace` inside `startTransition` from `useTransition` and fold its pending flag into the button's loading state, and keep confirm dialogs open (`event.preventDefault()` on the action) until then. Sign-in and sign-out use a full page load (`window.location.assign`) so no cached signed-in or signed-out pages survive.
+- Date inputs use `DatePicker` from `src/components/ui/date-picker.tsx`, never `<input type="date">`. Values stay `YYYY-MM-DD` strings.
 - Secrets live only in `.env` and Vercel env. Do not commit them or print them.
 
 ## Database workflow
@@ -110,6 +112,7 @@ Seed the Super Admin with `SUPER_ADMIN_PHONE` and `SUPER_ADMIN_NAME` set in `.en
 Required: `AADHAAR_ENCRYPTION_KEY` (32 random bytes, base64; generate with `openssl rand -base64 32`), `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`, `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`.
 Documents: `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`. The bucket stays private and needs a CORS rule allowing `PUT` with a `content-type` header from the site's origins.
 OTP delivery: `MSG91_AUTH_KEY`, `MSG91_OTP_TEMPLATE_ID`. Until both are set, OTPs are written to the server log in every environment, production included.
+Development only: `EXPOSE_OTP_TO_BROWSER=true` also prints each OTP in the browser console. Never set it once real members use the site.
 Application SMS: `MSG91_APPLICATION_TEMPLATE_ID`, a MSG91 flow template with `##number##` and `##status##` variables. Until it and `MSG91_AUTH_KEY` are set, status messages go to the server log.
 Seed only: `SUPER_ADMIN_PHONE`, `SUPER_ADMIN_NAME`.
 
@@ -118,6 +121,8 @@ Seed only: `SUPER_ADMIN_PHONE`, `SUPER_ADMIN_NAME`.
 - tRPC has no per-user / per-IP rate-limit middleware yet. Denied permission checks are audited through `staffProcedure` in `src/trpc/init.ts`; use it (not `protectedProcedure`) for every admin procedure.
 - Approving or rejecting from the members sheet calls `purgeFullAadhaar()`, but accounts that are never decided keep their encrypted Aadhaar. Add a retention job as a safety net.
 - OTPs go to the server log while MSG91 is not configured; anyone with Vercel log access can sign in as any number until it is.
+- Development only, remove before go-live: with `EXPOSE_OTP_TO_BROWSER=true` the send-OTP response carries the code in the `x-dev-otp` header and the sign-in page prints it to the browser console. Anyone can sign in as any number while it is on. Delete the flag, the header in `src/lib/auth.ts` and the `console.info` in `member-auth.tsx`.
+- `getSession()` calls `connection()` so Partial Prefetching never starts a session lookup it then abandons; protected pages stream in behind the layout's skeleton instead of being prefetched with session data.
 - Consent is stored on `user.consentAcceptedAt` only; the `Consent` table is not written yet.
 - Leadership names and years, the full journey timeline, social links, privacy and terms text are placeholders until COG supplies them.
 - Turnstile, the daily OTP cap with admin alert, and Member ID issuing on approval are not built yet.

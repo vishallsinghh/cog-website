@@ -1,10 +1,13 @@
 "use client";
 
 import { ChevronsUpDownIcon, GlobeIcon, LogOutIcon, UserRoundIcon } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { toast } from "sonner";
 import { authClient } from "@/lib/auth.client";
 import { formatPhone } from "@/lib/format";
-import { Link, useRouter } from "@/i18n/navigation";
+import { getPathname, Link } from "@/i18n/navigation";
+import { Spinner } from "@/components/ui/spinner";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
     DropdownMenu,
@@ -39,14 +42,26 @@ function initials(name: string) {
 }
 
 export function NavUser({ user }: { user: NavUserData }) {
-    const router = useRouter();
+    const locale = useLocale();
     const t = useTranslations("Dashboard");
+    const tc = useTranslations("Common");
     const { isMobile } = useSidebar();
+    const [signingOut, setSigningOut] = useState(false);
 
-    async function signOut() {
-        await authClient.signOut();
-        router.push("/member");
-        router.refresh();
+    async function signOut(event: Event) {
+        event.preventDefault();
+        if (signingOut) return;
+
+        setSigningOut(true);
+        const { error } = await authClient.signOut();
+
+        if (error) {
+            setSigningOut(false);
+            toast.error(tc("genericError"));
+            return;
+        }
+
+        window.location.assign(getPathname({ href: "/member", locale }));
     }
 
     return (
@@ -58,20 +73,20 @@ export function NavUser({ user }: { user: NavUserData }) {
                             size="lg"
                             tooltip={user.name}
                             aria-label={t("accountMenu", { name: user.name })}
-                            className="min-h-14 rounded-xl border border-cream/15 bg-cream/5 p-2.5 text-cream hover:bg-cream/10 hover:text-cream data-open:bg-cream/10 data-[state=open]:bg-cream/10 data-[state=open]:text-cream"
+                            className="min-h-14 rounded-xl border border-cream/15 bg-cream/5 p-2.5 text-cream hover:bg-cream/10 hover:text-cream data-open:bg-cream/10 data-[state=open]:bg-cream/10 data-[state=open]:text-cream group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-14! group-data-[collapsible=icon]:justify-center"
                         >
                             <Avatar className="size-9">
                                 <AvatarFallback className="bg-gold text-[14px] font-bold text-green-ink">
                                     {initials(user.name)}
                                 </AvatarFallback>
                             </Avatar>
-                            <span className="flex min-w-0 flex-col text-left leading-tight">
+                            <span className="flex min-w-0 flex-col text-left leading-tight group-data-[collapsible=icon]:hidden">
                                 <span className="truncate text-[15px] font-semibold">{user.name}</span>
                                 <span className="truncate text-[13px] font-normal text-cream/70">
                                     {user.roleLabel}
                                 </span>
                             </span>
-                            <ChevronsUpDownIcon className="ml-auto" />
+                            <ChevronsUpDownIcon className="ml-auto group-data-[collapsible=icon]:hidden" />
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent
@@ -103,8 +118,8 @@ export function NavUser({ user }: { user: NavUserData }) {
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />
                         <DropdownMenuGroup>
-                            <DropdownMenuItem onSelect={signOut}>
-                                <LogOutIcon />
+                            <DropdownMenuItem onSelect={(event) => void signOut(event)} disabled={signingOut}>
+                                {signingOut ? <Spinner /> : <LogOutIcon />}
                                 {t("signOut")}
                             </DropdownMenuItem>
                         </DropdownMenuGroup>

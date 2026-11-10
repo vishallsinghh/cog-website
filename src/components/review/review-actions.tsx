@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { NativeSelect } from "@/components/ui/native-select";
+import { ResponsiveSelect } from "@/components/ui/responsive-select";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "@/i18n/navigation";
@@ -46,6 +46,8 @@ export function ReviewActions({
     const router = useRouter();
     const trpc = useTRPC();
     const setStatus = useMutation(trpc.applicationReview.setStatus.mutationOptions());
+    const [refreshing, startRefresh] = useTransition();
+    const applying = setStatus.isPending || refreshing;
     const [confirming, setConfirming] = useState<StatusChangeValues | null>(null);
 
     const form = useForm<StatusChangeValues>({
@@ -72,10 +74,12 @@ export function ReviewActions({
             const result = await setStatus.mutateAsync({ id: applicationId, ...values });
             toast.success(result.smsSent ? t("saved", { status: label }) : t("savedNoSms", { status: label }));
             form.reset({ status: "" as StaffTargetStatus, message: "" });
-            router.refresh();
+            startRefresh(() => {
+                router.refresh();
+                setConfirming(null);
+            });
         } catch (error) {
             toast.error(errorMessage(error, tc("genericError")));
-        } finally {
             setConfirming(null);
         }
     }
@@ -98,20 +102,20 @@ export function ReviewActions({
                         render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
                                 <FieldLabel htmlFor="review-status">{t("newStatus")}</FieldLabel>
-                                <NativeSelect
-                                    {...field}
+                                <ResponsiveSelect
                                     id="review-status"
+                                    name={field.name}
+                                    ref={field.ref}
+                                    value={field.value}
+                                    onValueChange={field.onChange}
+                                    onBlur={field.onBlur}
                                     className="w-full"
-                                    disabled={setStatus.isPending}
+                                    disabled={applying}
                                     aria-invalid={fieldState.invalid}
-                                >
-                                    <option value="">{t("choose")}</option>
-                                    {transitions.map((value) => (
-                                        <option key={value} value={value}>
-                                            {ts(value)}
-                                        </option>
-                                    ))}
-                                </NativeSelect>
+                                    label={t("newStatus")}
+                                    placeholder={t("choose")}
+                                    options={transitions.map((value) => ({ value, label: ts(value) }))}
+                                />
                                 <FormFieldError error={fieldState.error} />
                             </Field>
                         )}
@@ -133,21 +137,21 @@ export function ReviewActions({
                                     value={field.value ?? ""}
                                     id="review-message"
                                     rows={4}
-                                    disabled={setStatus.isPending}
+                                    disabled={applying}
                                     aria-invalid={fieldState.invalid}
                                 />
                                 <FormFieldError error={fieldState.error} />
                             </Field>
                         )}
                     />
-                    <Button type="submit" className="self-start" disabled={setStatus.isPending}>
-                        {setStatus.isPending && <Spinner data-icon="inline-start" />}
+                    <Button type="submit" className="self-start" disabled={applying}>
+                        {applying && <Spinner data-icon="inline-start" />}
                         {t("save")}
                     </Button>
                 </FieldGroup>
             </form>
 
-            <AlertDialog open={Boolean(confirming)} onOpenChange={(open) => !open && setConfirming(null)}>
+            <AlertDialog open={Boolean(confirming)} onOpenChange={(open) => !open && !applying && setConfirming(null)}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>
@@ -156,13 +160,16 @@ export function ReviewActions({
                         <AlertDialogDescription>{t("confirmText")}</AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel disabled={setStatus.isPending}>{tc("cancel")}</AlertDialogCancel>
+                        <AlertDialogCancel disabled={applying}>{tc("cancel")}</AlertDialogCancel>
                         <AlertDialogAction
                             variant={confirming?.status === "rejected" ? "destructive" : "default"}
-                            disabled={setStatus.isPending}
-                            onClick={() => confirming && void apply(confirming)}
+                            disabled={applying}
+                            onClick={(event) => {
+                                event.preventDefault();
+                                if (confirming) void apply(confirming);
+                            }}
                         >
-                            {setStatus.isPending && <Spinner data-icon="inline-start" />}
+                            {applying && <Spinner data-icon="inline-start" />}
                             {t("confirm")}
                         </AlertDialogAction>
                     </AlertDialogFooter>

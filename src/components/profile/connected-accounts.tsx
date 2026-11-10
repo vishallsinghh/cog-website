@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
@@ -33,7 +33,9 @@ export function ConnectedAccounts({ google }: { google: GoogleAccount | null }) 
     const tc = useTranslations("Common");
     const params = useSearchParams();
     const profilePath = getPathname({ href: "/profile", locale });
-    const [busy, setBusy] = useState(false);
+    const [working, setBusy] = useState(false);
+    const [refreshing, startRefresh] = useTransition();
+    const busy = working || refreshing;
     const [confirmOpen, setConfirmOpen] = useState(false);
     const handled = useRef(false);
     const connected = google !== null;
@@ -73,10 +75,9 @@ export function ConnectedAccounts({ google }: { google: GoogleAccount | null }) 
 
         const { error: unlinkError } = await authClient.unlinkAccount({ accountId: google.id });
 
-        setBusy(false);
-        setConfirmOpen(false);
-
         if (unlinkError) {
+            setBusy(false);
+            setConfirmOpen(false);
             toast.error(
                 unlinkError.code === "SESSION_NOT_FRESH" ? t("freshSession") : t("disconnectError"),
             );
@@ -84,7 +85,11 @@ export function ConnectedAccounts({ google }: { google: GoogleAccount | null }) 
         }
 
         toast.success(t("disconnectedToast"));
-        router.refresh();
+        startRefresh(() => {
+            router.refresh();
+            setBusy(false);
+            setConfirmOpen(false);
+        });
     }
 
     return (

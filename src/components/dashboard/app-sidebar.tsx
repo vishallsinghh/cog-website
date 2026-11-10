@@ -22,7 +22,7 @@ import { NavIcon } from "./nav-icon";
 import { NavUser, type NavUserData } from "./nav-user";
 
 const ITEM =
-    "min-h-11 gap-3 rounded-[10px] px-3 text-[15px] font-medium text-cream/80 hover:bg-cream/10 hover:text-cream data-active:bg-cream/12 data-active:text-cream data-active:shadow-[inset_3px_0_0_var(--gold)]";
+    "min-h-11 gap-3 rounded-[10px] px-3 text-[15px] font-medium text-cream/80 hover:bg-cream/10 hover:text-cream data-active:bg-cream/12 data-active:text-cream data-active:shadow-[inset_3px_0_0_var(--gold)] group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-11! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0!";
 
 export function AppSidebar({ groups, user }: { groups: NavGroup[]; user: NavUserData }) {
     const pathname = usePathname();
@@ -71,7 +71,7 @@ export function AppSidebar({ groups, user }: { groups: NavGroup[]; user: NavUser
                                             <SidebarMenuButton asChild tooltip={title} isActive={active} className={ITEM}>
                                                 <Link href={item.href} aria-current={active ? "page" : undefined}>
                                                     <NavIcon name={item.key} />
-                                                    <span className="flex-1">{title}</span>
+                                                    <span className="flex-1 group-data-[collapsible=icon]:hidden">{title}</span>
                                                     {item.soon && !active && (
                                                         <span className="text-[11px] font-normal text-cream/50 group-data-[collapsible=icon]:hidden">
                                                             {t("soon")}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTransition } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { ArrowRightIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -16,20 +17,22 @@ export function StartApplicationButton({ slug }: { slug: string }) {
     const router = useRouter();
     const trpc = useTRPC();
     const start = useMutation(trpc.applications.start.mutationOptions());
+    const [navigating, startNavigation] = useTransition();
+    const starting = start.isPending || (start.isSuccess && navigating);
 
     async function handleClick() {
         try {
             const application = await start.mutateAsync({ slug });
-            router.push(`/my-applications/${application.id}`);
+            startNavigation(() => router.push(`/my-applications/${application.id}`));
         } catch (error) {
             toast.error(errorMessage(error, tc("genericError")));
         }
     }
 
     return (
-        <Button type="button" className="w-fit" disabled={start.isPending || start.isSuccess} onClick={() => void handleClick()}>
+        <Button type="button" className="w-fit" disabled={starting} onClick={() => void handleClick()}>
             {t("apply")}
-            {start.isPending || start.isSuccess ? <Spinner data-icon="inline-end" /> : <ArrowRightIcon data-icon="inline-end" />}
+            {starting ? <Spinner data-icon="inline-end" /> : <ArrowRightIcon data-icon="inline-end" />}
         </Button>
     );
 }

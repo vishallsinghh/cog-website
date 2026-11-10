@@ -24,7 +24,7 @@ import { Button } from "@/components/ui/button";
 import { FormFieldError } from "@/components/form/form-field-error";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
-import { NativeSelect } from "@/components/ui/native-select";
+import { ResponsiveSelect } from "@/components/ui/responsive-select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -111,18 +111,18 @@ function InviteForm({ onInvited }: { onInvited: (notice: Notice) => void }) {
                     render={({ field, fieldState }) => (
                         <Field data-invalid={fieldState.invalid} className="sm:w-44">
                             <FieldLabel htmlFor="invite-role">{t("role")}</FieldLabel>
-                            <NativeSelect
-                                {...field}
+                            <ResponsiveSelect
                                 id="invite-role"
+                                name={field.name}
+                                ref={field.ref}
+                                value={field.value}
+                                onValueChange={field.onChange}
+                                onBlur={field.onBlur}
                                 className="w-full"
                                 aria-invalid={fieldState.invalid}
-                            >
-                                {ASSIGNABLE_ROLES.map((role) => (
-                                    <option key={role} value={role}>
-                                        {roleLabel(role)}
-                                    </option>
-                                ))}
-                            </NativeSelect>
+                                label={t("role")}
+                                options={ASSIGNABLE_ROLES.map((role) => ({ value: role, label: roleLabel(role) }))}
+                            />
                             {fieldState.invalid && <FormFieldError error={fieldState.error} />}
                         </Field>
                     )}
@@ -231,13 +231,20 @@ export function TeamManager({ currentUserId }: { currentUserId: string }) {
                                                     {formatPhone(person.phoneNumber ?? "")}
                                                 </TableCell>
                                                 <TableCell>
-                                                    <NativeSelect
+                                                    <ResponsiveSelect
                                                         size="sm"
                                                         aria-label={t("roleFor", { name: person.name })}
+                                                        label={t("roleFor", { name: person.name })}
                                                         value={person.role}
                                                         disabled={busy}
-                                                        onChange={(event) => {
-                                                            const role = assignableRoleSchema.safeParse(event.target.value);
+                                                        options={[
+                                                            ...(isSuperAdmin
+                                                                ? [{ value: "super_admin", label: roleLabel("super_admin"), disabled: true }]
+                                                                : []),
+                                                            ...ASSIGNABLE_ROLES.map((role) => ({ value: role, label: roleLabel(role) })),
+                                                        ]}
+                                                        onValueChange={(next) => {
+                                                            const role = assignableRoleSchema.safeParse(next);
                                                             if (!role.success) return;
 
                                                             void run(
@@ -249,18 +256,7 @@ export function TeamManager({ currentUserId }: { currentUserId: string }) {
                                                                 t("roleChanged", { name: person.name, role: roleLabel(role.data) }),
                                                             );
                                                         }}
-                                                    >
-                                                        {isSuperAdmin && (
-                                                            <option value="super_admin" disabled>
-                                                                {roleLabel("super_admin")}
-                                                            </option>
-                                                        )}
-                                                        {ASSIGNABLE_ROLES.map((role) => (
-                                                            <option key={role} value={role}>
-                                                                {roleLabel(role)}
-                                                            </option>
-                                                        ))}
-                                                    </NativeSelect>
+                                                    />
                                                 </TableCell>
                                                 <TableCell className="text-right">
                                                     <AlertDialog>
