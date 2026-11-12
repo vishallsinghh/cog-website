@@ -5,6 +5,7 @@ import { purgeFullAadhaar } from "@/lib/aadhaar.server";
 import { hasPermission, type RequiredPermissions } from "@/lib/access";
 import { getClientIp, maskPhone, writeAuditLog } from "@/lib/audit";
 import { db } from "@/lib/db";
+import { deleteUserDocuments } from "@/lib/forms/documents.server";
 import { dayRange, memberListInputSchema } from "@/lib/list.schemas";
 import { memberIdInputSchema, setMemberStatusInputSchema } from "@/lib/members.schemas";
 import { STAFF_ROLES, type MemberStatus } from "@/lib/permissions";
@@ -238,6 +239,15 @@ export const membersRouter = createTRPCRouter({
             if (target.status === "approved") {
                 const e = await errorsFor(ctx.locale);
                 throw new TRPCError({ code: "BAD_REQUEST", message: e("approvedNotDeletable") });
+            }
+
+            // This deletes the row directly, so Better Auth's delete hook does not run.
+            // The uploaded files are removed here instead, before the account goes.
+            try {
+                await deleteUserDocuments(target.id);
+            } catch {
+                const e = await errorsFor(ctx.locale);
+                throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: e("documentsNotDeleted") });
             }
 
             await db.user.deleteMany({ where: { id: target.id } });

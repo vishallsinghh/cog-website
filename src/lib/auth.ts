@@ -11,6 +11,7 @@ import { writeAuditLog } from "./audit";
 import { signUpDetailsSchema } from "./auth.schemas";
 import { db } from "./db";
 import { authEnv, smsEnv } from "./env";
+import { deleteUserDocuments } from "./forms/documents.server";
 import { ac, roles } from "./permissions";
 import { DEV_OTP_HEADER, isIndianMobile, tempEmailForPhone } from "./phone";
 import {
@@ -260,6 +261,13 @@ export const auth = betterAuth({
 
                     const ip = ctx.request ? getIP(ctx.request, ctx.context.options) : null;
                     await acceptInviteFor(user as Parameters<typeof acceptInviteFor>[0], ip);
+                },
+            },
+            delete: {
+                // Uploaded files live in R2, outside the database cascade. Removing them
+                // first means a failure keeps the account, so the delete can be retried.
+                before: async (user) => {
+                    await deleteUserDocuments(user.id);
                 },
             },
         },

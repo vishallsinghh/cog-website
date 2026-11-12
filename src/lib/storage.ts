@@ -80,6 +80,35 @@ export async function headObject(key: string) {
     };
 }
 
+export async function getObject(key: string) {
+    const response = await r2().fetch(objectUrl(key).toString(), { method: "GET" });
+
+    if (!response.ok) throw new Error(`R2 GET failed with ${response.status}`);
+
+    return new Uint8Array(await response.arrayBuffer());
+}
+
+export async function readObjectStart(key: string, length: number) {
+    const response = await r2().fetch(objectUrl(key).toString(), {
+        method: "GET",
+        headers: { range: `bytes=0-${length - 1}` },
+    });
+
+    if (!response.ok) throw new Error(`R2 GET failed with ${response.status}`);
+
+    return new Uint8Array(await response.arrayBuffer()).subarray(0, length);
+}
+
+export async function putObject(key: string, body: Uint8Array<ArrayBuffer>, contentType: string) {
+    const response = await r2().fetch(objectUrl(key).toString(), {
+        method: "PUT",
+        headers: { "content-type": contentType },
+        body,
+    });
+
+    if (!response.ok) throw new Error(`R2 PUT failed with ${response.status}`);
+}
+
 export async function deleteObject(key: string) {
     const response = await r2().fetch(objectUrl(key).toString(), { method: "DELETE" });
 

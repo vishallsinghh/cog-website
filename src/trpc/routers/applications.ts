@@ -8,14 +8,24 @@ import {
     startApplicationSchema,
 } from "@/lib/forms/application.schemas";
 import { canMemberEdit, type ApplicationStatus } from "@/lib/forms/application-status";
+import {
+    canCompress,
+    COMPRESSED_CONTENT_TYPE,
+    compressedFileName,
+    compressImage,
+} from "@/lib/forms/compress.server";
 import { allFields, parseDefinition, type FormDefinition } from "@/lib/forms/definition";
+import { isDocumentContentType, matchesClaimedType, SIGNATURE_BYTES } from "@/lib/forms/documents";
 import { answerForSource, prefillAnswers } from "@/lib/forms/prefill";
 import { notifyApplicant } from "@/lib/forms/review.server";
 import {
     createUploadUrl,
     deleteObject,
     documentStorageKey,
+    getObject,
     headObject,
+    putObject,
+    readObjectStart,
     storageConfigured,
     UPLOAD_URL_TTL_SECONDS,
 } from "@/lib/storage";
@@ -75,6 +85,30 @@ async function purgeStaleUploads(applicationId: string) {
     if (purged.length > 0) {
         await db.applicationDocument.deleteMany({ where: { id: { in: purged }, uploadedAt: null } });
     }
+}
+
+// The smaller copy goes under a new key and the original is deleted only after the row
+// points at the copy, so a failure at any step still leaves a working document.
+async function compressUploadedImage(document: {
+    applicationId: string;
+    storageKey: string;
+    fileName: string;
+    contentType: string;
+}) {
+    if (!canCompress(document.contentType)) return null;
+
+    const compressed = await compressImage(await getObject(document.storageKey));
+    if (!compressed) return null;
+
+    const storageKey = documentStorageKey(document.applicationId);
+    await putObject(storageKey, compressed, COMPRESSED_CONTENT_TYPE);
+
+    return {
+        storageKey,
+        size: compressed.byteLength,
+        contentType: COMPRESSED_CONTENT_TYPE,
+        fileName: compressedFileName(document.fileName),
+    };
 }
 
 function documentFieldIds(definition: FormDefinition) {
@@ -386,17 +420,29 @@ export const applicationsRouter = createTRPCRouter({
             object.size === document.size &&
             object.contentType.split(";")[0]?.trim() === document.contentType;
 
-        if (!matches) {
+        // The declared type is only a claim. The file's first bytes must agree with it, so a
+        // file renamed to look like another type (an SVG called image.png) is thrown away.
+        const genuine =
+            matches &&
+            isDocumentContentType(document.contentType) &&
+            matchesClaimedType(await readObjectStart(document.storageKey, SIGNATURE_BYTES), document.contentType);
+
+        if (!genuine) {
             await deleteObject(document.storageKey).catch(() => undefined);
             await db.applicationDocument.delete({ where: { id: document.id } });
-            return fail(ctx.locale, "BAD_REQUEST", "documentInvalid");
+            return fail(ctx.locale, "BAD_REQUEST", matches ? "documentContentMismatch" : "documentInvalid");
         }
+
+        // A failed compression is not the member's problem: the original upload is kept.
+        const compressed = await compressUploadedImage(document).catch(() => null);
 
         const confirmed = await db.applicationDocument.update({
             where: { id: document.id },
-            data: { uploadedAt: new Date() },
+            data: { uploadedAt: new Date(), ...compressed },
             select: { id: true, fieldId: true, fileName: true, contentType: true, size: true, uploadedAt: true },
         });
+
+        if (compressed) await deleteObject(document.storageKey).catch(() => undefined);
 
         return { ...confirmed, removable: true };
     }),
