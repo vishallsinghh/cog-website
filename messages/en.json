@@ -898,11 +898,6 @@
       "women": "Women supported"
     },
     "formLabel": "Donation",
-    "frequencyLabel": "Frequency",
-    "frequency": {
-      "once": "One-time",
-      "monthly": "Monthly"
-    },
     "programmeTitle": "Choose a programme",
     "programmes": {
       "need": "Where most needed",
@@ -918,15 +913,11 @@
     "detailsTitle": "Your details",
     "name": "Full name",
     "mobile": "Mobile",
-    "email": "Email for your receipt",
+    "email": "Email",
     "summaryOnce": "{programme} · one-time",
-    "summaryMonthly": "{programme} · monthly",
-    "perMonth": "{amount} / month",
     "pay": "Donate {amount}",
-    "payMonthly": "Donate {amount} monthly",
     "payEmpty": "Enter an amount",
-    "secureNote": "Secure payment by UPI, card or net banking. A receipt is emailed to you.",
-    "notice": "Online donations are not open yet. Please contact the Council to give in the meantime.",
+    "secureNote": "Secure payment by UPI, card or net banking through Razorpay. You get a receipt number as soon as your payment is confirmed.",
     "contactLink": "Contact the Council ↗",
     "otherTitle": "Other ways ",
     "otherTitleEm": "to give",
@@ -938,6 +929,24 @@
     },
     "talk": {
       "title": "Talk to us"
+    },
+    "processing": "Processing…",
+    "checkoutName": "The Council of Gujarat",
+    "notices": {
+      "cancelled": "Payment cancelled. Nothing was charged, and you can try again whenever you are ready.",
+      "failed": "Your payment did not go through. Please try again, or use a different payment method.",
+      "pending": "Razorpay is still confirming your payment. Please do not pay again. Your receipt number is issued as soon as it is confirmed; contact the Council if you need it.",
+      "unavailable": "Online payment could not be loaded. Check your connection and try again, or"
+    },
+    "thanks": {
+      "eyebrow": "Payment confirmed",
+      "title": "Thank you.",
+      "text": "Your gift of {amount} to {programme} has been received.",
+      "receipt": "Receipt number",
+      "receiptPending": "Being issued",
+      "amount": "Amount",
+      "keep": "Keep this receipt number for your records. Members who are signed in can also find it under My donations.",
+      "again": "Make another donation"
     }
   },
   "Updates": {
@@ -1098,7 +1107,7 @@
       },
       "donations": {
         "title": "Donations",
-        "description": "One-time and monthly donations, receipts and refunds."
+        "description": "Online donations, receipts and Excel exports."
       },
       "content": {
         "title": "Content",
@@ -1119,6 +1128,10 @@
       "forms": {
         "title": "Forms",
         "description": "Build, publish and open the assistance forms."
+      },
+      "myDonations": {
+        "title": "My donations",
+        "description": "Your online donations and their receipt numbers."
       }
     }
   },
@@ -1197,26 +1210,6 @@
     "badge": "Coming soon",
     "planned": "What’s planned",
     "sections": {
-      "donations": {
-        "headline": "Online giving is on its way.",
-        "lede": "Soon you’ll see every donation in one place, with receipts sent automatically and tools to manage refunds.",
-        "p1": {
-          "title": "Online payments",
-          "text": "UPI, cards and net banking from the Donate page"
-        },
-        "p2": {
-          "title": "Automatic receipts",
-          "text": "Emailed to donors as soon as a gift arrives"
-        },
-        "p3": {
-          "title": "Donor history",
-          "text": "Each donor’s gifts, by programme and date"
-        },
-        "p4": {
-          "title": "Refunds & export",
-          "text": "Issue refunds and export to CSV for accounts"
-        }
-      },
       "applications": {
         "headline": "Assistance applications, online.",
         "lede": "Families will apply for any of the seven programmes from their phone, and staff will review everything here.",
@@ -1458,7 +1451,10 @@
     "formExists": "A form with that web address or code already exists.",
     "fieldTypeLocked": "A published question's answer type cannot be changed.",
     "formNotPublished": "This form has not been published yet.",
-    "noDraft": "There are no unpublished changes."
+    "noDraft": "There are no unpublished changes.",
+    "donationsUnavailable": "Online donations are not available right now. Please try again later or contact the Council.",
+    "tooManyDonationAttempts": "Too many donation attempts. Please wait a few minutes and try again.",
+    "paymentNotConfirmed": "We could not confirm this payment. If money was taken, contact the Council with your payment ID."
   },
   "ApplicationStatuses": {
     "draft": "Draft",
@@ -1751,5 +1747,56 @@
       "pincode": "Pincode",
       "jamaat": "Jamaat"
     }
+  },
+  "Donations": {
+    "totalReceived": "Total received",
+    "paidCount": "Paid donations",
+    "shown": "Matching records",
+    "download": "Download Excel",
+    "search": "Search",
+    "searchContact": "Receipt, name, mobile, email or payment ID",
+    "searchNoContact": "Receipt, name or payment ID",
+    "status": "Status",
+    "allStatuses": "All statuses",
+    "programme": "Programme",
+    "allProgrammes": "All programmes",
+    "from": "From",
+    "to": "To",
+    "receipt": "Receipt",
+    "donor": "Donor",
+    "amount": "Amount",
+    "date": "Date",
+    "empty": "No donations match these filters.",
+    "loadError": "Donations could not be loaded.",
+    "statuses": {
+      "created": "Not completed",
+      "paid": "Paid",
+      "failed": "Failed"
+    },
+    "export": {
+      "sheet": "Donations",
+      "receipt": "Receipt",
+      "status": "Status",
+      "created": "Started",
+      "paid": "Paid",
+      "donor": "Donor",
+      "memberId": "Member ID",
+      "mobile": "Mobile",
+      "email": "Email",
+      "programme": "Programme",
+      "amount": "Amount",
+      "method": "Method",
+      "paymentId": "Payment ID",
+      "orderId": "Order ID"
+    }
+  },
+  "MyDonations": {
+    "empty": "You have not made an online donation yet.",
+    "donate": "Donate now",
+    "donateAgain": "Donate again",
+    "summary": "{count, plural, one {# donation} other {# donations}} · {total} in total",
+    "receipt": "Receipt",
+    "receiptPending": "being issued",
+    "payment": "Payment"
   }
 }

@@ -36,6 +36,7 @@ model User {
   applicationNotes    ApplicationNote[]
   formAccess          FormAccess[]
   formVersions        FormVersion[]
+  donations           Donation[]
 
   @@unique([email])
   @@unique([phoneNumber])
@@ -300,4 +301,32 @@ model ApplicationCounter {
   value Int    @default(0)
 
   @@map("application_counter")
+}
+
+model Donation {
+  id                String    @id
+  receiptNumber     String?
+  userId            String?
+  user              User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  name              String
+  phoneNumber       String
+  email             String
+  programme         String
+  amountPaise       Int
+  status            String    @default("created")
+  razorpayOrderId   String
+  razorpayPaymentId String?
+  method            String?
+  failureReason     String?
+  paidAt            DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@unique([receiptNumber])
+  @@unique([razorpayOrderId])
+  @@unique([razorpayPaymentId])
+  @@index([status, createdAt])
+  @@index([userId])
+  @@index([phoneNumber])
+  @@map("donation")
 }

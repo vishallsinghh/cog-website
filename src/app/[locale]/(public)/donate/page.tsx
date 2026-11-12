@@ -5,6 +5,7 @@ import { DonateForm } from "@/components/donate/donate-form";
 import { Eyebrow } from "@/components/page-parts";
 import { CONTACT } from "@/content/site";
 import { localizeDigits } from "@/lib/digits";
+import { TRPCReactProvider } from "@/trpc/client";
 
 export async function generateMetadata(): Promise<Metadata> {
     const t = await getTranslations("Donate");
@@ -61,7 +62,9 @@ export default async function Page() {
                     </div>
                 </div>
 
-                <DonateForm />
+                <TRPCReactProvider>
+                    <DonateForm />
+                </TRPCReactProvider>
             </section>
 
             <section className="bg-cream-deep">

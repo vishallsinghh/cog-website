@@ -4,10 +4,10 @@ import { NavIcon } from "./nav-icon";
 import { PageHeader } from "./page-header";
 
 const PLANNED = ["p1", "p2", "p3", "p4"] as const;
-type SectionKey = "applications" | "donations" | "content";
+type SectionKey = "applications" | "content";
 
 function isSection(key: string): key is SectionKey {
-    return key === "applications" || key === "donations" || key === "content";
+    return key === "applications" || key === "content";
 }
 
 export async function PagePlaceholder({ item }: { item: NavItem }) {

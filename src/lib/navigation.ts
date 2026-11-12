@@ -5,6 +5,7 @@ export type NavKey =
     | "dashboard"
     | "profile"
     | "myApplications"
+    | "myDonations"
     | "members"
     | "applications"
     | "donations"
@@ -34,6 +35,7 @@ export const NAV_GROUPS: NavGroup[] = [
             { key: "dashboard", href: "/dashboard" },
             { key: "profile", href: "/profile" },
             { key: "myApplications", href: "/my-applications" },
+            { key: "myDonations", href: "/my-donations" },
         ],
     },
     {
@@ -45,9 +47,7 @@ export const NAV_GROUPS: NavGroup[] = [
     },
     {
         key: "finance",
-        items: [
-            { key: "donations", href: "/donations", permission: { donation: ["read"] }, soon: true },
-        ],
+        items: [{ key: "donations", href: "/donations", permission: { donation: ["read"] } }],
     },
     {
         key: "content",

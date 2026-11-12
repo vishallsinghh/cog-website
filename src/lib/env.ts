@@ -49,6 +49,12 @@ const storageSchema = z.object({
     R2_BUCKET: required,
 });
 
+const razorpaySchema = z.object({
+    RAZORPAY_KEY_ID: z.string().regex(/^rzp_(test|live)_\w+$/, "Use the Key ID from the Razorpay dashboard"),
+    RAZORPAY_KEY_SECRET: required,
+    RAZORPAY_WEBHOOK_SECRET: required,
+});
+
 const seedSchema = z.object({
     SUPER_ADMIN_PHONE: z.string().regex(INDIAN_MOBILE, "Use the format +91XXXXXXXXXX"),
     SUPER_ADMIN_NAME: z.string().trim().min(2).max(100),
@@ -60,4 +66,6 @@ export const redisEnv = lazy(() => redisSchema.parse(process.env));
 export const smsEnv = lazy(() => smsSchema.parse(process.env));
 export const aadhaarEnv = lazy(() => aadhaarSchema.parse(process.env));
 export const storageEnv = lazy(() => storageSchema.parse(process.env));
+export const razorpayEnv = lazy(() => razorpaySchema.parse(process.env));
+export const razorpayConfigured = () => razorpaySchema.safeParse(process.env).success;
 export const seedEnv = lazy(() => seedSchema.parse(process.env));

@@ -55,6 +55,26 @@ const otpIpLimiter = new Ratelimit({
     prefix: "cog:otp:send-ip",
 });
 
+const donationStartLimiter = new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(10, "15 m"),
+    prefix: "cog:donation:start-ip",
+});
+
+const donationConfirmLimiter = new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(60, "15 m"),
+    prefix: "cog:donation:confirm-ip",
+});
+
+export async function allowDonationStart(ip: string | null) {
+    return (await donationStartLimiter.limit(ip ?? "unknown")).success;
+}
+
+export async function allowDonationConfirm(ip: string | null) {
+    return (await donationConfirmLimiter.limit(ip ?? "unknown")).success;
+}
+
 function tooManyRequests(code: string, message: string, retryAfterSeconds: number) {
     return APIError.from("TOO_MANY_REQUESTS", {
         code,
