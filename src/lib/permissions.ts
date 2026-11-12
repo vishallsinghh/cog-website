@@ -8,7 +8,6 @@ export const statement = {
     application: ["read", "review", "verify", "decide", "export"],
     form: ["read", "write", "assign"],
     content: ["read", "write", "publish"],
-    report: ["read", "export"],
     auditLog: ["read"],
 } as const;
 
@@ -23,7 +22,6 @@ export const roles = {
         application: ["read", "review", "verify", "decide", "export"],
         form: ["read", "write", "assign"],
         content: ["read", "write", "publish"],
-        report: ["read", "export"],
         auditLog: ["read"],
     }),
     admin: ac.newRole({
@@ -33,7 +31,6 @@ export const roles = {
         application: ["read", "review", "verify", "decide", "export"],
         form: ["read", "write"],
         content: ["read", "write", "publish"],
-        report: ["read", "export"],
         auditLog: ["read"],
     }),
     editor: ac.newRole({
@@ -46,7 +43,6 @@ export const roles = {
         application: ["read"],
         form: ["read"],
         content: ["read"],
-        report: ["read"],
         auditLog: ["read"],
     }),
 };

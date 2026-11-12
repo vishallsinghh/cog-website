@@ -1100,10 +1100,6 @@
         "title": "Donations",
         "description": "One-time and monthly donations, receipts and refunds."
       },
-      "reports": {
-        "title": "Reports",
-        "description": "Donor statistics and CSV exports."
-      },
       "content": {
         "title": "Content",
         "description": "Landing page, notices, blogs and emergency appeals."
@@ -1239,26 +1235,6 @@
         "p4": {
           "title": "Notifications",
           "text": "Applicants hear back by SMS or email"
-        }
-      },
-      "reports": {
-        "headline": "Clear numbers, ready to share.",
-        "lede": "Summaries of members, donations and applications, ready to download for committee meetings.",
-        "p1": {
-          "title": "Member summary",
-          "text": "Growth and approvals by Jamaat"
-        },
-        "p2": {
-          "title": "Donation summary",
-          "text": "Totals by programme and month"
-        },
-        "p3": {
-          "title": "Application summary",
-          "text": "Requests, decisions and amounts"
-        },
-        "p4": {
-          "title": "CSV export",
-          "text": "Every report downloads as a spreadsheet"
         }
       },
       "content": {

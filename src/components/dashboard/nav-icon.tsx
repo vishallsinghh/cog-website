@@ -1,5 +1,4 @@
 import {
-    ChartColumnIcon,
     ClipboardListIcon,
     FileTextIcon,
     HandCoinsIcon,
@@ -21,7 +20,6 @@ const ICONS: Record<NavKey, LucideIcon> = {
     members: UsersIcon,
     applications: ClipboardListIcon,
     donations: HandCoinsIcon,
-    reports: ChartColumnIcon,
     content: NewspaperIcon,
     forms: ListChecksIcon,
     audit: ScrollTextIcon,

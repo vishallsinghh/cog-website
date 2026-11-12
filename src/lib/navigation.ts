@@ -8,7 +8,6 @@ export type NavKey =
     | "members"
     | "applications"
     | "donations"
-    | "reports"
     | "content"
     | "forms"
     | "audit"
@@ -48,7 +47,6 @@ export const NAV_GROUPS: NavGroup[] = [
         key: "finance",
         items: [
             { key: "donations", href: "/donations", permission: { donation: ["read"] }, soon: true },
-            { key: "reports", href: "/reports", permission: { report: ["read"] }, soon: true },
         ],
     },
     {
