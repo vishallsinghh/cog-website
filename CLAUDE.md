@@ -51,7 +51,8 @@ src/lib/            server and shared modules
   phone.ts          +91 validation and placeholder email helper
   rate-limit.ts     Upstash storage for Better Auth and the OTP guards
   redis.ts          Upstash client
-  sms.ts            OTP and application-status SMS (MSG91 when the keys are set, otherwise the server log)
+  members.server.ts approveMember issues the COG Member ID from a counter that only goes up
+  sms.ts            OTP, application-status and approval SMS (MSG91 when the keys are set, otherwise the server log)
   storage.ts        R2 signed upload and download links, HEAD and DELETE for documents
   forms/            assistance forms: the JSON definition format, answer validation, application statuses, document limits, staff review access (review.server.ts)
 src/components/     site shell, shadcn components in ui/, feature components (member/, team/, members/, audit/, profile/, applications/, review/, forms-admin/)
@@ -71,7 +72,7 @@ migrations/         SQL migrations applied by scripts/db.ts
 - Forms use react-hook-form with `zodResolver` and the shadcn `FieldGroup` / `Field` / `Controller` pattern (`data-invalid` on `Field`, `aria-invalid` on the control). Read `.claude/skills/shadcn` before adding or changing UI.
 - Phone numbers are `+91` followed by a 10-digit mobile starting 6 to 9. Validate with `INDIAN_MOBILE` from `src/lib/phone.ts`.
 - There are no passwords. OTP is the only login. Google can only be linked from inside a logged-in account and must never create a user.
-- Accounts start as `pending`. Statuses are `pending`, `under_review`, `documents_required`, `approved` and `rejected`. Every account except a rejected one gets a session, but until it is `approved` it only sees the review screen on `/dashboard`: pages go through `requireApproved` (or `requirePermission` / `requireNavAccess`) and tRPC through `protectedProcedure`, which all require `approved`. Approval is done by an admin from the members sheet and issues the COG Member ID.
+- Accounts start as `pending`. Statuses are `pending`, `under_review`, `documents_required`, `approved` and `rejected`. Every account except a rejected one gets a session, but until it is `approved` it only sees the review screen on `/dashboard`: pages go through `requireApproved` (or `requirePermission` / `requireNavAccess`) and tRPC through `protectedProcedure`, which all require `approved`. Approval is done by an admin from the members sheet and goes through `approveMember()`, which issues the COG Member ID (`COG-000001`) once; it is never changed or reused, even if the status changes later. The member is told by SMS.
 - Roles: `member`, `super_admin`, `admin`, `editor`, `viewer`. Check permissions through `src/lib/permissions.ts`, never by comparing role strings in feature code.
 - Every admin action and every denied access attempt writes an `AuditLog` row.
 - Uploaded documents are private. Never expose a public URL for them. Staff open them through a permission-checked route that writes an `AuditLog` row and hands out a short-lived R2 link.
@@ -109,11 +110,12 @@ Seed the Super Admin with `SUPER_ADMIN_PHONE` and `SUPER_ADMIN_NAME` set in `.en
 
 ## Environment variables
 
-Required: `AADHAAR_ENCRYPTION_KEY` (32 random bytes, base64; generate with `openssl rand -base64 32`), `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`, `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`.
+Required: `AADHAAR_ENCRYPTION_KEY` (32 random bytes, base64; generate with `openssl rand -base64 32`), `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL` (`http://localhost:3000` locally, the deployment's own URL on Vercel; there is no default), `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`, `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`.
 Documents: `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`. The bucket stays private and needs a CORS rule allowing `PUT` with a `content-type` header from the site's origins.
 OTP delivery: `MSG91_AUTH_KEY`, `MSG91_OTP_TEMPLATE_ID`. Until both are set, OTPs are written to the server log in every environment, production included.
 Development only: `EXPOSE_OTP_TO_BROWSER=true` also prints each OTP in the browser console. Never set it once real members use the site.
 Application SMS: `MSG91_APPLICATION_TEMPLATE_ID`, a MSG91 flow template with `##number##` and `##status##` variables. Until it and `MSG91_AUTH_KEY` are set, status messages go to the server log.
+Approval SMS: `MSG91_APPROVAL_TEMPLATE_ID`, a MSG91 flow template with a `##memberid##` variable. Until it and `MSG91_AUTH_KEY` are set, the message goes to the server log.
 Seed only: `SUPER_ADMIN_PHONE`, `SUPER_ADMIN_NAME`.
 
 ## Known gaps
@@ -125,4 +127,4 @@ Seed only: `SUPER_ADMIN_PHONE`, `SUPER_ADMIN_NAME`.
 - `getSession()` calls `connection()` so Partial Prefetching never starts a session lookup it then abandons; protected pages stream in behind the layout's skeleton instead of being prefetched with session data.
 - Consent is stored on `user.consentAcceptedAt` only; the `Consent` table is not written yet.
 - Leadership names and years, the full journey timeline, social links, privacy and terms text are placeholders until COG supplies them.
-- Turnstile, the daily OTP cap with admin alert, and Member ID issuing on approval are not built yet.
+- Turnstile and the daily OTP cap with admin alert are not built yet.

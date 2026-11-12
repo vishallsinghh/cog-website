@@ -31,21 +31,14 @@ export async function sendOtpSms(phoneNumber: string, code: string) {
 
 const MSG91_FLOW_URL = "https://control.msg91.com/api/v5/flow";
 
-export async function sendApplicationSms(phoneNumber: string, values: { number: string; status: string }) {
-    const env = smsEnv();
-
-    if (!env.MSG91_AUTH_KEY || !env.MSG91_APPLICATION_TEMPLATE_ID) {
-        console.log(`[sms] ${phoneNumber}: application ${values.number} is now ${values.status}`);
-        return;
-    }
-
+async function sendFlowSms(authKey: string, templateId: string, phoneNumber: string, values: Record<string, string>) {
     const response = await fetch(MSG91_FLOW_URL, {
         method: "POST",
-        headers: { authkey: env.MSG91_AUTH_KEY, "content-type": "application/json", accept: "application/json" },
+        headers: { authkey: authKey, "content-type": "application/json", accept: "application/json" },
         body: JSON.stringify({
-            template_id: env.MSG91_APPLICATION_TEMPLATE_ID,
+            template_id: templateId,
             short_url: "0",
-            recipients: [{ mobiles: phoneNumber.replace("+", ""), number: values.number, status: values.status }],
+            recipients: [{ mobiles: phoneNumber.replace("+", ""), ...values }],
         }),
     });
 
@@ -54,4 +47,26 @@ export async function sendApplicationSms(phoneNumber: string, values: { number: 
     if (!response.ok || result?.type !== "success") {
         throw new Error(`MSG91 flow request failed: ${result?.message ?? response.status}`);
     }
+}
+
+export async function sendApplicationSms(phoneNumber: string, values: { number: string; status: string }) {
+    const env = smsEnv();
+
+    if (!env.MSG91_AUTH_KEY || !env.MSG91_APPLICATION_TEMPLATE_ID) {
+        console.log(`[sms] ${phoneNumber}: application ${values.number} is now ${values.status}`);
+        return;
+    }
+
+    await sendFlowSms(env.MSG91_AUTH_KEY, env.MSG91_APPLICATION_TEMPLATE_ID, phoneNumber, values);
+}
+
+export async function sendApprovalSms(phoneNumber: string, memberId: string) {
+    const env = smsEnv();
+
+    if (!env.MSG91_AUTH_KEY || !env.MSG91_APPROVAL_TEMPLATE_ID) {
+        console.log(`[sms] ${phoneNumber}: your COG membership is approved. Member ID ${memberId}`);
+        return;
+    }
+
+    await sendFlowSms(env.MSG91_AUTH_KEY, env.MSG91_APPROVAL_TEMPLATE_ID, phoneNumber, { memberid: memberId });
 }

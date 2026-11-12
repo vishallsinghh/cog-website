@@ -15,7 +15,7 @@ const dbSchema = z.object({
 
 const authSchema = z.object({
     BETTER_AUTH_SECRET: z.string().min(32),
-    BETTER_AUTH_URL: z.url().default("http://localhost:3000"),
+    BETTER_AUTH_URL: z.url(),
     GOOGLE_CLIENT_ID: required,
     GOOGLE_CLIENT_SECRET: required,
 });
@@ -29,6 +29,7 @@ const smsSchema = z.object({
     MSG91_AUTH_KEY: z.string().optional(),
     MSG91_OTP_TEMPLATE_ID: z.string().optional(),
     MSG91_APPLICATION_TEMPLATE_ID: z.string().optional(),
+    MSG91_APPROVAL_TEMPLATE_ID: z.string().optional(),
     EXPOSE_OTP_TO_BROWSER: z
         .enum(["true", "false"])
         .optional()

@@ -8,6 +8,7 @@ import { db } from "@/lib/db";
 import { deleteUserDocuments } from "@/lib/forms/documents.server";
 import { dayRange, memberListInputSchema } from "@/lib/list.schemas";
 import { memberIdInputSchema, setMemberStatusInputSchema } from "@/lib/members.schemas";
+import { approveMember, notifyApproved } from "@/lib/members.server";
 import { STAFF_ROLES, type MemberStatus } from "@/lib/permissions";
 import { createTRPCRouter, errorsFor, staffProcedure } from "../init";
 
@@ -212,9 +213,23 @@ export const membersRouter = createTRPCRouter({
             const final = input.status === "approved" || input.status === "rejected";
             if (target.status === input.status && !final) return { ok: true as const };
 
-            await db.user.update({ where: { id: target.id }, data: { status: input.status } });
+            const approval = input.status === "approved" ? await approveMember(target.id) : null;
+            if (!approval) await db.user.update({ where: { id: target.id }, data: { status: input.status } });
 
             if (final) await purgeFullAadhaar(target.id);
+
+            if (approval?.issued) {
+                await writeAuditLog({
+                    actorId: ctx.userId,
+                    action: "member.id.issued",
+                    entityType: "user",
+                    entityId: target.id,
+                    metadata: { memberId: approval.memberId },
+                    ipAddress: await getClientIp(),
+                });
+            }
+
+            if (approval && target.status !== "approved") await notifyApproved(target.phoneNumber, approval.memberId);
             if (input.status === "rejected") await db.session.deleteMany({ where: { userId: target.id } });
 
             if (target.status !== input.status) {
