@@ -55,6 +55,21 @@ const razorpaySchema = z.object({
     RAZORPAY_WEBHOOK_SECRET: required,
 });
 
+const sanityPublicSchema = z.object({
+    NEXT_PUBLIC_SANITY_PROJECT_ID: z.string().regex(/^[a-z0-9-]+$/),
+    NEXT_PUBLIC_SANITY_DATASET: z.string().regex(/^[a-z0-9_-]+$/),
+});
+
+const sanityPublicValues = () => ({
+    NEXT_PUBLIC_SANITY_PROJECT_ID: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+    NEXT_PUBLIC_SANITY_DATASET: process.env.NEXT_PUBLIC_SANITY_DATASET,
+});
+
+const sanityServerSchema = z.object({
+    SANITY_REVALIDATE_SECRET: z.string().min(16).optional(),
+    SANITY_API_READ_TOKEN: z.string().min(1).optional(),
+});
+
 const seedSchema = z.object({
     SUPER_ADMIN_PHONE: z.string().regex(INDIAN_MOBILE, "Use the format +91XXXXXXXXXX"),
     SUPER_ADMIN_NAME: z.string().trim().min(2).max(100),
@@ -68,4 +83,9 @@ export const aadhaarEnv = lazy(() => aadhaarSchema.parse(process.env));
 export const storageEnv = lazy(() => storageSchema.parse(process.env));
 export const razorpayEnv = lazy(() => razorpaySchema.parse(process.env));
 export const razorpayConfigured = () => razorpaySchema.safeParse(process.env).success;
+export const sanityPublicEnv = () => {
+    const parsed = sanityPublicSchema.safeParse(sanityPublicValues());
+    return parsed.success ? parsed.data : null;
+};
+export const sanityServerEnv = lazy(() => sanityServerSchema.parse(process.env));
 export const seedEnv = lazy(() => seedSchema.parse(process.env));

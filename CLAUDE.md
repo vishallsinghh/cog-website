@@ -42,7 +42,7 @@ src/lib/            server and shared modules
   auth.client.ts    Better Auth browser client
   auth.utils.ts     getSession / requireAuth helpers for server components
   db.ts             Prisma client on Turso
-  env.ts            Zod-validated env in lazy groups (dbEnv, authEnv, redisEnv, smsEnv, aadhaarEnv, storageEnv, razorpayEnv, seedEnv); never read process.env elsewhere
+  env.ts            Zod-validated env in lazy groups (dbEnv, authEnv, redisEnv, smsEnv, aadhaarEnv, storageEnv, razorpayEnv, sanityPublicEnv, sanityServerEnv, seedEnv); never read process.env elsewhere
   auth.schemas.ts   Zod schemas shared by the auth config and the sign-in form
   aadhaar.ts        Aadhaar format, checksum and last-4 helpers (client-safe)
   aadhaar.server.ts store, read and purge the encrypted Aadhaar
@@ -56,8 +56,11 @@ src/lib/            server and shared modules
   members.server.ts approveMember issues the COG Member ID from a counter that only goes up
   sms.ts            OTP, application-status and approval SMS (MSG91 when the keys are set, otherwise the server log)
   storage.ts        R2 signed upload and download links, HEAD and DELETE for documents
+  blog.ts           Sanity client and the cached post queries (`use cache` + the `posts` tag), with the English fallback for Gujarati
   forms/            assistance forms: the JSON definition format, answer validation, application statuses, document limits, staff review access (review.server.ts)
 src/components/     site shell, shadcn components in ui/, feature components (member/, team/, members/, audit/, profile/, applications/, review/, forms-admin/, donate/, donations/)
+src/sanity/         Studio config, the post schema and the client-only Studio component
+src/app/studio/     Sanity Studio at /studio, its own root layout, outside the locale routes and the proxy
 src/trpc/           tRPC init, routers, server and client wiring
 src/generated/      Prisma client output, never edit
 prisma/schema.prisma
@@ -82,6 +85,7 @@ migrations/         SQL migrations applied by scripts/db.ts
 - Forms are built at `/forms` (`formsAdmin` router): `form: ["read"]` views, `form: ["write"]` edits. The builder has no Save draft button: Publish saves and publishes in one step. Older unpublished `FormVersion` drafts can still be discarded. A question's answer type is locked once any published version contains it, and a form can only be opened after its first publish. New question, section, choice and column IDs come from `newId()` in `src/lib/forms/builder.ts` and must never be reused for something else.
 - Assistance forms are data, not code. Each `Form` has numbered `FormVersion` rows whose `definition` is JSON checked by `formDefinitionSchema`; a published version is never edited, so changes create a new version. An `Application` keeps the version it was started on. Validate answers with `buildAnswersSchema(definition, "draft" | "submit")`. Money answers are number fields with `money: true`, stored in paise.
 - Donations are one-time only. The donate form calls `donations.start` (creates the Razorpay order and a `created` row) and opens Razorpay Checkout. A donation becomes `paid` only through `settlePayment()`, after Razorpay confirms the payment: either `donations.confirm` (checks the checkout signature, then fetches the payment from Razorpay) or the signed webhook at `/api/razorpay/webhook`. Both are safe to run twice. The `DON-000001` receipt number is issued once, in the same transaction that marks it paid. Never mark a donation paid from a client value. Members see their paid donations at `/my-donations` (matched by user or verified mobile); staff use `/donations` with `donation: ["read"]` and export with `donation: ["export"]`, with contact details masked for roles without `member: ["readContact"]`.
+- Blog posts live in Sanity, not the database. Each `post` has `localeString` / `localeText` / `localeBody` fields with `en` (required) and `gu`; read them through `pickLocale()`, which falls back to English. Only import `sanity` or `src/sanity/config.ts` from client components (`src/sanity/studio.tsx`); server code uses `src/lib/blog.ts` and `src/sanity/constants.ts`. Post queries are cached with the `posts` tag, and the signed Sanity webhook at `/api/sanity/revalidate` expires it on publish, edit or delete.
 - Use `db.$transaction` when several writes must land together. Otherwise design writes so a partial failure is safe to retry.
 - User-facing text lives in `messages/en.json` and `messages/gu.json`, never hardcoded in components. Add every key to both files. `gu.json` is a draft translation pending COG review.
 - Use `Link`, `redirect`, `useRouter` and `usePathname` from `@/i18n/navigation`, not `next/link` or `next/navigation`, so the locale is kept.
@@ -120,6 +124,7 @@ Development only: `EXPOSE_OTP_TO_BROWSER=true` also prints each OTP in the brows
 Application SMS: `MSG91_APPLICATION_TEMPLATE_ID`, a MSG91 flow template with `##number##` and `##status##` variables. Until it and `MSG91_AUTH_KEY` are set, status messages go to the server log.
 Approval SMS: `MSG91_APPROVAL_TEMPLATE_ID`, a MSG91 flow template with a `##memberid##` variable. Until it and `MSG91_AUTH_KEY` are set, the message goes to the server log.
 Donations: `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET` (test keys until go-live), `RAZORPAY_WEBHOOK_SECRET`. Until all three are set the donate form says online donations are unavailable. In the Razorpay dashboard add a webhook to `<site>/api/razorpay/webhook` with that secret and the `payment.authorized`, `payment.captured`, `payment.failed` and `order.paid` events. The webhook cannot reach `localhost`; use a tunnel or a preview deployment to test it.
+Blog: `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, `SANITY_REVALIDATE_SECRET` (16+ characters), and `SANITY_API_READ_TOKEN` only if the dataset is private. Until the first two are set the Updates page shows its empty state and `/studio` explains what is missing. In sanity.io/manage add the site's origins (including `http://localhost:3000`) as CORS origins with credentials, invite editors to the project, and add a GROQ webhook for `_type == "post"` on create, update and delete to `<site>/api/sanity/revalidate` with the same secret.
 Seed only: `SUPER_ADMIN_PHONE`, `SUPER_ADMIN_NAME`.
 
 ## Known gaps
@@ -132,4 +137,5 @@ Seed only: `SUPER_ADMIN_PHONE`, `SUPER_ADMIN_NAME`.
 - Consent is stored on `user.consentAcceptedAt` only; the `Consent` table is not written yet.
 - Leadership names and years, the full journey timeline, social links, privacy and terms text are placeholders until COG supplies them.
 - Turnstile and the daily OTP cap with admin alert are not built yet. Starting a donation is public and only rate limited per IP until Turnstile is added.
+- Studio access is managed in Sanity (sanity.io/manage), separately from website roles; the dashboard Content page only shows the Studio link to roles with `content: ["write"]`.
 - Donation receipts are a number only; there is no printable 80G receipt or receipt email yet, and refunds are done in the Razorpay dashboard.

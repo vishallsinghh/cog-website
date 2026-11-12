@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
   partialPrefetching: true,
   images: {
     qualities: [75, 92],
+    remotePatterns: [{ protocol: "https", hostname: "cdn.sanity.io", pathname: "/images/**" }],
   },
   async redirects() {
     return [

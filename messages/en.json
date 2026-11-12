@@ -954,9 +954,10 @@
     "eyebrow": "NEWS & UPDATES",
     "title": "Stories from our community.",
     "description": "The Council's latest initiatives, announcements, projects and appeals.",
-    "panelTitle": "Updates coming soon",
-    "panelText": "News and notices from the Council will be published here by COG's editorial team.",
-    "notice": "No articles have been published yet."
+    "emptyTitle": "No posts yet",
+    "emptyText": "News and notices from the Council will appear here as soon as COG's team publishes them.",
+    "readMore": "Read more →",
+    "back": "All updates"
   },
   "Privacy": {
     "metaTitle": "Privacy policy",
@@ -1111,7 +1112,7 @@
       },
       "content": {
         "title": "Content",
-        "description": "Landing page, notices, blogs and emergency appeals."
+        "description": "Write and publish posts for the website's Updates page."
       },
       "audit": {
         "title": "Activity log",
@@ -1204,52 +1205,6 @@
     "help": {
       "title": "Need help?",
       "text": "Call the COG office or speak to your Jamaat."
-    }
-  },
-  "Placeholder": {
-    "badge": "Coming soon",
-    "planned": "What’s planned",
-    "sections": {
-      "applications": {
-        "headline": "Assistance applications, online.",
-        "lede": "Families will apply for any of the seven programmes from their phone, and staff will review everything here.",
-        "p1": {
-          "title": "Seven application forms",
-          "text": "Primary, higher education, medical, housing, widow, Ramzan and sports"
-        },
-        "p2": {
-          "title": "Private documents",
-          "text": "Uploads stay private, with no public links"
-        },
-        "p3": {
-          "title": "Review queue",
-          "text": "Verify, ask for more details, and decide"
-        },
-        "p4": {
-          "title": "Notifications",
-          "text": "Applicants hear back by SMS or email"
-        }
-      },
-      "content": {
-        "headline": "Publish updates to the website.",
-        "lede": "Editors will write news and updates here, and publish them straight to the website’s Updates page.",
-        "p1": {
-          "title": "Write in both languages",
-          "text": "English and ગુજરાતી side by side"
-        },
-        "p2": {
-          "title": "Review before publishing",
-          "text": "Drafts, review and publish steps"
-        },
-        "p3": {
-          "title": "Feeds the Updates page",
-          "text": "Published posts appear on the website"
-        },
-        "p4": {
-          "title": "History",
-          "text": "Every change recorded in the audit log"
-        }
-      }
     }
   },
   "Paging": {
@@ -1798,5 +1753,18 @@
     "receipt": "Receipt",
     "receiptPending": "being issued",
     "payment": "Payment"
+  },
+  "Content": {
+    "studioTitle": "Sanity Studio",
+    "studioText": "Write posts in English and Gujarati, add a cover image and publish. Published posts appear on the Updates page within moments, with no redeploy.",
+    "notConfigured": "Sanity is not connected yet. Set the Sanity project ID and dataset to start publishing posts.",
+    "openStudio": "Open Studio",
+    "latestTitle": "Latest posts",
+    "viewUpdates": "View the Updates page",
+    "empty": "No posts have been published yet.",
+    "published": "Published {date}",
+    "view": "View",
+    "edit": "Edit",
+    "accessNote": "The Studio uses Sanity accounts, not website accounts. Ask the Super Admin to invite you to the Sanity project before you sign in."
   }
 }

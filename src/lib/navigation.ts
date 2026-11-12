@@ -51,7 +51,7 @@ export const NAV_GROUPS: NavGroup[] = [
     },
     {
         key: "content",
-        items: [{ key: "content", href: "/content", permission: { content: ["read"] }, soon: true }],
+        items: [{ key: "content", href: "/content", permission: { content: ["read"] } }],
     },
     {
         key: "administration",
